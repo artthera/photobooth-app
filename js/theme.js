@@ -201,6 +201,48 @@ const ThemeManager = (function() {
         }, 3000);
     }
 
+    function syncMockup(cfg) {
+        const mBadge = document.getElementById('mockupBadge');
+        const mTitle = document.getElementById('mockupTitle');
+        const mSubtitle = document.getElementById('mockupSubtitle');
+        const mBtnText = document.getElementById('mockupBtnText');
+
+        if (mBadge) mBadge.textContent = cfg.landingBadge || defaults.landingBadge;
+        if (mTitle) mTitle.textContent = cfg.landingTitle || defaults.landingTitle;
+        if (mSubtitle) mSubtitle.textContent = cfg.landingSubtitle || defaults.landingSubtitle;
+        if (mBtnText) mBtnText.textContent = cfg.landingBtnText || defaults.landingBtnText;
+    }
+
+    function renderDashFrames() {
+        const grid = document.getElementById('dashFrameGrid');
+        const countBadge = document.getElementById('dashCountFrames');
+        if (typeof frames !== 'undefined' && frames) {
+            if (countBadge) countBadge.textContent = `${frames.length} Active`;
+            if (grid) {
+                grid.innerHTML = '';
+                frames.forEach(frame => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between shadow-xs hover:border-blue-400 transition';
+                    card.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-14 rounded-lg bg-white border border-slate-200 shadow-xs flex items-center justify-center font-bold text-xs text-blue-600">
+                                ${frame.slotCount}P
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black text-slate-800 line-clamp-1">${frame.name}</h4>
+                                <div class="text-[10px] text-slate-400 font-medium mt-0.5">${frame.width} &times; ${frame.height}px &bull; ${frame.slotCount} Slots</div>
+                            </div>
+                        </div>
+                        <span class="text-[9px] font-black uppercase px-2.5 py-1 rounded-full ${frame.isCustom ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-slate-200 text-slate-600'}">
+                            ${frame.isCustom ? 'Custom' : 'Bawaan'}
+                        </span>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+        }
+    }
+
     function syncModalInputs(cfg) {
         const setVal = (id, val) => {
             const el = document.getElementById(id);
@@ -222,6 +264,9 @@ const ThemeManager = (function() {
         setVal('themeResultsBadge', cfg.resultsBadge);
         setVal('themeResultsTitle', cfg.resultsTitle);
         setVal('themeResultsSubtitle', cfg.resultsSubtitle);
+
+        // Update Live Mockup Preview
+        syncMockup(cfg);
 
         // Background Mode Buttons
         document.querySelectorAll('.theme-bg-mode-btn').forEach(btn => {
@@ -323,7 +368,42 @@ const ThemeManager = (function() {
     function initModalUI() {
         const btnSave = document.getElementById('btnSaveThemeSettings');
 
-        // Tab switching
+        // Sidebar Navigation Handling (.dash-nav-btn & [data-target])
+        const navBtns = document.querySelectorAll('.dash-nav-btn');
+        const sections = document.querySelectorAll('.dash-section');
+
+        function switchDashSection(targetId) {
+            sections.forEach(sec => {
+                if (sec.id === targetId) {
+                    sec.classList.remove('hide');
+                } else {
+                    sec.classList.add('hide');
+                }
+            });
+
+            navBtns.forEach(btn => {
+                if (btn.getAttribute('data-target') === targetId) {
+                    btn.classList.add('bg-blue-600', 'text-white', 'shadow-xs');
+                    btn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+                } else {
+                    btn.classList.remove('bg-blue-600', 'text-white', 'shadow-xs');
+                    btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+                }
+            });
+
+            if (targetId === 'dashSectionFrames') {
+                renderDashFrames();
+            }
+        }
+
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.getAttribute('data-target');
+                if (target) switchDashSection(target);
+            });
+        });
+
+        // Horizontal tabs support (fallback)
         const tabBtns = [
             { btn: document.getElementById('themeTabBtnTexts'), content: document.getElementById('themeTabContentTexts') },
             { btn: document.getElementById('themeTabBtnBackground'), content: document.getElementById('themeTabContentBackground') },
@@ -363,11 +443,12 @@ const ThemeManager = (function() {
                 const stateAdmin = document.getElementById('state-admin');
                 if (stateAdmin) stateAdmin.classList.remove('hide');
                 syncModalInputs(currentConfig);
+                switchDashSection('dashSectionGdrive');
                 switchTab('themeTabBtnGdrive');
             });
         }
 
-        // Admin Header Buttons: Kelola Frame Event & Studio Frame Custom
+        // Admin Header & Dashboard Buttons: Kelola Frame Event & Studio Frame Custom
         const btnAdminFrame = document.getElementById('btnAdminOpenFrameManager');
         if (btnAdminFrame) {
             btnAdminFrame.addEventListener('click', () => {
@@ -377,18 +458,46 @@ const ThemeManager = (function() {
             });
         }
 
+        const btnDashFramesManage = document.getElementById('btnDashManageAllFrames');
+        if (btnDashFramesManage) {
+            btnDashFramesManage.addEventListener('click', () => {
+                if (typeof renderFrameManagerGrid === 'function') renderFrameManagerGrid();
+                const modal = document.getElementById('frameManagerModal');
+                if (modal) modal.classList.remove('hide');
+            });
+        }
+
+        const openCustomModalHandler = () => {
+            const customFrameModal = document.getElementById('customFrameModal');
+            if (customFrameModal) customFrameModal.classList.remove('hide');
+            if (typeof customOriginalDataUrl !== 'undefined' && !customOriginalDataUrl) {
+                const customUploadDropZone = document.getElementById('customUploadDropZone');
+                if (customUploadDropZone) customUploadDropZone.classList.remove('hide');
+                const customEditorStageWrapper = document.getElementById('customEditorStageWrapper');
+                if (customEditorStageWrapper) customEditorStageWrapper.classList.add('hide');
+            } else if (typeof adjustCustomStageScale === 'function') {
+                setTimeout(adjustCustomStageScale, 50);
+            }
+        };
+
         const btnAdminStudio = document.getElementById('btnAdminOpenCustomStudio');
-        if (btnAdminStudio) {
-            btnAdminStudio.addEventListener('click', () => {
-                const customFrameModal = document.getElementById('customFrameModal');
-                if (customFrameModal) customFrameModal.classList.remove('hide');
-                if (typeof customOriginalDataUrl !== 'undefined' && !customOriginalDataUrl) {
-                    const customUploadDropZone = document.getElementById('customUploadDropZone');
-                    if (customUploadDropZone) customUploadDropZone.classList.remove('hide');
-                    const customEditorStageWrapper = document.getElementById('customEditorStageWrapper');
-                    if (customEditorStageWrapper) customEditorStageWrapper.classList.add('hide');
-                } else if (typeof adjustCustomStageScale === 'function') {
-                    setTimeout(adjustCustomStageScale, 50);
+        if (btnAdminStudio) btnAdminStudio.addEventListener('click', openCustomModalHandler);
+
+        const btnDashStudio = document.getElementById('btnDashOpenCustomStudio');
+        if (btnDashStudio) btnDashStudio.addEventListener('click', openCustomModalHandler);
+
+        const btnOpenFullModal = document.getElementById('btnOpenFullCustomModal');
+        if (btnOpenFullModal) btnOpenFullModal.addEventListener('click', openCustomModalHandler);
+
+        const dashCustomFileInput = document.getElementById('dashCustomFileInput');
+        if (dashCustomFileInput) {
+            dashCustomFileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    openCustomModalHandler();
+                    if (typeof handleCustomFrameFile === 'function') {
+                        handleCustomFrameFile(file);
+                    }
                 }
             });
         }
@@ -436,13 +545,14 @@ const ThemeManager = (function() {
             });
         }
 
-        // Live Input Bindings for instant real-time feedback
+        // Live Input Bindings for instant real-time feedback & Mockup preview
         const bindInput = (id, key) => {
             const el = document.getElementById(id);
             if (!el) return;
             el.addEventListener('input', (e) => {
                 activeWorkingConfig[key] = e.target.value;
                 applyConfig(activeWorkingConfig);
+                syncMockup(activeWorkingConfig);
             });
         };
 
@@ -569,14 +679,17 @@ const ThemeManager = (function() {
             });
         });
 
-        // Save Button in Sticky Footer
-        if (btnSave) {
-            btnSave.addEventListener('click', () => {
-                saveConfig(activeWorkingConfig);
-                applyConfig(currentConfig);
-                showToast("Pengaturan Disimpan!", "Pengaturan photobooth berhasil disimpan dan diterapkan.");
-            });
-        }
+        // Save Buttons (all .btn-save-dash & #btnSaveThemeSettings)
+        const saveAction = () => {
+            saveConfig(activeWorkingConfig);
+            applyConfig(currentConfig);
+            showToast("Pengaturan Disimpan!", "Pengaturan photobooth berhasil disimpan dan diterapkan.");
+        };
+
+        if (btnSave) btnSave.addEventListener('click', saveAction);
+        document.querySelectorAll('.btn-save-dash').forEach(btn => {
+            btn.addEventListener('click', saveAction);
+        });
 
         // Reset Defaults Button
         const btnReset = document.getElementById('btnResetThemeDefaults');
@@ -597,8 +710,8 @@ const ThemeManager = (function() {
         if (btnExport) {
             btnExport.addEventListener('click', () => {
                 const exportData = {
-                    version: 2,
-                    type: 'photobooth_theme_preset',
+                    version: 3,
+                    type: 'eazy_fotobooth_theme_preset',
                     exportedAt: new Date().toISOString(),
                     theme: { ...activeWorkingConfig }
                 };
@@ -606,7 +719,7 @@ const ThemeManager = (function() {
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `photobooth_theme_preset_${Date.now()}.json`;
+                a.download = `eazy_fotobooth_preset_${Date.now()}.json`;
                 a.click();
                 URL.revokeObjectURL(url);
                 showToast("Export Berhasil", "Preset tema berhasil didownload sebagai file .json");
@@ -640,8 +753,9 @@ const ThemeManager = (function() {
             });
         }
 
-        // Initial sync of inputs with loaded configuration
+        // Initial sync
         syncModalInputs(currentConfig);
+        renderDashFrames();
     }
 
     return {
@@ -650,6 +764,7 @@ const ThemeManager = (function() {
         applyConfig,
         initModalUI,
         syncModalInputs,
+        renderDashFrames,
         showToast,
         getConfig: () => currentConfig,
         getActiveConfig: () => activeWorkingConfig

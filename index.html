@@ -63,215 +63,404 @@
         <!-- Layer 4: Global Light Tint & Blur Overlay -->
         <div id="globalBgOverlay" class="absolute inset-0 z-0 bg-white/20 pointer-events-none transition-all duration-300"></div>
 
-        <!-- ================= STATE -1: ADMIN SETUP DASHBOARD (DEFAULT ON LOAD) ================= -->
-        <div id="state-admin" class="w-full h-full overflow-y-auto flex flex-col bg-slate-100 absolute top-0 left-0 z-30 pt-16 pb-28 px-3 sm:px-6">
-            <div class="max-w-5xl w-full mx-auto flex flex-col gap-5">
-                
-                <!-- Admin Top Title Banner -->
-                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-2xl shadow-md shrink-0">
-                            <i class="ph ph-sliders font-bold"></i>
-                        </div>
-                        <div>
-                            <div class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider mb-1">
-                                <i class="ph ph-shield-check"></i> Setup & Konfigurasi Event
-                            </div>
-                            <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">PANEL ADMIN EAZY FOTOBOOTH</h2>
-                            <p class="text-xs text-slate-500 font-medium mt-0.5">Konfigurasikan judul acara, template frame, background visual, dan integrasi cloud sebelum memulai sesi pelanggan.</p>
-                        </div>
+        <!-- ================= STATE -1: FULL CLEAN WEB DASHBOARD (DEFAULT ON LOAD) ================= -->
+        <div id="state-admin" class="w-full h-full overflow-y-auto flex flex-col bg-slate-50 absolute top-0 left-0 z-30">
+            
+            <!-- Top Dashboard Admin Header -->
+            <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 px-4 sm:px-8 py-3.5 flex items-center justify-between shadow-xs">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-xl shadow-md shrink-0">
+                        <i class="ph ph-sliders font-bold"></i>
                     </div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <a href="dashboard.html" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-blue-200 shadow-xs">
-                            <i class="ph ph-layout text-base"></i>
-                            <span>Buka Halaman Dashboard</span>
-                        </a>
-                        <button type="button" id="btnAdminOpenFrameManager" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-slate-200">
-                            <i class="ph ph-squares-four text-base text-blue-600"></i>
-                            <span>Kelola Frame Event</span>
-                        </button>
-                        <button type="button" id="btnAdminOpenCustomStudio" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-4 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2 shadow-sm">
-                            <i class="ph ph-magic-wand text-base text-amber-300"></i>
-                            <span>Studio Frame Custom</span>
-                        </button>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm sm:text-base font-black tracking-tight text-slate-900">EAZY FOTOBOOTH</span>
+                            <span class="bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Console Admin</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 font-medium hidden sm:block">Kelola konfigurasi acara, template frame, dan visual photobooth</p>
                     </div>
                 </div>
 
-                <!-- Admin Main Card Container with Tabs -->
-                <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
-                    
-                    <!-- Tab Navigation Header -->
-                    <div class="p-3 px-6 bg-slate-50 border-b border-slate-200 flex items-center gap-2 overflow-x-auto scrollbar-none">
-                        <button type="button" id="themeTabBtnTexts" class="theme-tab-btn px-4 py-2.5 rounded-xl text-xs font-bold bg-blue-600 text-white transition flex items-center gap-2 shrink-0 shadow-xs">
-                            <i class="ph ph-text-t text-base"></i> <span>Beranda & Branding</span>
+                <div class="flex items-center gap-3">
+                    <div class="hidden md:flex items-center gap-2 bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span>
+                        <span>System Ready</span>
+                    </div>
+                    <!-- Quick Launch Button -->
+                    <button type="button" class="btn-launch-booth-trigger bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-5 sm:px-7 py-2.5 sm:py-3 rounded-2xl font-black text-xs sm:text-sm transition shadow-[0_8px_20px_-4px_rgba(37,99,235,0.4)] flex items-center gap-2 active:scale-95">
+                        <span>🚀 BUKA PHOTOBOOTH</span>
+                        <i class="ph ph-arrow-square-out font-bold text-base"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Dashboard Body with Sidebar & Content Area -->
+            <div class="flex-grow flex flex-col md:flex-row w-full max-w-7xl mx-auto px-3 sm:px-6 md:px-8 py-6 gap-6 pb-36">
+                
+                <!-- Left Sidebar Navigation Menu -->
+                <aside class="w-full md:w-64 shrink-0 flex flex-col gap-2.5">
+                    <div class="bg-white p-3 rounded-3xl border border-slate-200 shadow-xs flex flex-row md:flex-col gap-1 overflow-x-auto scrollbar-none">
+                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-black transition flex items-center gap-2.5 shrink-0 bg-blue-600 text-white shadow-xs" data-target="dashSectionOverview">
+                            <i class="ph ph-gauge text-base"></i> <span>Ringkasan & Status</span>
                         </button>
-                        <button type="button" id="themeTabBtnBackground" class="theme-tab-btn px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition flex items-center gap-2 shrink-0">
-                            <i class="ph ph-image text-base"></i> <span>Background & Visual</span>
+                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionBranding">
+                            <i class="ph ph-text-t text-base"></i> <span>Branding & Acara</span>
                         </button>
-                        <button type="button" id="themeTabBtnStyle" class="theme-tab-btn px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition flex items-center gap-2 shrink-0">
-                            <i class="ph ph-palette text-base"></i> <span>Font & Warna</span>
+                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionFrames">
+                            <i class="ph ph-squares-four text-base"></i> <span>Template Frame</span>
                         </button>
-                        <button type="button" id="themeTabBtnOther" class="theme-tab-btn px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition flex items-center gap-2 shrink-0">
-                            <i class="ph ph-sparkle text-base"></i> <span>Panduan & Hasil</span>
+                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionCustomStudio">
+                            <i class="ph ph-magic-wand text-base"></i> <span>Studio Frame Custom</span>
                         </button>
-                        <button type="button" id="themeTabBtnGdrive" class="theme-tab-btn px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition flex items-center gap-2 shrink-0">
-                            <i class="ph ph-google-drive-logo text-emerald-600 text-base"></i> <span>Google Drive</span>
+                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionVisual">
+                            <i class="ph ph-palette text-base"></i> <span>Background & Font</span>
+                        </button>
+                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionGdrive">
+                            <i class="ph ph-google-drive-logo text-emerald-600 text-base"></i> <span>Google Drive Cloud</span>
+                        </button>
+                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionPresets">
+                            <i class="ph ph-floppy-disk text-base"></i> <span>Backup & Preset</span>
                         </button>
                     </div>
 
-                    <!-- Tab Contents Body -->
-                    <div class="p-6 bg-slate-50/50">
-                        
-                        <!-- TAB 1: BERANDA & BRANDING -->
-                        <div id="themeTabContentTexts" class="theme-tab-content flex flex-col gap-4">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col gap-3">
-                                    <h4 class="text-xs font-black text-blue-600 uppercase tracking-wider flex items-center gap-1.5">
-                                        <i class="ph ph-crown"></i> Header Branding
-                                    </h4>
-                                    <div>
-                                        <label class="text-[11px] font-bold text-slate-700 block mb-1">Nama Brand Aplikasi (Kiri Atas)</label>
-                                        <input type="text" id="themeBrandName" placeholder="Contoh: EAZY FOTOBOOTH" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 transition font-medium" />
-                                    </div>
-                                    <div>
-                                        <label class="text-[11px] font-bold text-slate-700 block mb-1">Badge Kanan Atas</label>
-                                        <input type="text" id="themeBrandBadge" placeholder="Contoh: HD PHOTO & LIVE MOTION" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 transition font-medium" />
-                                    </div>
-                                </div>
+                    <!-- Quick Action Guidance Card -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-3xl border border-blue-100 hidden md:flex flex-col gap-2.5">
+                        <div class="flex items-center gap-2 text-xs font-black text-blue-900">
+                            <i class="ph ph-info text-blue-600 text-base"></i>
+                            <span>Mode Kiosk Booth</span>
+                        </div>
+                        <p class="text-[11px] text-blue-700 leading-relaxed font-medium">
+                            Jalankan layar photobooth pada mode fullscreen browser (F11 di PC / Add to Home Screen di iPad) untuk pengalaman booth profesional.
+                        </p>
+                    </div>
+                </aside>
 
-                                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col gap-3">
-                                    <h4 class="text-xs font-black text-pink-600 uppercase tracking-wider flex items-center gap-1.5">
-                                        <i class="ph ph-tag"></i> Badge Event Beranda
-                                    </h4>
-                                    <div>
-                                        <label class="text-[11px] font-bold text-slate-700 block mb-1">Teks Badge (Atas Judul)</label>
-                                        <input type="text" id="themeLandingBadge" placeholder="Contoh: KOREAN STYLE PHOTOBOOTH" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 transition font-medium" />
-                                    </div>
-                                    <div>
-                                        <label class="text-[11px] font-bold text-slate-700 block mb-1">Teks Tombol Mulai</label>
-                                        <input type="text" id="themeLandingBtnText" placeholder="Contoh: TAP TO START" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 transition font-medium" />
-                                    </div>
+                <!-- Right Main Dashboard Content Sections Area -->
+                <main class="flex-grow flex flex-col gap-6">
+
+                    <!-- ================= SECTION 1: OVERVIEW & STATUS ================= -->
+                    <section id="dashSectionOverview" class="dash-section flex flex-col gap-5">
+                        
+                        <!-- Welcome Banner -->
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+                            <div>
+                                <div class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider mb-2">
+                                    <i class="ph ph-sparkle text-amber-500"></i> Eazy Fotobooth Console v3.0
+                                </div>
+                                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Selamat Datang di Panel Admin</h2>
+                                <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Konfigurasikan seluruh detail acara Anda, lalu luncurkan sesi photobooth untuk pelanggan.</p>
+                            </div>
+                            <button type="button" class="btn-launch-booth-trigger bg-slate-900 hover:bg-slate-800 text-white px-7 py-3.5 rounded-2xl font-black text-xs sm:text-sm transition shadow-md flex items-center justify-center gap-2 shrink-0 active:scale-95">
+                                <i class="ph ph-camera text-base text-amber-300"></i> Buka Layar Booth
+                            </button>
+                        </div>
+
+                        <!-- 4 Telemetry Status Cards -->
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+                            <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs flex flex-col justify-between gap-3">
+                                <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+                                    <i class="ph ph-camera"></i>
+                                </div>
+                                <div>
+                                    <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Format Output</div>
+                                    <div class="text-lg sm:text-xl font-black text-slate-900 mt-0.5">3 in 1 HD</div>
+                                    <div class="text-[10px] text-emerald-600 font-bold mt-0.5">JPG &bull; MP4 &bull; GIF</div>
                                 </div>
                             </div>
 
-                            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col gap-3">
-                                <h4 class="text-xs font-black text-indigo-600 uppercase tracking-wider flex items-center gap-1.5">
-                                    <i class="ph ph-text-aa"></i> Judul Utama & Tagline Beranda
-                                </h4>
-                                <div>
-                                    <label class="text-[11px] font-bold text-slate-700 block mb-1">Teks Judul Utama (Main Headline)</label>
-                                    <input type="text" id="themeLandingTitle" placeholder="Contoh: EAZY FOTOBOOTH / SWEET 17 / WEDDING OF..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 transition" />
+                            <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs flex flex-col justify-between gap-3">
+                                <div class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
+                                    <i class="ph ph-squares-four"></i>
                                 </div>
                                 <div>
-                                    <label class="text-[11px] font-bold text-slate-700 block mb-1">Tagline / Deskripsi Singkat</label>
-                                    <textarea id="themeLandingSubtitle" rows="2" placeholder="Tuliskan deskripsi singkat atau ucapan selamat..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 transition resize-none font-medium"></textarea>
+                                    <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Template Frame</div>
+                                    <div class="text-lg sm:text-xl font-black text-slate-900 mt-0.5" id="dashCountFrames">5 Active</div>
+                                    <div class="text-[10px] text-purple-600 font-bold mt-0.5">IndexedDB Sync</div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs flex flex-col justify-between gap-3">
+                                <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                                    <i class="ph ph-google-drive-logo"></i>
+                                </div>
+                                <div>
+                                    <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Cloud Storage</div>
+                                    <div class="text-lg sm:text-xl font-black text-slate-900 mt-0.5" id="dashGdriveStatusText">Auto-Upload</div>
+                                    <div class="text-[10px] text-emerald-600 font-bold mt-0.5">Google Drive Ready</div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs flex flex-col justify-between gap-3">
+                                <div class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                                    <i class="ph ph-devices"></i>
+                                </div>
+                                <div>
+                                    <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Touch & Tablet</div>
+                                    <div class="text-lg sm:text-xl font-black text-slate-900 mt-0.5">100% Friendly</div>
+                                    <div class="text-[10px] text-amber-600 font-bold mt-0.5">Portrait & Landscape</div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- TAB 2: BACKGROUND & VISUAL -->
-                        <div id="themeTabContentBackground" class="theme-tab-content hide flex flex-col gap-5">
-                            <div>
-                                <label class="text-xs font-black text-slate-800 uppercase tracking-wider block mb-2.5 flex items-center gap-1.5">
-                                    <i class="ph ph-monitor text-blue-600"></i> Mode Latar Belakang (Background)
-                                </label>
-                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                                    <button type="button" class="theme-bg-mode-btn p-3 rounded-2xl border flex flex-col items-center gap-2 transition text-center" data-mode="camera">
-                                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
-                                            <i class="ph ph-camera"></i>
-                                        </div>
-                                        <div>
-                                            <div class="text-xs font-bold text-slate-800">Live Kamera</div>
-                                            <div class="text-[10px] text-slate-500">Mirror kamera langsung</div>
-                                        </div>
-                                    </button>
+                        <!-- Quick Start Steps Workflow -->
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-4">
+                            <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                                <i class="ph ph-rocket-launch text-blue-600 text-lg"></i> Alur Kerja Cepat Operator
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3.5">
+                                    <span class="w-7 h-7 rounded-xl bg-blue-600 text-white font-black text-xs flex items-center justify-center shrink-0">1</span>
+                                    <div>
+                                        <h4 class="text-xs font-black text-slate-800">Atur Identitas & Acara</h4>
+                                        <p class="text-[11px] text-slate-500 mt-0.5">Kustomisasi judul acara, badge, dan background visual sesuai tema pesta.</p>
+                                    </div>
+                                </div>
+                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3.5">
+                                    <span class="w-7 h-7 rounded-xl bg-purple-600 text-white font-black text-xs flex items-center justify-center shrink-0">2</span>
+                                    <div>
+                                        <h4 class="text-xs font-black text-slate-800">Pilih / Buat Frame</h4>
+                                        <p class="text-[11px] text-slate-500 mt-0.5">Aktifkan template bawaan atau upload frame custom dengan Studio Green Screen.</p>
+                                    </div>
+                                </div>
+                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3.5">
+                                    <span class="w-7 h-7 rounded-xl bg-emerald-600 text-white font-black text-xs flex items-center justify-center shrink-0">3</span>
+                                    <div>
+                                        <h4 class="text-xs font-black text-slate-800">Luncurkan Photobooth</h4>
+                                        <p class="text-[11px] text-slate-500 mt-0.5">Klik tombol Buka Photobooth untuk memulai sesi mandiri pelanggan.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                                    <button type="button" class="theme-bg-mode-btn p-3 rounded-2xl border flex flex-col items-center gap-2 transition text-center" data-mode="gradient">
-                                        <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
-                                            <i class="ph ph-sparkle"></i>
-                                        </div>
-                                        <div>
-                                            <div class="text-xs font-bold text-slate-800">Gradient Estetik</div>
-                                            <div class="text-[10px] text-slate-500">Pilihan gradasi modern</div>
-                                        </div>
-                                    </button>
+                    </section>
 
-                                    <button type="button" class="theme-bg-mode-btn p-3 rounded-2xl border flex flex-col items-center gap-2 transition text-center" data-mode="color">
-                                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
-                                            <i class="ph ph-paint-bucket"></i>
-                                        </div>
-                                        <div>
-                                            <div class="text-xs font-bold text-slate-800">Warna Solid</div>
-                                            <div class="text-[10px] text-slate-500">Pilih 1 warna latar</div>
-                                        </div>
-                                    </button>
+                    <!-- ================= SECTION 2: BRANDING & EVENT TEXTS ================= -->
+                    <section id="dashSectionBranding" class="dash-section hide flex flex-col gap-5">
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-6">
+                            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                                <div>
+                                    <h3 class="text-lg font-black text-slate-900">Identitas & Teks Beranda Acara</h3>
+                                    <p class="text-xs text-slate-500 font-medium mt-0.5">Ubah judul acara, badge, dan pesan sambutan yang tampil pada layar pelanggan.</p>
+                                </div>
+                                <button type="button" class="btn-save-dash bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                                    <i class="ph ph-floppy-disk"></i> Simpan
+                                </button>
+                            </div>
 
-                                    <button type="button" class="theme-bg-mode-btn p-3 rounded-2xl border flex flex-col items-center gap-2 transition text-center" data-mode="image">
-                                        <div class="w-10 h-10 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center text-xl">
-                                            <i class="ph ph-image"></i>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div class="flex flex-col gap-4">
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-700 block mb-1.5">Nama Brand Aplikasi (Header Kiri)</label>
+                                        <input type="text" id="themeBrandName" placeholder="Contoh: EAZY FOTOBOOTH" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 font-bold outline-none focus:border-blue-500 transition" />
+                                    </div>
+
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-700 block mb-1.5">Badge Header Kanan Atas</label>
+                                        <input type="text" id="themeBrandBadge" placeholder="Contoh: HD PHOTO & LIVE MOTION" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 font-medium outline-none focus:border-blue-500 transition" />
+                                    </div>
+
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-700 block mb-1.5">Teks Badge Beranda (Atas Judul)</label>
+                                        <input type="text" id="themeLandingBadge" placeholder="Contoh: KOREAN STYLE PHOTOBOOTH / WEDDING CELEBRATION" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 font-medium outline-none focus:border-blue-500 transition" />
+                                    </div>
+
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-700 block mb-1.5">Judul Utama Beranda (Main Headline)</label>
+                                        <input type="text" id="themeLandingTitle" placeholder="Contoh: EAZY FOTOBOOTH / SWEET 17 SARAH / WEDDING OF ALEX & DIANA" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-black text-slate-900 outline-none focus:border-blue-500 transition" />
+                                    </div>
+
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-700 block mb-1.5">Tagline / Pesan Singkat Beranda</label>
+                                        <textarea id="themeLandingSubtitle" rows="3" placeholder="Tuliskan ucapan singkat..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 font-medium outline-none focus:border-blue-500 transition resize-none"></textarea>
+                                    </div>
+
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-700 block mb-1.5">Teks Tombol Mulai Foto</label>
+                                        <input type="text" id="themeLandingBtnText" placeholder="Contoh: TAP TO START" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 font-bold outline-none focus:border-blue-500 transition" />
+                                    </div>
+                                </div>
+
+                                <!-- Live Interactive Tablet Mockup Preview -->
+                                <div class="bg-slate-100 p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center">
+                                    <div class="text-[11px] font-black text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                                        <i class="ph ph-device-tablet text-blue-600 text-base"></i> Live Preview Layar Kiosk
+                                    </div>
+                                    <div class="w-full max-w-sm bg-white rounded-3xl border border-slate-300 shadow-xl p-6 sm:p-8 flex flex-col items-center text-center relative overflow-hidden">
+                                        <span id="mockupBadge" class="bg-blue-50 text-blue-600 border border-blue-200 text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-wider mb-3">KOREAN STYLE PHOTOBOOTH</span>
+                                        <h3 id="mockupTitle" class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight mb-2">EAZY FOTOBOOTH</h3>
+                                        <p id="mockupSubtitle" class="text-[11px] text-slate-500 line-clamp-2 mb-6 font-medium">Abadikan setiap pose secara otomatis dengan 3 format hasil.</p>
+                                        <div id="mockupBtn" class="bg-blue-600 text-white px-7 py-3 rounded-full text-xs font-black shadow-md flex items-center gap-2">
+                                            <span id="mockupBtnText">TAP TO START</span> <i class="ph ph-hand-tap text-amber-300"></i>
                                         </div>
-                                        <div>
-                                            <div class="text-xs font-bold text-slate-800">Upload Foto</div>
-                                            <div class="text-[10px] text-slate-500">Wallpaper kustom</div>
-                                        </div>
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 font-medium mt-3 text-center">Preview terupdate seketika saat Anda mengetik di formulir.</p>
+                                </div>
+                            </div>
+
+                            <!-- Sub Section: Panduan & Hasil Texts -->
+                            <div class="border-t border-slate-100 pt-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col gap-3">
+                                    <h4 class="text-xs font-black text-blue-600 uppercase tracking-wider flex items-center gap-1.5">
+                                        <i class="ph ph-info"></i> Teks Halaman Panduan
+                                    </h4>
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-600 block mb-1">Badge Panduan</label>
+                                        <input type="text" id="themeGuideBadge" placeholder="Panduan Singkat" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 font-medium" />
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-600 block mb-1">Judul Panduan</label>
+                                        <input type="text" id="themeGuideTitle" placeholder="CARA KERJA EAZY FOTOBOOTH" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 font-medium" />
+                                    </div>
+                                </div>
+
+                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col gap-3">
+                                    <h4 class="text-xs font-black text-pink-600 uppercase tracking-wider flex items-center gap-1.5">
+                                        <i class="ph ph-sparkle"></i> Teks Halaman Hasil
+                                    </h4>
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-600 block mb-1">Badge Hasil</label>
+                                        <input type="text" id="themeResultsBadge" placeholder="HASIL SIAP DI-DOWNLOAD" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 font-medium" />
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-600 block mb-1">Judul Hasil</label>
+                                        <input type="text" id="themeResultsTitle" placeholder="YOUR PHOTOBOOTH MOMENTS" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 font-medium" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ================= SECTION 3: TEMPLATE FRAME ================= -->
+                    <section id="dashSectionFrames" class="dash-section hide flex flex-col gap-5">
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-5">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+                                <div>
+                                    <h3 class="text-lg font-black text-slate-900">Daftar Template Frame Event</h3>
+                                    <p class="text-xs text-slate-500 font-medium mt-0.5">Template frame yang aktif dan dapat dipilih oleh pelanggan saat berfoto.</p>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <button type="button" id="btnDashManageAllFrames" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-200">
+                                        <i class="ph ph-squares-four text-blue-600"></i> Kelola Semua Frame
+                                    </button>
+                                    <button type="button" id="btnDashOpenCustomStudio" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-sm">
+                                        <i class="ph ph-magic-wand text-amber-300"></i> + Upload Frame Custom
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- Gradient Options -->
-                            <div id="themeGradientOptions" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col gap-3">
-                                <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
-                                    <i class="ph ph-palette text-blue-600"></i> Pilihan Preset Gradasi
-                                </span>
-                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="themeGradPresetGrid">
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative overflow-hidden group shadow-xs" data-gradient="linear-gradient(135deg, #f8fafc 0%, #eef2f6 50%, #ffffff 100%)" style="background: linear-gradient(135deg, #f8fafc 0%, #eef2f6 50%, #ffffff 100%);">
-                                        <span class="text-[11px] font-bold text-slate-800">Clean Pearl White</span>
-                                    </button>
+                            <!-- Dynamic Frame Grid Container -->
+                            <div id="dashFrameGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </section>
 
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative overflow-hidden group shadow-xs" data-gradient="linear-gradient(135deg, #fdf4ff 0%, #fae8ff 50%, #f0fdf4 100%)" style="background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 50%, #f0fdf4 100%);">
-                                        <span class="text-[11px] font-bold text-slate-800">Pastel Blossom</span>
-                                    </button>
+                    <!-- ================= SECTION 4: STUDIO FRAME CUSTOM ================= -->
+                    <section id="dashSectionCustomStudio" class="dash-section hide flex flex-col gap-5">
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-5">
+                            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                                <div>
+                                    <h3 class="text-lg font-black text-slate-900">Studio Frame Custom & Green Screen</h3>
+                                    <p class="text-xs text-slate-500 font-medium mt-0.5">Upload file desain frame PNG/JPG, AI deteksi green screen otomatis, dan atur posisi slot foto.</p>
+                                </div>
+                                <button type="button" id="btnOpenFullCustomModal" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                                    <i class="ph ph-arrows-out-simple"></i> Buka Editor Penuh
+                                </button>
+                            </div>
 
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative overflow-hidden group shadow-xs" data-gradient="linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #f8fafc 100%)" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #f8fafc 100%);">
-                                        <span class="text-[11px] font-bold text-slate-800">Sky Breeze</span>
-                                    </button>
+                            <div class="bg-slate-50 p-6 rounded-3xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-center cursor-pointer hover:border-blue-500 transition py-12" onclick="document.getElementById('dashCustomFileInput').click()">
+                                <input type="file" id="dashCustomFileInput" accept="image/*" class="hidden" />
+                                <div class="w-16 h-16 rounded-3xl bg-blue-50 text-blue-600 flex items-center justify-center text-3xl mb-3 shadow-sm">
+                                    <i class="ph ph-cloud-arrow-up font-bold"></i>
+                                </div>
+                                <h4 class="text-sm font-black text-slate-800">Upload Desain Frame Baru</h4>
+                                <p class="text-xs text-slate-500 mt-1 max-w-sm font-medium">Klik untuk memilih file PNG transparan atau JPG dengan area green screen.</p>
+                            </div>
 
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative overflow-hidden group shadow-xs" data-gradient="linear-gradient(135deg, #fef3c7 0%, #fef9c3 50%, #fffbeb 100%)" style="background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 50%, #fffbeb 100%);">
-                                        <span class="text-[11px] font-bold text-slate-800">Warm Vanilla</span>
-                                    </button>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
+                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                                    <div class="text-xs font-black text-slate-800 mb-1">Portrait Strip 2&times;6</div>
+                                    <p class="text-[11px] text-slate-500 leading-relaxed font-medium">Ukuran standar cetak 600 &times; 1800 px (3 atau 4 slot pose foto).</p>
+                                </div>
+                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                                    <div class="text-xs font-black text-slate-800 mb-1">Square Grid 4&times;4</div>
+                                    <p class="text-[11px] text-slate-500 leading-relaxed font-medium">Ukuran feed Instagram 1200 &times; 1200 px (4 foto grid kolase 2&times;2).</p>
+                                </div>
+                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                                    <div class="text-xs font-black text-slate-800 mb-1">Landscape Card 4&times;6</div>
+                                    <p class="text-[11px] text-slate-500 leading-relaxed font-medium">Ukuran postcard 1800 &times; 1200 px (3 atau 4 foto horizontal).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative overflow-hidden group shadow-xs" data-gradient="linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #f0fdf4 100%)" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #f0fdf4 100%);">
-                                        <span class="text-[11px] font-bold text-slate-800">Fresh Mint</span>
-                                    </button>
+                    <!-- ================= SECTION 5: BACKGROUND & FONT ================= -->
+                    <section id="dashSectionVisual" class="dash-section hide flex flex-col gap-5">
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-6">
+                            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                                <div>
+                                    <h3 class="text-lg font-black text-slate-900">Latar Belakang (Background) & Font Typography</h3>
+                                    <p class="text-xs text-slate-500 font-medium mt-0.5">Pilih tema warna, preset gradasi estetik, foto wallpaper, dan gaya font.</p>
+                                </div>
+                                <button type="button" class="btn-save-dash bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                                    <i class="ph ph-floppy-disk"></i> Simpan
+                                </button>
+                            </div>
 
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative overflow-hidden group shadow-xs" data-gradient="linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #e0e7ff 100%)" style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #e0e7ff 100%);">
-                                        <span class="text-[11px] font-bold text-slate-800">Lavender Milk</span>
+                            <!-- Background Mode Selector -->
+                            <div>
+                                <label class="text-xs font-black text-slate-800 uppercase tracking-wider block mb-3 flex items-center gap-1.5">
+                                    <i class="ph ph-monitor text-blue-600"></i> Mode Latar Belakang (Background)
+                                </label>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                    <button type="button" class="theme-bg-mode-btn p-3.5 rounded-2xl border flex flex-col items-center gap-2 transition text-center" data-mode="camera">
+                                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl"><i class="ph ph-camera"></i></div>
+                                        <div><div class="text-xs font-bold text-slate-800">Live Kamera</div><div class="text-[10px] text-slate-500">Mirror kamera</div></div>
                                     </button>
+                                    <button type="button" class="theme-bg-mode-btn p-3.5 rounded-2xl border flex flex-col items-center gap-2 transition text-center" data-mode="gradient">
+                                        <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl"><i class="ph ph-sparkle"></i></div>
+                                        <div><div class="text-xs font-bold text-slate-800">Gradient Estetik</div><div class="text-[10px] text-slate-500">Gradasi modern</div></div>
+                                    </button>
+                                    <button type="button" class="theme-bg-mode-btn p-3.5 rounded-2xl border flex flex-col items-center gap-2 transition text-center" data-mode="color">
+                                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl"><i class="ph ph-paint-bucket"></i></div>
+                                        <div><div class="text-xs font-bold text-slate-800">Warna Solid</div><div class="text-[10px] text-slate-500">1 warna solid</div></div>
+                                    </button>
+                                    <button type="button" class="theme-bg-mode-btn p-3.5 rounded-2xl border flex flex-col items-center gap-2 transition text-center" data-mode="image">
+                                        <div class="w-10 h-10 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center text-xl"><i class="ph ph-image"></i></div>
+                                        <div><div class="text-xs font-bold text-slate-800">Upload Foto</div><div class="text-[10px] text-slate-500">Wallpaper custom</div></div>
+                                    </button>
+                                </div>
+                            </div>
 
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative overflow-hidden group shadow-xs" data-gradient="linear-gradient(135deg, #fff1f2 0%, #ffe4e6 50%, #fdf2f8 100%)" style="background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 50%, #fdf2f8 100%);">
-                                        <span class="text-[11px] font-bold text-slate-800">Rose Petal</span>
-                                    </button>
-
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative overflow-hidden group shadow-xs" data-gradient="linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%)" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);">
-                                        <span class="text-[11px] font-bold text-white">Cyber Dark</span>
-                                    </button>
+                            <!-- Preset Gradasi -->
+                            <div id="themeGradientOptions" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col gap-3">
+                                <span class="text-xs font-black text-slate-800 flex items-center gap-1.5"><i class="ph ph-palette text-blue-600"></i> Pilihan Preset Gradasi</span>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #f8fafc 0%, #eef2f6 50%, #ffffff 100%)" style="background: linear-gradient(135deg, #f8fafc 0%, #eef2f6 50%, #ffffff 100%);"><span class="text-[11px] font-bold text-slate-800">Clean Pearl White</span></button>
+                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #fdf4ff 0%, #fae8ff 50%, #f0fdf4 100%)" style="background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 50%, #f0fdf4 100%);"><span class="text-[11px] font-bold text-slate-800">Pastel Blossom</span></button>
+                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #f8fafc 100%)" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #f8fafc 100%);"><span class="text-[11px] font-bold text-slate-800">Sky Breeze</span></button>
+                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #fef3c7 0%, #fef9c3 50%, #fffbeb 100%)" style="background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 50%, #fffbeb 100%);"><span class="text-[11px] font-bold text-slate-800">Warm Vanilla</span></button>
+                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #f0fdf4 100%)" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #f0fdf4 100%);"><span class="text-[11px] font-bold text-slate-800">Fresh Mint</span></button>
+                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #e0e7ff 100%)" style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #e0e7ff 100%);"><span class="text-[11px] font-bold text-slate-800">Lavender Milk</span></button>
+                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #fff1f2 0%, #ffe4e6 50%, #fdf2f8 100%)" style="background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 50%, #fdf2f8 100%);"><span class="text-[11px] font-bold text-slate-800">Rose Petal</span></button>
+                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%)" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);"><span class="text-[11px] font-bold text-white">Cyber Dark</span></button>
                                 </div>
                             </div>
 
                             <!-- Solid Color Options -->
-                            <div id="themeColorOptions" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between hide">
+                            <div id="themeColorOptions" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between hide">
                                 <div>
                                     <span class="text-xs font-bold text-slate-800 block mb-0.5">Warna Latar Belakang Solid</span>
-                                    <span class="text-[11px] text-slate-500">Pilih warna solid untuk latar beranda</span>
+                                    <span class="text-[11px] text-slate-500">Pilih 1 warna solid untuk latar beranda</span>
                                 </div>
                                 <div class="flex items-center gap-3">
-                                    <span id="themeBgColorHex" class="text-xs font-mono text-slate-800 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">#ffffff</span>
+                                    <span id="themeBgColorHex" class="text-xs font-mono text-slate-800 bg-white px-3 py-1.5 rounded-lg border border-slate-200">#ffffff</span>
                                     <input type="color" id="themeBgColorInput" value="#ffffff" class="w-10 h-10 rounded-xl cursor-pointer bg-transparent border-0" />
                                 </div>
                             </div>
 
                             <!-- Upload Image Wallpaper Options -->
-                            <div id="themeImageOptions" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col gap-3 hide">
+                            <div id="themeImageOptions" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col gap-3 hide">
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <span class="text-xs font-bold text-slate-800 block mb-0.5">Upload Wallpaper / Gambar Custom</span>
@@ -283,7 +472,7 @@
                                     </button>
                                 </div>
 
-                                <div id="themeBgImagePreviewWrapper" class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 hide">
+                                <div id="themeBgImagePreviewWrapper" class="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-200 hide">
                                     <div class="flex items-center gap-3">
                                         <img id="themeBgImageThumbnail" src="" class="w-14 h-10 object-cover rounded-lg border border-slate-200 shadow-xs" alt="Wallpaper Preview" />
                                         <div>
@@ -297,10 +486,74 @@
                                 </div>
                             </div>
 
+                            <!-- Typography Font Selector -->
+                            <div>
+                                <label class="text-xs font-black text-slate-800 uppercase tracking-wider block mb-3 flex items-center gap-1.5">
+                                    <i class="ph ph-text-t text-blue-600"></i> Pilihan Gaya Font (Typography)
+                                </label>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="themeFontGrid">
+                                    <button type="button" class="theme-font-card p-3.5 rounded-2xl border text-left flex flex-col justify-between transition bg-white border-slate-200" data-font="'Plus Jakarta Sans', system-ui, sans-serif" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                                        <div class="text-sm font-black text-slate-900">Plus Jakarta Sans</div>
+                                        <div class="text-[10px] text-slate-500 mt-1">Modern & Clean (Default)</div>
+                                    </button>
+                                    <button type="button" class="theme-font-card p-3.5 rounded-2xl border text-left flex flex-col justify-between transition bg-white border-slate-200" data-font="'Poppins', system-ui, sans-serif" style="font-family: 'Poppins', sans-serif;">
+                                        <div class="text-sm font-black text-slate-900">Poppins</div>
+                                        <div class="text-[10px] text-slate-500 mt-1">Geometric & Friendly</div>
+                                    </button>
+                                    <button type="button" class="theme-font-card p-3.5 rounded-2xl border text-left flex flex-col justify-between transition bg-white border-slate-200" data-font="'Outfit', system-ui, sans-serif" style="font-family: 'Outfit', sans-serif;">
+                                        <div class="text-sm font-black text-slate-900">Outfit</div>
+                                        <div class="text-[10px] text-slate-500 mt-1">Bold & Futuristic</div>
+                                    </button>
+                                    <button type="button" class="theme-font-card p-3.5 rounded-2xl border text-left flex flex-col justify-between transition bg-white border-slate-200" data-font="'Montserrat', system-ui, sans-serif" style="font-family: 'Montserrat', sans-serif;">
+                                        <div class="text-sm font-black text-slate-900">Montserrat</div>
+                                        <div class="text-[10px] text-slate-500 mt-1">Urban & Powerful</div>
+                                    </button>
+                                    <button type="button" class="theme-font-card p-3.5 rounded-2xl border text-left flex flex-col justify-between transition bg-white border-slate-200" data-font="'Space Grotesk', system-ui, sans-serif" style="font-family: 'Space Grotesk', sans-serif;">
+                                        <div class="text-sm font-black text-slate-900">Space Grotesk</div>
+                                        <div class="text-[10px] text-slate-500 mt-1">Neo-Brutalist Tech</div>
+                                    </button>
+                                    <button type="button" class="theme-font-card p-3.5 rounded-2xl border text-left flex flex-col justify-between transition bg-white border-slate-200" data-font="'Playfair Display', serif" style="font-family: 'Playfair Display', serif;">
+                                        <div class="text-sm font-black text-slate-900">Playfair Display</div>
+                                        <div class="text-[10px] text-slate-500 mt-1">Serif Luxury / Wedding</div>
+                                    </button>
+                                    <button type="button" class="theme-font-card p-3.5 rounded-2xl border text-left flex flex-col justify-between transition bg-white border-slate-200" data-font="'Caveat', cursive" style="font-family: 'Caveat', cursive;">
+                                        <div class="text-base font-bold text-slate-900">Caveat Handwriting</div>
+                                        <div class="text-[10px] text-slate-500 mt-0.5">Cute Hand-drawn Style</div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Color Accent Selector -->
+                            <div>
+                                <label class="text-xs font-black text-slate-800 uppercase tracking-wider block mb-3 flex items-center gap-1.5">
+                                    <i class="ph ph-palette text-blue-600"></i> Warna Aksen Utama
+                                </label>
+                                <div class="flex flex-wrap items-center gap-2.5" id="themeAccentGrid">
+                                    <button type="button" class="theme-accent-btn px-4 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#2563eb" data-end="#7c3aed">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-blue-600"></span> Royal Blue
+                                    </button>
+                                    <button type="button" class="theme-accent-btn px-4 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#ec4899" data-end="#f43f5e">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-pink-500"></span> Neon Rose
+                                    </button>
+                                    <button type="button" class="theme-accent-btn px-4 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#d97706" data-end="#b45309">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-amber-500"></span> Warm Amber
+                                    </button>
+                                    <button type="button" class="theme-accent-btn px-4 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#059669" data-end="#047857">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-emerald-600"></span> Emerald Mint
+                                    </button>
+                                    <button type="button" class="theme-accent-btn px-4 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#7c3aed" data-end="#6366f1">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-purple-600"></span> Vivid Purple
+                                    </button>
+                                    <button type="button" class="theme-accent-btn px-4 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#0f172a" data-end="#334155">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-slate-900"></span> Slate Black
+                                    </button>
+                                </div>
+                            </div>
+
                             <!-- Visual Effects Sliders -->
-                            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col gap-4">
+                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex flex-col gap-4">
                                 <h4 class="text-xs font-black text-blue-600 uppercase tracking-wider flex items-center gap-1.5">
-                                    <i class="ph ph-sliders"></i> Pengaturan Efek Visual
+                                    <i class="ph ph-sliders"></i> Pengaturan Efek Visual Latar
                                 </h4>
                                 
                                 <div class="flex flex-col gap-1.5">
@@ -309,227 +562,140 @@
                                         <span id="themeOverlayOpacityVal" class="font-mono text-blue-600 font-bold">5%</span>
                                     </div>
                                     <input type="range" id="themeOverlayOpacity" min="0" max="90" step="5" value="5" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
-                                    <span class="text-[10px] text-slate-400 font-medium">Atur seberapa gelap lapisan di atas background.</span>
                                 </div>
 
-                                <div class="flex flex-col gap-1.5 pt-2 border-t border-slate-100">
+                                <div class="flex flex-col gap-1.5 pt-2 border-t border-slate-200">
                                     <div class="flex justify-between items-center text-xs">
                                         <label class="font-bold text-slate-700">Efek Blur Latar Belakang</label>
                                         <span id="themeBgBlurVal" class="font-mono text-blue-600 font-bold">0px</span>
                                     </div>
                                     <input type="range" id="themeBgBlur" min="0" max="20" step="1" value="0" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
-                                    <span class="text-[10px] text-slate-400 font-medium">Memberikan efek blur estetik pada latar beranda.</span>
                                 </div>
                             </div>
                         </div>
+                    </section>
 
-                        <!-- TAB 3: TEMA & FONT -->
-                        <div id="themeTabContentStyle" class="theme-tab-content hide flex flex-col gap-5">
-                            
-                            <!-- Font Family Selector -->
-                            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col gap-3">
-                                <label class="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                                    <i class="ph ph-text-t text-blue-600"></i> Pilihan Gaya Font (Typography)
+                    <!-- ================= SECTION 6: GOOGLE DRIVE CLOUD ================= -->
+                    <section id="dashSectionGdrive" class="dash-section hide flex flex-col gap-5">
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-5">
+                            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl">
+                                        <i class="ph ph-google-drive-logo"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-black text-slate-900">Integrasi Google Drive Cloud</h3>
+                                        <p class="text-xs text-slate-500 font-medium mt-0.5">Upload otomatis foto strip, video, & GIF ke Google Drive per sesi foto.</p>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full font-bold">100% GRATIS</span>
+                            </div>
+
+                            <div>
+                                <label class="text-xs font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
+                                    <i class="ph ph-link text-blue-600"></i> URL Web App Google Apps Script
                                 </label>
-                                
-                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5" id="themeFontGrid">
-                                    <button type="button" class="theme-font-card p-3 rounded-xl border text-left flex flex-col justify-between transition group bg-white border-slate-200" data-font="'Plus Jakarta Sans', system-ui, sans-serif" style="font-family: 'Plus Jakarta Sans', sans-serif;">
-                                        <div class="text-sm font-black text-slate-900">Plus Jakarta Sans</div>
-                                        <div class="text-[10px] text-slate-500 mt-1">Modern & Clean (Default)</div>
-                                    </button>
-
-                                    <button type="button" class="theme-font-card p-3 rounded-xl border text-left flex flex-col justify-between transition group bg-white border-slate-200" data-font="'Poppins', system-ui, sans-serif" style="font-family: 'Poppins', sans-serif;">
-                                        <div class="text-sm font-black text-slate-900">Poppins</div>
-                                        <div class="text-[10px] text-slate-500 mt-1">Geometric & Friendly</div>
-                                    </button>
-
-                                    <button type="button" class="theme-font-card p-3 rounded-xl border text-left flex flex-col justify-between transition group bg-white border-slate-200" data-font="'Outfit', system-ui, sans-serif" style="font-family: 'Outfit', sans-serif;">
-                                        <div class="text-sm font-black text-slate-900">Outfit</div>
-                                        <div class="text-[10px] text-slate-500 mt-1">Bold & Futuristic</div>
-                                    </button>
-
-                                    <button type="button" class="theme-font-card p-3 rounded-xl border text-left flex flex-col justify-between transition group bg-white border-slate-200" data-font="'Montserrat', system-ui, sans-serif" style="font-family: 'Montserrat', sans-serif;">
-                                        <div class="text-sm font-black text-slate-900">Montserrat</div>
-                                        <div class="text-[10px] text-slate-500 mt-1">Urban & Powerful</div>
-                                    </button>
-
-                                    <button type="button" class="theme-font-card p-3 rounded-xl border text-left flex flex-col justify-between transition group bg-white border-slate-200" data-font="'Space Grotesk', system-ui, sans-serif" style="font-family: 'Space Grotesk', sans-serif;">
-                                        <div class="text-sm font-black text-slate-900">Space Grotesk</div>
-                                        <div class="text-[10px] text-slate-500 mt-1">Neo-Brutalist Tech</div>
-                                    </button>
-
-                                    <button type="button" class="theme-font-card p-3 rounded-xl border text-left flex flex-col justify-between transition group bg-white border-slate-200" data-font="'Playfair Display', serif" style="font-family: 'Playfair Display', serif;">
-                                        <div class="text-sm font-black text-slate-900">Playfair Display</div>
-                                        <div class="text-[10px] text-slate-500 mt-1">Serif Luxury / Wedding</div>
-                                    </button>
-
-                                    <button type="button" class="theme-font-card p-3 rounded-xl border text-left flex flex-col justify-between transition group bg-white border-slate-200" data-font="'Caveat', cursive" style="font-family: 'Caveat', cursive;">
-                                        <div class="text-base font-bold text-slate-900">Caveat Handwriting</div>
-                                        <div class="text-[10px] text-slate-500 mt-0.5">Cute Hand-drawn Style</div>
+                                <div class="flex gap-2">
+                                    <input type="url" id="themeGdriveWebhookUrl" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-emerald-500 transition font-mono" />
+                                    <button type="button" id="btnTestGdriveWebhook" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 shadow-xs">
+                                        <i class="ph ph-plugs-connected"></i> Test Koneksi
                                     </button>
                                 </div>
+                                <div id="gdriveTestStatus" class="text-[11px] mt-2 hidden font-medium"></div>
                             </div>
 
-                            <!-- Color Accent Selector -->
-                            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col gap-3">
-                                <label class="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                                    <i class="ph ph-palette text-blue-600"></i> Warna Aksen Utama
-                                </label>
-                                
-                                <div class="flex flex-wrap items-center gap-2.5" id="themeAccentGrid">
-                                    <button type="button" class="theme-accent-btn px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#2563eb" data-end="#7c3aed">
-                                        <span class="w-3.5 h-3.5 rounded-full bg-blue-600"></span> Royal Blue
-                                    </button>
-
-                                    <button type="button" class="theme-accent-btn px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#ec4899" data-end="#f43f5e">
-                                        <span class="w-3.5 h-3.5 rounded-full bg-pink-500"></span> Neon Rose
-                                    </button>
-
-                                    <button type="button" class="theme-accent-btn px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#d97706" data-end="#b45309">
-                                        <span class="w-3.5 h-3.5 rounded-full bg-amber-500"></span> Warm Amber
-                                    </button>
-
-                                    <button type="button" class="theme-accent-btn px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#059669" data-end="#047857">
-                                        <span class="w-3.5 h-3.5 rounded-full bg-emerald-600"></span> Emerald Mint
-                                    </button>
-
-                                    <button type="button" class="theme-accent-btn px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#7c3aed" data-end="#6366f1">
-                                        <span class="w-3.5 h-3.5 rounded-full bg-purple-600"></span> Vivid Purple
-                                    </button>
-
-                                    <button type="button" class="theme-accent-btn px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#0f172a" data-end="#334155">
-                                        <span class="w-3.5 h-3.5 rounded-full bg-slate-900"></span> Slate Black
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- TAB 4: PANDUAN & HASIL -->
-                        <div id="themeTabContentOther" class="theme-tab-content hide flex flex-col gap-4">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col gap-3">
-                                    <h4 class="text-xs font-black text-blue-600 uppercase tracking-wider flex items-center gap-1.5">
-                                        <i class="ph ph-info"></i> Halaman Panduan
-                                    </h4>
-                                    <div>
-                                        <label class="text-[11px] font-bold text-slate-700 block mb-1">Badge Panduan</label>
-                                        <input type="text" id="themeGuideBadge" placeholder="Panduan Singkat" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 font-medium" />
-                                    </div>
-                                    <div>
-                                        <label class="text-[11px] font-bold text-slate-700 block mb-1">Judul Panduan</label>
-                                        <input type="text" id="themeGuideTitle" placeholder="CARA KERJA PHOTOBOOTH" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 font-medium" />
-                                    </div>
-                                    <div>
-                                        <label class="text-[11px] font-bold text-slate-700 block mb-1">Subtitle Panduan</label>
-                                        <input type="text" id="themeGuideSubtitle" placeholder="3 langkah mudah..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 font-medium" />
-                                    </div>
-                                    <div>
-                                        <label class="text-[11px] font-bold text-slate-700 block mb-1">Teks Tombol Lanjut</label>
-                                        <input type="text" id="themeGuideBtnText" placeholder="MENGERTI, AYO MULAI" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 font-medium" />
-                                    </div>
-                                </div>
-
-                                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col gap-3">
-                                    <h4 class="text-xs font-black text-pink-600 uppercase tracking-wider flex items-center gap-1.5">
-                                        <i class="ph ph-sparkle"></i> Halaman Hasil (Results)
-                                    </h4>
-                                    <div>
-                                        <label class="text-[11px] font-bold text-slate-700 block mb-1">Badge Hasil</label>
-                                        <input type="text" id="themeResultsBadge" placeholder="HASIL SIAP DI-DOWNLOAD" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 font-medium" />
-                                    </div>
-                                    <div>
-                                        <label class="text-[11px] font-bold text-slate-700 block mb-1">Judul Hasil</label>
-                                        <input type="text" id="themeResultsTitle" placeholder="YOUR PHOTOBOOTH MOMENTS" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 font-medium" />
-                                    </div>
-                                    <div>
-                                        <label class="text-[11px] font-bold text-slate-700 block mb-1">Subtitle Hasil</label>
-                                        <textarea id="themeResultsSubtitle" rows="3" placeholder="Semua foto, video live motion..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 resize-none font-medium"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- TAB 5: GOOGLE DRIVE & CLOUD -->
-                        <div id="themeTabContentGdrive" class="theme-tab-content hide flex flex-col gap-4">
-                            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col gap-4">
-                                <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl shadow-inner">
-                                            <i class="ph ph-google-drive-logo"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="text-sm font-black text-slate-900">Integrasi Google Drive Otomatis</h4>
-                                            <p class="text-[11px] text-slate-500 font-medium">Upload otomatis foto strip, video, & GIF ke Google Drive per sesi foto.</p>
-                                        </div>
-                                    </div>
-                                    <span class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-full font-bold">100% GRATIS</span>
-                                </div>
-
+                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
                                 <div>
-                                    <label class="text-[11px] font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
-                                        <i class="ph ph-link text-blue-600"></i> URL Web App Google Apps Script
-                                    </label>
-                                    <div class="flex gap-2">
-                                        <input type="url" id="themeGdriveWebhookUrl" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-emerald-500 transition font-mono" />
-                                        <button type="button" id="btnTestGdriveWebhook" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 shadow-xs">
-                                            <i class="ph ph-plugs-connected"></i> Test Koneksi
-                                        </button>
-                                    </div>
-                                    <div id="gdriveTestStatus" class="text-[11px] mt-1.5 hidden font-medium"></div>
+                                    <div class="text-xs font-bold text-slate-900">Auto-Upload Setelah Selesai Sesi</div>
+                                    <div class="text-[10px] text-slate-500 font-medium">QR Code di layar otomatis mengarahkan ke link folder Google Drive sesi tersebut.</div>
                                 </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="themeGdriveAutoUpload" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                                </label>
+                            </div>
 
-                                <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
-                                    <div>
-                                        <div class="text-xs font-bold text-slate-900">Auto-Upload Setelah Selesai Sesi</div>
-                                        <div class="text-[10px] text-slate-500 font-medium">QR Code di layar otomatis mengarahkan ke link folder Google Drive sesi tersebut.</div>
-                                    </div>
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" id="themeGdriveAutoUpload" class="sr-only peer" checked>
-                                        <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
-                                    </label>
+                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 text-xs flex flex-col gap-2.5">
+                                <div class="font-black text-slate-800 flex items-center gap-1.5 text-xs">
+                                    <i class="ph ph-info text-blue-600"></i> Cara Memasang Script Google Drive:
                                 </div>
-
-                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs flex flex-col gap-2">
-                                    <div class="font-black text-slate-800 flex items-center gap-1.5 text-xs">
-                                        <i class="ph ph-info text-blue-600"></i> Cara Memasang Script Google Drive:
-                                    </div>
-                                    <ol class="list-decimal list-inside text-slate-600 text-[11px] space-y-1.5 leading-relaxed font-medium">
-                                        <li>Buka file <span class="text-emerald-700 font-mono font-bold">google-apps-script.js</span> di workspace ini.</li>
-                                        <li>Buka <a href="https://script.google.com/" target="_blank" class="text-blue-600 underline hover:text-blue-500 font-bold">script.google.com</a> lalu buat proyek baru (New Project).</li>
-                                        <li>Copy semua kode dari file tersebut dan paste ke editor Google Apps Script.</li>
-                                        <li>Klik <b>Deploy &gt; New deployment</b>, pilih tipe <b>Web app</b>.</li>
-                                        <li>Set <b>Execute as: Me</b> dan <b>Who has access: Anyone</b>, lalu klik <b>Deploy</b>.</li>
-                                        <li>Salin <b>Web app URL</b> lalu tempel di kolom input di atas!</li>
-                                    </ol>
-                                </div>
+                                <ol class="list-decimal list-inside text-slate-600 text-[11px] space-y-1.5 leading-relaxed font-medium">
+                                    <li>Buka file <span class="text-emerald-700 font-mono font-bold">google-apps-script.js</span> di workspace ini.</li>
+                                    <li>Buka <a href="https://script.google.com/" target="_blank" class="text-blue-600 underline hover:text-blue-500 font-bold">script.google.com</a> lalu buat proyek baru (New Project).</li>
+                                    <li>Copy semua kode dari file tersebut dan paste ke editor Google Apps Script.</li>
+                                    <li>Klik <b>Deploy &gt; New deployment</b>, pilih tipe <b>Web app</b>.</li>
+                                    <li>Set <b>Execute as: Me</b> dan <b>Who has access: Anyone</b>, lalu klik <b>Deploy</b>.</li>
+                                    <li>Salin <b>Web app URL</b> lalu tempel di kolom input di atas!</li>
+                                </ol>
                             </div>
                         </div>
+                    </section>
 
-                    </div>
-                </div>
+                    <!-- ================= SECTION 7: BACKUP & PRESET ================= -->
+                    <section id="dashSectionPresets" class="dash-section hide flex flex-col gap-5">
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-5">
+                            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                                <div>
+                                    <h3 class="text-lg font-black text-slate-900">Backup & Restore Preset Tema</h3>
+                                    <p class="text-xs text-slate-500 font-medium mt-0.5">Ekspor konfigurasi tema acara ke file .json atau pulihkan tema tersimpan.</p>
+                                </div>
+                            </div>
 
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between gap-4">
+                                    <div>
+                                        <h4 class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                                            <i class="ph ph-download text-blue-600 text-base"></i> Export Preset (.json)
+                                        </h4>
+                                        <p class="text-[11px] text-slate-500 mt-1 font-medium">Simpan seluruh pengaturan teks, warna, font, dan Google Drive ke file lokal komputer.</p>
+                                    </div>
+                                    <button type="button" id="btnExportThemePreset" class="bg-white hover:bg-slate-100 text-slate-800 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 border border-slate-200 shadow-xs">
+                                        <i class="ph ph-floppy-disk text-blue-600"></i> Download Preset (.json)
+                                    </button>
+                                </div>
+
+                                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between gap-4">
+                                    <div>
+                                        <h4 class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                                            <i class="ph ph-upload text-blue-600 text-base"></i> Restore Preset (.json)
+                                        </h4>
+                                        <p class="text-[11px] text-slate-500 mt-1 font-medium">Muat preset tema yang pernah Anda simpan sebelumnya ke photobooth.</p>
+                                    </div>
+                                    <input type="file" id="importThemeFileInput" accept=".json" class="hidden" />
+                                    <button type="button" id="btnImportThemeTrigger" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs">
+                                        <i class="ph ph-folder-open"></i> Buka File Preset (.json)
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="p-5 rounded-2xl bg-red-50/50 border border-red-100 flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-xs font-black text-red-900">Reset ke Pengaturan Default</h4>
+                                    <p class="text-[11px] text-red-700 font-medium">Kembalikan seluruh teks, warna, dan tema ke tampilan cerah bawaan Eazy Fotobooth.</p>
+                                </div>
+                                <button type="button" id="btnResetThemeDefaults" class="bg-white hover:bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-bold transition border border-red-200 shadow-xs">
+                                    Reset Default
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                </main>
             </div>
 
             <!-- Sticky Bottom Admin Action Bar -->
             <div class="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md border-t border-slate-200 p-4 px-6 z-40 flex flex-wrap items-center justify-between gap-3 shadow-lg">
                 <div class="flex flex-wrap items-center gap-2">
-                    <button type="button" id="btnResetThemeDefaults" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2 border border-slate-200">
-                        <i class="ph ph-arrow-counter-clockwise text-base"></i> <span>Reset Default Cerah</span>
-                    </button>
-                    <button type="button" id="btnExportThemePreset" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2 border border-slate-200">
-                        <i class="ph ph-download text-base text-blue-600"></i> <span>Backup Preset (.json)</span>
-                    </button>
-                    <input type="file" id="importThemeFileInput" accept=".json" class="hidden" />
-                    <button type="button" id="btnImportThemeTrigger" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2 border border-slate-200">
-                        <i class="ph ph-upload text-base text-blue-600"></i> <span>Restore Preset</span>
-                    </button>
                     <button type="button" id="btnSaveThemeSettings" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-5 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2 border border-slate-200">
                         <i class="ph ph-floppy-disk text-base text-blue-600"></i> <span>Simpan Pengaturan</span>
                     </button>
+                    <a href="dashboard.html" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2 border border-slate-200">
+                        <i class="ph ph-arrow-square-out text-base text-blue-600"></i> <span>Halaman Dashboard Terpisah</span>
+                    </a>
                 </div>
 
                 <!-- Big Main Launch Photobooth Button -->
-                <button type="button" id="btnLaunchBooth" class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-8 py-3.5 rounded-2xl font-black text-sm transition shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] flex items-center gap-2.5 active:scale-95">
+                <button type="button" id="btnLaunchBooth" class="btn-launch-booth-trigger bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-8 py-3.5 rounded-2xl font-black text-sm transition shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] flex items-center gap-2.5 active:scale-95">
                     <span>🚀 BUKA PHOTOBOOTH (MULAI SESI PELANGGAN)</span>
                     <i class="ph ph-arrow-right font-bold text-base"></i>
                 </button>

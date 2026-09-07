@@ -68,32 +68,40 @@ function bindAppNavigation() {
     const frameList = document.getElementById('frameList');
     const filterList = document.getElementById('filterList');
 
-    // 0. Admin Launch Photobooth -> Opens Landing Page
-    if (btnLaunchBooth) {
-        btnLaunchBooth.addEventListener('click', () => {
-            ThemeManager.saveConfig(ThemeManager.getActiveConfig());
-            ThemeManager.applyConfig(ThemeManager.getConfig());
-            
-            if (stateAdmin) stateAdmin.classList.add('hide');
-            if (stateLanding) {
-                stateLanding.classList.remove('hide');
-                stateLanding.style.opacity = '1';
-            }
-            if (streamActive) {
-                streamActive.getVideoTracks().forEach(track => track.enabled = true);
-            }
-            ThemeManager.showToast("Photobooth Siap!", "Sesi photobooth pelanggan telah dibuka.");
-        });
-    }
+    const mainAppHeader = document.getElementById('mainAppHeader');
 
-    // 0. Header Button -> Back to Admin Setup Dashboard Anytime
+    const launchBoothSession = () => {
+        ThemeManager.saveConfig(ThemeManager.getActiveConfig());
+        ThemeManager.applyConfig(ThemeManager.getConfig());
+        
+        if (stateAdmin) stateAdmin.classList.add('hide');
+        if (mainAppHeader) mainAppHeader.classList.remove('hide');
+        if (stateLanding) {
+            stateLanding.classList.remove('hide');
+            stateLanding.style.opacity = '1';
+        }
+        if (streamActive) {
+            streamActive.getVideoTracks().forEach(track => track.enabled = true);
+        }
+        ThemeManager.showToast("Photobooth Siap!", "Sesi photobooth pelanggan telah dibuka.");
+    };
+
+    // Bind all launch photobooth buttons
+    if (btnLaunchBooth) btnLaunchBooth.addEventListener('click', launchBoothSession);
+    document.querySelectorAll('.btn-launch-booth-trigger').forEach(btn => {
+        btn.addEventListener('click', launchBoothSession);
+    });
+
+    // Header Button -> Back to Admin Dashboard Anytime
     if (btnGoToAdmin) {
         btnGoToAdmin.addEventListener('click', () => {
             [stateLanding, stateInstructions, stateCamera, stateBuilder, stateResults].forEach(el => {
                 if (el) el.classList.add('hide');
             });
+            if (mainAppHeader) mainAppHeader.classList.add('hide');
             if (stateAdmin) stateAdmin.classList.remove('hide');
             ThemeManager.syncModalInputs(ThemeManager.getConfig());
+            ThemeManager.renderDashFrames();
         });
     }
 
