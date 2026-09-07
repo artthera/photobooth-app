@@ -29,11 +29,15 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 function bindAppNavigation() {
+    const stateAdmin = document.getElementById('state-admin');
     const stateLanding = document.getElementById('state-landing');
     const stateInstructions = document.getElementById('state-instructions');
     const stateCamera = document.getElementById('state-camera');
     const stateBuilder = document.getElementById('state-builder');
+    const stateResults = document.getElementById('state-results');
     
+    const btnLaunchBooth = document.getElementById('btnLaunchBooth');
+    const btnGoToAdmin = document.getElementById('btnGoToAdmin');
     const btnLanding = document.getElementById('btnLanding');
     const btnStartCapture = document.getElementById('btnStartCapture');
     const btnMulaiFoto = document.getElementById('btnMulaiFoto');
@@ -51,6 +55,35 @@ function bindAppNavigation() {
     const tabFilterBtn = document.getElementById('tabFilterBtn');
     const frameList = document.getElementById('frameList');
     const filterList = document.getElementById('filterList');
+
+    // 0. Admin Launch Photobooth -> Opens Landing Page
+    if (btnLaunchBooth) {
+        btnLaunchBooth.addEventListener('click', () => {
+            ThemeManager.saveConfig(ThemeManager.getActiveConfig());
+            ThemeManager.applyConfig(ThemeManager.getConfig());
+            
+            if (stateAdmin) stateAdmin.classList.add('hide');
+            if (stateLanding) {
+                stateLanding.classList.remove('hide');
+                stateLanding.style.opacity = '1';
+            }
+            if (streamActive) {
+                streamActive.getVideoTracks().forEach(track => track.enabled = true);
+            }
+            ThemeManager.showToast("Photobooth Siap!", "Sesi photobooth pelanggan telah dibuka.");
+        });
+    }
+
+    // 0. Header Button -> Back to Admin Setup Dashboard Anytime
+    if (btnGoToAdmin) {
+        btnGoToAdmin.addEventListener('click', () => {
+            [stateLanding, stateInstructions, stateCamera, stateBuilder, stateResults].forEach(el => {
+                if (el) el.classList.add('hide');
+            });
+            if (stateAdmin) stateAdmin.classList.remove('hide');
+            ThemeManager.syncModalInputs(ThemeManager.getConfig());
+        });
+    }
 
     // 1. Landing -> Instructions
     if (btnLanding && stateLanding && stateInstructions) {
@@ -156,6 +189,7 @@ function bindAppNavigation() {
 
 // Reset photo session smoothly without reloading page / re-requesting permissions
 function restartPhotoSession() {
+    const stateAdmin = document.getElementById('state-admin');
     const stateLanding = document.getElementById('state-landing');
     const stateInstructions = document.getElementById('state-instructions');
     const stateCamera = document.getElementById('state-camera');
@@ -188,7 +222,8 @@ function restartPhotoSession() {
     if (masterActionBar) masterActionBar.classList.add('hide');
     if (resultsGrid) resultsGrid.classList.add('hide');
 
-    // Hide subsequent states
+    // Hide subsequent states & admin
+    if (stateAdmin) stateAdmin.classList.add('hide');
     if (stateResults) stateResults.classList.add('hide');
     if (stateBuilder) stateBuilder.classList.add('hide');
     if (stateCamera) stateCamera.classList.add('hide');

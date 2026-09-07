@@ -62,6 +62,7 @@ const ThemeManager = (function() {
     function saveConfig(cfg) {
         try {
             currentConfig = { ...cfg };
+            activeWorkingConfig = { ...currentConfig };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(currentConfig));
             return true;
         } catch(e) {
@@ -320,38 +321,7 @@ const ThemeManager = (function() {
     }
 
     function initModalUI() {
-        const modal = document.getElementById('themeCustomizerModal');
-        const btnOpen = document.getElementById('btnOpenThemeModal');
-        const btnFloating = document.getElementById('btnFloatingTheme');
-        const btnClose = document.getElementById('btnCloseThemeModal');
-        const btnCancel = document.getElementById('btnCancelThemeModal');
         const btnSave = document.getElementById('btnSaveThemeSettings');
-
-        function openModal(defaultTabId = null) {
-            activeWorkingConfig = { ...currentConfig };
-            syncModalInputs(activeWorkingConfig);
-            if (modal) modal.classList.remove('hide');
-
-            if (defaultTabId) {
-                const targetTab = tabBtns.find(t => t.btn && t.btn.id === defaultTabId);
-                if (targetTab && targetTab.btn) targetTab.btn.click();
-            }
-        }
-
-        function closeModal() {
-            if (modal) modal.classList.add('hide');
-            applyConfig(currentConfig);
-        }
-
-        if (btnOpen) btnOpen.addEventListener('click', () => openModal());
-        if (btnFloating) btnFloating.addEventListener('click', () => openModal());
-        if (btnClose) btnClose.addEventListener('click', closeModal);
-        if (btnCancel) btnCancel.addEventListener('click', closeModal);
-
-        const btnSetupGdriveResults = document.getElementById('btnSetupGdriveResults');
-        if (btnSetupGdriveResults) {
-            btnSetupGdriveResults.addEventListener('click', () => openModal('themeTabBtnGdrive'));
-        }
 
         // Tab switching
         const tabBtns = [
@@ -362,20 +332,66 @@ const ThemeManager = (function() {
             { btn: document.getElementById('themeTabBtnGdrive'), content: document.getElementById('themeTabContentGdrive') }
         ];
 
-        tabBtns.forEach(({ btn, content }) => {
-            if (!btn || !content) return;
-            btn.addEventListener('click', () => {
-                tabBtns.forEach(t => {
-                    if (!t.btn || !t.content) return;
+        function switchTab(targetBtnId) {
+            tabBtns.forEach(t => {
+                if (!t.btn || !t.content) return;
+                if (t.btn.id === targetBtnId) {
+                    t.btn.classList.add('bg-blue-600', 'text-white');
+                    t.btn.classList.remove('bg-slate-100', 'text-slate-600');
+                    t.content.classList.remove('hide');
+                } else {
                     t.btn.classList.remove('bg-blue-600', 'text-white');
                     t.btn.classList.add('bg-slate-100', 'text-slate-600');
                     t.content.classList.add('hide');
-                });
-                btn.classList.add('bg-blue-600', 'text-white');
-                btn.classList.remove('bg-slate-100', 'text-slate-600');
-                content.classList.remove('hide');
+                }
             });
+        }
+
+        tabBtns.forEach(({ btn }) => {
+            if (!btn) return;
+            btn.addEventListener('click', () => switchTab(btn.id));
         });
+
+        // Setup from results screen
+        const btnSetupGdriveResults = document.getElementById('btnSetupGdriveResults');
+        if (btnSetupGdriveResults) {
+            btnSetupGdriveResults.addEventListener('click', () => {
+                ['state-landing', 'state-instructions', 'state-camera', 'state-builder', 'state-results'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('hide');
+                });
+                const stateAdmin = document.getElementById('state-admin');
+                if (stateAdmin) stateAdmin.classList.remove('hide');
+                syncModalInputs(currentConfig);
+                switchTab('themeTabBtnGdrive');
+            });
+        }
+
+        // Admin Header Buttons: Kelola Frame Event & Studio Frame Custom
+        const btnAdminFrame = document.getElementById('btnAdminOpenFrameManager');
+        if (btnAdminFrame) {
+            btnAdminFrame.addEventListener('click', () => {
+                if (typeof renderFrameManagerGrid === 'function') renderFrameManagerGrid();
+                const modal = document.getElementById('frameManagerModal');
+                if (modal) modal.classList.remove('hide');
+            });
+        }
+
+        const btnAdminStudio = document.getElementById('btnAdminOpenCustomStudio');
+        if (btnAdminStudio) {
+            btnAdminStudio.addEventListener('click', () => {
+                const customFrameModal = document.getElementById('customFrameModal');
+                if (customFrameModal) customFrameModal.classList.remove('hide');
+                if (typeof customOriginalDataUrl !== 'undefined' && !customOriginalDataUrl) {
+                    const customUploadDropZone = document.getElementById('customUploadDropZone');
+                    if (customUploadDropZone) customUploadDropZone.classList.remove('hide');
+                    const customEditorStageWrapper = document.getElementById('customEditorStageWrapper');
+                    if (customEditorStageWrapper) customEditorStageWrapper.classList.add('hide');
+                } else if (typeof adjustCustomStageScale === 'function') {
+                    setTimeout(adjustCustomStageScale, 50);
+                }
+            });
+        }
 
         // Google Drive Test Connection Button
         const btnTestGdrive = document.getElementById('btnTestGdriveWebhook');
@@ -404,7 +420,7 @@ const ThemeManager = (function() {
                         gdriveTestStatus.innerHTML = '<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> Terhubung ke Google Apps Script!</span>';
                     }
                 } catch (err) {
-                    gdriveTestStatus.innerHTML = `<span class="text-amber-600 font-bold"><i class="ph ph-info"></i> Endpoint terhubung (atau diarahkan oleh Google). Pastikan 'Who has access' di-set ke 'Anyone'.</span>`;
+                    gdriveTestStatus.innerHTML = `<span class="text-amber-600 font-bold"><i class="ph ph-info"></i> Endpoint terhubung (atau diarahkan oleh Google). Pastikan \'Who has access\' di-set ke \'Anyone\'.</span>`;
                 } finally {
                     btnTestGdrive.disabled = false;
                     btnTestGdrive.innerHTML = origBtn;
@@ -553,13 +569,12 @@ const ThemeManager = (function() {
             });
         });
 
-        // Save Button
+        // Save Button in Sticky Footer
         if (btnSave) {
             btnSave.addEventListener('click', () => {
                 saveConfig(activeWorkingConfig);
                 applyConfig(currentConfig);
-                if (modal) modal.classList.add('hide');
-                showToast("Pengaturan Disimpan!", "Tampilan kustom photobooth berhasil disimpan dan diterapkan.");
+                showToast("Pengaturan Disimpan!", "Pengaturan photobooth berhasil disimpan dan diterapkan.");
             });
         }
 
@@ -624,6 +639,9 @@ const ThemeManager = (function() {
                 }
             });
         }
+
+        // Initial sync of inputs with loaded configuration
+        syncModalInputs(currentConfig);
     }
 
     return {
@@ -631,7 +649,9 @@ const ThemeManager = (function() {
         saveConfig,
         applyConfig,
         initModalUI,
+        syncModalInputs,
         showToast,
-        getConfig: () => currentConfig
+        getConfig: () => currentConfig,
+        getActiveConfig: () => activeWorkingConfig
     };
 })();
