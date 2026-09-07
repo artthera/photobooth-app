@@ -1,0 +1,202 @@
+/**
+ * Photobooth Pro - Bright Clean White Aesthetic Theme
+ */
+
+:root {
+    --app-font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --accent-primary: #2563eb;
+    --accent-gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    --bg-page: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+}
+
+body { 
+    background-color: var(--bg-page); 
+    color: var(--text-main); 
+    font-family: var(--app-font); 
+    overflow-x: hidden; 
+}
+
+.theme-font { 
+    font-family: var(--app-font); 
+}
+
+.font-handwriting { 
+    font-family: 'Caveat', cursive; 
+}
+
+#kamera { 
+    transform: scaleX(-1); 
+}
+
+.user-photo { 
+    transform: none; 
+}
+
+/* Shutter Flash Screen Effect */
+.flash-overlay { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh; 
+    background-color: white; 
+    z-index: 999; 
+    opacity: 0; 
+    pointer-events: none; 
+    transition: opacity 0.1s ease-out; 
+}
+
+.flash-active { 
+    opacity: 1; 
+    transition: none; 
+}
+
+.hide { 
+    display: none !important; 
+}
+
+/* Thumbnail Gallery */
+.thumbnail-container { 
+    display: flex; 
+    gap: 12px; 
+    justify-content: center; 
+    margin-top: 14px; 
+    min-height: 80px; 
+    flex-wrap: wrap; 
+}
+
+/* Spinner Loader */
+.loader { 
+    border: 4px solid #e2e8f0; 
+    border-top: 4px solid #2563eb; 
+    border-radius: 50%; 
+    width: 46px; 
+    height: 46px; 
+    animation: spin 0.9s linear infinite; 
+    margin: 0 auto; 
+}
+
+@keyframes spin { 
+    0% { transform: rotate(0deg); } 
+    100% { transform: rotate(360deg); } 
+}
+
+/* Custom Scrollbars (Clean Light Mode) */
+::-webkit-scrollbar { 
+    width: 6px; 
+    height: 6px; 
+}
+::-webkit-scrollbar-track { 
+    background: #f1f5f9; 
+}
+::-webkit-scrollbar-thumb { 
+    background: #cbd5e1; 
+    border-radius: 3px; 
+}
+::-webkit-scrollbar-thumb:hover { 
+    background: #94a3b8; 
+}
+
+.capturing .retake-btn { 
+    display: none !important; 
+}
+
+/* Pulse & Glowing Animations */
+@keyframes pulse-glow {
+    0%, 100% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.25); }
+    50% { transform: scale(1.03); box-shadow: 0 15px 35px -5px rgba(37, 99, 235, 0.4); }
+}
+.btn-pulse { 
+    animation: pulse-glow 2.2s infinite ease-in-out; 
+}
+
+@keyframes live-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+}
+.live-dot { 
+    animation: live-pulse 1s infinite ease-in-out; 
+}
+
+/* Glassmorphism Panels (Bright Clean White) */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.08);
+}
+
+/* Results Output Card */
+.output-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.06);
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.output-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12);
+    border-color: #cbd5e1;
+}
+
+/* Selected Palette Photo */
+.selected-photo-card {
+    outline: 3px solid #2563eb;
+    outline-offset: 2px;
+}
+
+/* Frame Card Styling (Clean Light Mode) */
+.frame-item-card {
+    border: 1.5px solid #e2e8f0;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.frame-item-card:hover {
+    border-color: #93c5fd;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.08);
+}
+.frame-item-card.is-active {
+    border-color: #2563eb !important;
+    background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%) !important;
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.2), inset 0 0 10px rgba(37, 99, 235, 0.05) !important;
+}
+
+/* Custom Slot Editor Styling */
+.slot-editor-box {
+    position: absolute;
+    box-sizing: border-box;
+    border: 2px solid #2563eb;
+    background: rgba(37, 99, 235, 0.2);
+    cursor: move;
+    user-select: none;
+    touch-action: none;
+}
+.slot-editor-box.active {
+    border: 2px solid #3b82f6;
+    background: rgba(37, 99, 235, 0.3);
+    box-shadow: 0 0 15px rgba(37, 99, 235, 0.35);
+}
+.slot-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #ffffff;
+    border: 2px solid #1d4ed8;
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+.slot-handle.nw { top: -6px; left: -6px; cursor: nwse-resize; }
+.slot-handle.ne { top: -6px; right: -6px; cursor: nesw-resize; }
+.slot-handle.sw { bottom: -6px; left: -6px; cursor: nesw-resize; }
+.slot-handle.se { bottom: -6px; right: -6px; cursor: nwse-resize; }
+.slot-handle.n { top: -6px; left: calc(50% - 6px); cursor: ns-resize; }
+.slot-handle.s { bottom: -6px; left: calc(50% - 6px); cursor: ns-resize; }
+.slot-handle.w { left: -6px; top: calc(50% - 6px); cursor: ew-resize; }
+.slot-handle.e { right: -6px; top: calc(50% - 6px); cursor: ew-resize; }
