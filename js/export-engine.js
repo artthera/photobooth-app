@@ -167,9 +167,12 @@ function prosesHasil() {
 
     // Generate GIF in background if frames exist, then update session
     if (typeof gifshot !== 'undefined' && finalAnimFrames && finalAnimFrames.length > 0) {
+        const animSpeedEl = document.getElementById('animSpeed');
+        const defaultInterval = animSpeedEl ? (parseInt(animSpeedEl.value) / 1000) : 0.65;
+
         gifshot.createGIF({
             images: finalAnimFrames,
-            interval: 0.16,
+            interval: defaultInterval,
             gifWidth: 360,
             gifHeight: 270,
             numFrames: 10
@@ -273,10 +276,13 @@ async function uploadToGoogleDrive(webhookUrl) {
     try {
         let gifBase64 = null;
         if (finalAnimFrames && finalAnimFrames.length > 0) {
+            const animSpeedEl = document.getElementById('animSpeed');
+            const defaultInterval = animSpeedEl ? (parseInt(animSpeedEl.value) / 1000) : 0.65;
+
             gifBase64 = await new Promise(resolve => {
                 gifshot.createGIF({
                     images: finalAnimFrames,
-                    interval: 0.16,
+                    interval: defaultInterval,
                     gifWidth: 360,
                     gifHeight: 270,
                     numFrames: 10
@@ -594,10 +600,13 @@ async function downloadAllMomentsZip() {
         });
 
         // 4. Generate Looping GIF and add to ZIP
+        const animSpeedEl = document.getElementById('animSpeed');
+        const defaultInterval = animSpeedEl ? (parseInt(animSpeedEl.value) / 1000) : 0.65;
+
         const gifBlob = await new Promise((resolve) => {
             gifshot.createGIF({
                 images: finalAnimFrames,
-                interval: 0.16,
+                interval: defaultInterval,
                 gifWidth: 400,
                 gifHeight: 300
             }, function(obj) {
