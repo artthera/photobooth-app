@@ -111,6 +111,7 @@ function bindAppNavigation() {
             stateLanding.style.opacity = '0';
             setTimeout(() => { 
                 stateLanding.classList.add('hide'); 
+                if (mainAppHeader) mainAppHeader.classList.remove('hide');
                 stateInstructions.classList.remove('hide'); 
                 stateInstructions.style.opacity = '1';
             }, 300); 
@@ -123,6 +124,7 @@ function bindAppNavigation() {
             stateInstructions.style.opacity = '0';
             setTimeout(() => { 
                 stateInstructions.classList.add('hide'); 
+                if (mainAppHeader) mainAppHeader.classList.add('hide');
                 stateCamera.classList.remove('hide'); 
                 stateCamera.style.opacity = '1';
                 activateCameraView();
@@ -171,6 +173,7 @@ function bindAppNavigation() {
     if (btnContinue && stateCamera && stateBuilder) {
         btnContinue.addEventListener('click', () => {
             stateCamera.classList.add('hide'); 
+            if (mainAppHeader) mainAppHeader.classList.remove('hide');
             stateBuilder.classList.remove('hide');
             deactivateCameraView();
             setupBuilder();
@@ -222,6 +225,7 @@ function restartPhotoSession() {
     const photoCounter = document.getElementById('photoCounter');
     const settingsBar = document.getElementById('settingsBar');
     const btnContinue = document.getElementById('btnContinue');
+    const mainAppHeader = document.getElementById('mainAppHeader');
 
     // Reset session data
     jepretanKe = 0;
@@ -249,7 +253,8 @@ function restartPhotoSession() {
     if (stateCamera) stateCamera.classList.add('hide');
     if (stateInstructions) stateInstructions.classList.add('hide');
 
-    // Show landing
+    // Show landing & header
+    if (mainAppHeader) mainAppHeader.classList.remove('hide');
     if (stateLanding) {
         stateLanding.classList.remove('hide');
         stateLanding.style.opacity = '1';

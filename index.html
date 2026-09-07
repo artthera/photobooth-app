@@ -27,17 +27,17 @@
     <!-- Flash Screen Effect -->
     <div id="flashOverlay" class="flash-overlay"></div>
 
-    <!-- Top App Navigation Header -->
-    <header id="mainAppHeader" class="p-3 sm:p-4 flex justify-between items-center z-[100] absolute w-full top-0 pointer-events-none">
+    <!-- Top App Navigation Header (Shown during Photobooth session) -->
+    <header id="mainAppHeader" class="p-3 sm:p-4 flex justify-between items-center z-[100] absolute w-full top-0 pointer-events-none hide">
         <div class="flex items-center gap-2.5 bg-white/90 backdrop-blur-md px-3.5 sm:px-4 py-2 rounded-full border border-slate-200/80 pointer-events-auto shadow-sm">
             <span class="w-2.5 h-2.5 rounded-full bg-blue-600 animate-ping"></span>
             <div id="brandHeaderTitle" class="text-xs font-black tracking-widest text-slate-800 uppercase">EAZY FOTOBOOTH</div>
         </div>
         <div class="flex items-center gap-2 pointer-events-auto">
-            <!-- Operator Button to access Admin Panel -->
-            <button id="btnGoToAdmin" title="Buka Panel Pengaturan Admin" class="bg-white/95 hover:bg-white text-slate-800 backdrop-blur-md px-3.5 sm:px-4 py-2 rounded-full text-xs font-black flex items-center gap-2 border border-slate-200 shadow-sm transition hover:border-slate-300 active:scale-95">
-                <i class="ph ph-gear text-blue-600 text-base"></i>
-                <span>Panel Admin</span>
+            <!-- Operator Button to access Dashboard Web -->
+            <button id="btnGoToAdmin" title="Buka Dashboard Web" class="bg-white/95 hover:bg-white text-slate-800 backdrop-blur-md px-3.5 sm:px-4 py-2 rounded-full text-xs font-black flex items-center gap-2 border border-slate-200 shadow-sm transition hover:border-slate-300 active:scale-95">
+                <i class="ph ph-sliders text-blue-600 text-base font-bold"></i>
+                <span>Dashboard Web</span>
             </button>
             <div id="brandHeaderBadge" class="bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-full border border-slate-200/80 text-[11px] font-bold text-slate-700 hidden sm:flex items-center gap-1.5 shadow-sm">
                 <i class="ph ph-sparkle text-amber-500"></i> HD PHOTO & LIVE MOTION

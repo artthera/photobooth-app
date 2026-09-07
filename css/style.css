@@ -289,10 +289,10 @@ button, select, input[type=text], input[type=url] {
         padding: 0.875rem 1.25rem;
     }
 
-    /* Admin Setup Dashboard Tablet Portrait */
+    /* Dashboard Web Tablet Portrait */
     #state-admin {
-        padding-top: 4.5rem;
-        padding-bottom: 8rem;
+        padding-top: 0;
+        padding-bottom: 6rem;
     }
 
     /* Camera View Tablet Portrait */
