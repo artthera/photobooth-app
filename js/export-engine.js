@@ -355,6 +355,20 @@ async function downloadLiveVideoFrameMP4() {
 
         const slotVideoData = [];
         const editorSlots = document.querySelectorAll('#frameEditor .drop-slot');
+        const editorEl = document.getElementById('frameEditor');
+        const editorRect = editorEl ? editorEl.getBoundingClientRect() : null;
+        const scaleFactorX = editorRect && editorRect.width > 0 ? (exportCanvas.width / editorRect.width) : scale;
+        const scaleFactorY = editorRect && editorRect.height > 0 ? (exportCanvas.height / editorRect.height) : scale;
+
+        let customOverlayImg = null;
+        if (currentSelectedFrame.isCustom && currentSelectedFrame.overlayUrl) {
+            customOverlayImg = await new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = () => resolve(null);
+                img.src = currentSelectedFrame.overlayUrl;
+            });
+        }
 
         for (let i = 0; i < offSlots.length; i++) {
             const slot = offSlots[i];
@@ -363,10 +377,31 @@ async function downloadLiveVideoFrameMP4() {
             const videoSrc = liveVideos[shotIdx];
             const photoSrc = frameUntukGif[shotIdx];
 
-            const relX = (slot.offsetLeft / frameWidth) * exportCanvas.width;
-            const relY = (slot.offsetTop / frameHeight) * exportCanvas.height;
-            const relW = (slot.offsetWidth / frameWidth) * exportCanvas.width;
-            const relH = (slot.offsetHeight / frameHeight) * exportCanvas.height;
+            let relX = 0, relY = 0, relW = 0, relH = 0;
+            let radius = 10 * scale;
+
+            if (currentSelectedFrame.isCustom && Array.isArray(currentSelectedFrame.slots) && currentSelectedFrame.slots[i]) {
+                const s = currentSelectedFrame.slots[i];
+                relX = Math.round((s.x / frameWidth) * exportCanvas.width);
+                relY = Math.round((s.y / frameHeight) * exportCanvas.height);
+                relW = Math.round((s.w / frameWidth) * exportCanvas.width);
+                relH = Math.round((s.h / frameHeight) * exportCanvas.height);
+            } else if (edSlot && editorRect) {
+                const edRect = edSlot.getBoundingClientRect();
+                relX = Math.round((edRect.left - editorRect.left) * scaleFactorX);
+                relY = Math.round((edRect.top - editorRect.top) * scaleFactorY);
+                relW = Math.round(edRect.width * scaleFactorX);
+                relH = Math.round(edRect.height * scaleFactorY);
+
+                const style = window.getComputedStyle(edSlot);
+                const rawRadius = parseFloat(style.borderRadius) || 8;
+                radius = Math.round(rawRadius * (scaleFactorX / scale) * scale);
+            } else {
+                relX = Math.round((slot.offsetLeft / frameWidth) * exportCanvas.width);
+                relY = Math.round((slot.offsetTop / frameHeight) * exportCanvas.height);
+                relW = Math.round((slot.offsetWidth / frameWidth) * exportCanvas.width);
+                relH = Math.round((slot.offsetHeight / frameHeight) * exportCanvas.height);
+            }
 
             let vidElement = null;
             let photoElement = null;
@@ -396,6 +431,7 @@ async function downloadLiveVideoFrameMP4() {
                 y: relY,
                 w: relW,
                 h: relH,
+                radius: radius,
                 video: vidElement,
                 photo: photoElement
             });
@@ -439,17 +475,11 @@ async function downloadLiveVideoFrameMP4() {
 
         function renderExportFrame() {
             ctx.clearRect(0, 0, exportCanvas.width, exportCanvas.height);
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+            ctx.drawImage(overlayCanvas, 0, 0, exportCanvas.width, exportCanvas.height);
 
             slotVideoData.forEach(item => {
                 ctx.save();
-                ctx.beginPath();
-                if (ctx.roundRect) {
-                    ctx.roundRect(item.x, item.y, item.w, item.h, 10 * scale);
-                } else {
-                    ctx.rect(item.x, item.y, item.w, item.h);
-                }
+                drawRoundedRectPath(ctx, item.x, item.y, item.w, item.h, item.radius);
                 ctx.clip();
 
                 ctx.filter = canvasFilter;
@@ -461,7 +491,9 @@ async function downloadLiveVideoFrameMP4() {
                 ctx.restore();
             });
 
-            ctx.drawImage(overlayCanvas, 0, 0, exportCanvas.width, exportCanvas.height);
+            if (customOverlayImg) {
+                ctx.drawImage(customOverlayImg, 0, 0, exportCanvas.width, exportCanvas.height);
+            }
 
             frameCount++;
             if (frameCount < totalFrames) {
@@ -638,6 +670,158 @@ async function downloadAllMomentsZip() {
     }
 }
 
+// ================= DIRECT HIGH-PRECISION CANVAS COMPOSITING (ZERO STRETCH) =================
+function drawRoundedRectPath(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    if (typeof ctx.roundRect === 'function') {
+        ctx.roundRect(x, y, w, h, r);
+    } else {
+        const radius = Math.min(r, w / 2, h / 2);
+        ctx.moveTo(x + radius, y);
+        ctx.arcTo(x + w, y, x + w, y + h, radius);
+        ctx.arcTo(x + w, y + h, x, y + h, radius);
+        ctx.arcTo(x, y + h, x, y, radius);
+        ctx.arcTo(x, y, x + w, y, radius);
+        ctx.closePath();
+    }
+}
+
+async function generateHighResStripCanvas(frameDef, scale = 3) {
+    const frameW = frameDef.width;
+    const frameH = frameDef.height;
+
+    const finalCanvas = document.createElement('canvas');
+    finalCanvas.width = Math.round(frameW * scale);
+    finalCanvas.height = Math.round(frameH * scale);
+    const ctx = finalCanvas.getContext('2d');
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    const canvasFilter = filters[currentFilter].canvasFilter;
+    const editorEl = document.getElementById('frameEditor');
+    const editorSlots = editorEl ? Array.from(editorEl.querySelectorAll('.drop-slot')) : [];
+    const editorRect = editorEl ? editorEl.getBoundingClientRect() : null;
+
+    // 1. Calculate slot coordinates and dimensions scaled to finalCanvas
+    const slotDataList = [];
+
+    if (frameDef.isCustom && Array.isArray(frameDef.slots) && frameDef.slots.length > 0) {
+        for (let i = 0; i < frameDef.slots.length; i++) {
+            const s = frameDef.slots[i];
+            const edSlot = editorSlots[i];
+            const shotIdx = edSlot ? parseInt(edSlot.dataset.shotIndex ?? i) : (i % frameUntukGif.length);
+            const photoSrc = frameUntukGif[shotIdx] || frameUntukGif[i % frameUntukGif.length];
+
+            slotDataList.push({
+                x: Math.round((s.x / frameDef.width) * finalCanvas.width),
+                y: Math.round((s.y / frameDef.height) * finalCanvas.height),
+                w: Math.round((s.w / frameDef.width) * finalCanvas.width),
+                h: Math.round((s.h / frameDef.height) * finalCanvas.height),
+                borderRadius: Math.round(10 * scale),
+                photoSrc: photoSrc
+            });
+        }
+    } else if (editorRect && editorRect.width > 0 && editorSlots.length > 0) {
+        const scaleFactorX = finalCanvas.width / editorRect.width;
+        const scaleFactorY = finalCanvas.height / editorRect.height;
+
+        for (let i = 0; i < editorSlots.length; i++) {
+            const edSlot = editorSlots[i];
+            const edRect = edSlot.getBoundingClientRect();
+            const shotIdx = parseInt(edSlot.dataset.shotIndex ?? i);
+            const photoSrc = frameUntukGif[shotIdx] || frameUntukGif[i % frameUntukGif.length];
+
+            const style = window.getComputedStyle(edSlot);
+            const rawRadius = parseFloat(style.borderRadius) || 8;
+            const computedRadius = Math.round(rawRadius * (scaleFactorX / scale) * scale);
+
+            slotDataList.push({
+                x: Math.round((edRect.left - editorRect.left) * scaleFactorX),
+                y: Math.round((edRect.top - editorRect.top) * scaleFactorY),
+                w: Math.round(edRect.width * scaleFactorX),
+                h: Math.round(edRect.height * scaleFactorY),
+                borderRadius: computedRadius,
+                photoSrc: photoSrc
+            });
+        }
+    }
+
+    // 2. Render Frame Template HTML with empty slots via html2canvas
+    const offscreen = document.getElementById('offscreenRenderContainer');
+    offscreen.style.width = frameW + 'px';
+    offscreen.style.height = frameH + 'px';
+    offscreen.innerHTML = frameDef.html;
+
+    const offSlots = offscreen.querySelectorAll('.drop-slot');
+    offSlots.forEach(s => {
+        s.innerHTML = '';
+        s.classList.remove('border-dashed');
+        s.style.borderStyle = 'none';
+        s.style.backgroundColor = 'transparent';
+        s.style.color = 'transparent';
+    });
+
+    const overlayCanvas = await html2canvas(offscreen, {
+        scale: scale,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: null,
+        logging: false
+    });
+
+    offscreen.innerHTML = '';
+
+    // 3. Composite onto finalCanvas
+    // Base 1: Draw Frame Structure (background, borders, header, footer text)
+    ctx.drawImage(overlayCanvas, 0, 0, finalCanvas.width, finalCanvas.height);
+
+    // Base 2: Draw each photo directly into its slot with TRUE COVER FIT (ZERO DISTORTION)
+    for (const slot of slotDataList) {
+        if (!slot.photoSrc) continue;
+
+        const img = await new Promise((resolve) => {
+            const image = new Image();
+            image.onload = () => resolve(image);
+            image.onerror = () => resolve(null);
+            image.src = slot.photoSrc;
+        });
+
+        if (img) {
+            ctx.save();
+            drawRoundedRectPath(ctx, slot.x, slot.y, slot.w, slot.h, slot.borderRadius);
+            ctx.clip();
+
+            if (canvasFilter && canvasFilter !== 'none') {
+                ctx.filter = canvasFilter;
+            }
+
+            drawImageCover(ctx, img, slot.x, slot.y, slot.w, slot.h);
+            ctx.restore();
+        }
+    }
+
+    // Base 3: If Custom Frame has overlayUrl, draw the overlay on top
+    if (frameDef.isCustom && frameDef.overlayUrl) {
+        const overlayImg = await new Promise((resolve) => {
+            const image = new Image();
+            image.onload = () => resolve(image);
+            image.onerror = () => resolve(null);
+            image.src = frameDef.overlayUrl;
+        });
+
+        if (overlayImg) {
+            ctx.drawImage(overlayImg, 0, 0, finalCanvas.width, finalCanvas.height);
+        }
+    }
+
+    if (typeof StickerManager !== 'undefined' && typeof StickerManager.bakeToCanvas === 'function') {
+        return StickerManager.bakeToCanvas(finalCanvas);
+    }
+
+    return finalCanvas;
+}
+
 // ================= BIND FINISH EDITING TO RENDER PIPELINE =================
 function initExportEngineEvents() {
     const btnSelesaiEdit = document.getElementById('btnSelesaiEdit');
@@ -669,61 +853,19 @@ function initExportEngineEvents() {
 
                 if (loadingText) loadingText.innerText = "MENGGAMBAR PHOTO STRIP ULTRA-HD...";
 
-                // 1. OFFSCREEN PIXEL-PERFECT RENDERING (OUTPUT 1)
-                const offscreen = document.getElementById('offscreenRenderContainer');
-                offscreen.style.width = currentSelectedFrame.width + 'px';
-                offscreen.style.height = currentSelectedFrame.height + 'px';
-                offscreen.innerHTML = currentSelectedFrame.html;
+                // 1. GENERATE ULTRA-HD PHOTO STRIP (OUTPUT 1) - DIRECT COMPOSITING (NO STRETCH)
+                const finalCanvas = await generateHighResStripCanvas(currentSelectedFrame, 3);
 
-                const editorSlots = document.querySelectorAll('#frameEditor .drop-slot');
-                const offscreenSlots = offscreen.querySelectorAll('.drop-slot');
-
-                const canvasFilter = filters[currentFilter].canvasFilter;
-
-                for (let i = 0; i < offscreenSlots.length; i++) {
-                    const offSlot = offscreenSlots[i];
-                    const edSlot = editorSlots[i];
-                    const shotIdx = edSlot ? parseInt(edSlot.dataset.shotIndex ?? i) : (i % frameUntukGif.length);
-                    const originalPhotoSrc = frameUntukGif[shotIdx];
-
-                    offSlot.classList.remove('border-dashed');
-                    offSlot.style.borderStyle = 'none';
-                    offSlot.style.backgroundColor = 'transparent';
-
-                    if (originalPhotoSrc) {
-                        const slotW = offSlot.offsetWidth || (offSlot.clientWidth || 300);
-                        const slotH = offSlot.offsetHeight || (offSlot.clientHeight || 200);
-                        const filteredPhotoSrc = await renderCroppedPhotoForSlot(originalPhotoSrc, slotW, slotH, canvasFilter);
-                        offSlot.innerHTML = `<img src="${filteredPhotoSrc}" style="width:100%; height:100%; display:block; object-fit:cover;" />`;
-                    } else {
-                        offSlot.innerHTML = '';
-                        offSlot.style.backgroundColor = '#e5e7eb';
-                    }
-                }
-
-                // Wait for all images in offscreen container to load
-                const imgs = Array.from(offscreen.querySelectorAll('img'));
-                await Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(r => { img.onload = r; img.onerror = r; })));
-
-                const canvas = await html2canvas(offscreen, { 
-                    scale: 2.5, 
-                    useCORS: true, 
-                    allowTaint: true,
-                    backgroundColor: '#ffffff',
-                    logging: false
-                });
-
-                finalStripImageUrl = canvas.toDataURL('image/jpeg', 0.96);
-                finalStripPngUrl = canvas.toDataURL('image/png');
+                finalStripImageUrl = finalCanvas.toDataURL('image/jpeg', 0.96);
+                finalStripPngUrl = finalCanvas.toDataURL('image/png');
                 
                 await new Promise(resolve => {
-                    canvas.toBlob((blob) => {
+                    finalCanvas.toBlob((blob) => {
                         finalStripBlob = blob;
                         resolve();
                     }, 'image/jpeg', 0.96);
                 });
 
-                offscreen.innerHTML = '';
                 if (stateBuilder) stateBuilder.classList.add('hide');
 
                 // 2. SETUP OUTPUT 2: Live Video Frame Preview
@@ -732,6 +874,7 @@ function initExportEngineEvents() {
 
                 // 3. SETUP OUTPUT 3: Looping GIF Frames
                 if (loadingText) loadingText.innerText = "MENYIAPKAN ANIMASI GIF...";
+                const canvasFilter = filters[currentFilter].canvasFilter;
                 finalAnimFrames = frameUntukGif;
                 if (currentFilter !== 'none') {
                     finalAnimFrames = await Promise.all(frameUntukGif.map(src => applyCanvasFilter(src, canvasFilter)));
