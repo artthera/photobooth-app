@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Photobooth Pro - Live Video, Photo Strip & GIF</title>
+    <title>Eazy Fotobooth - Live Video, Photo Strip & GIF</title>
     
     <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,7 +31,7 @@
     <header id="mainAppHeader" class="p-3 sm:p-4 flex justify-between items-center z-[100] absolute w-full top-0 pointer-events-none">
         <div class="flex items-center gap-2.5 bg-white/90 backdrop-blur-md px-3.5 sm:px-4 py-2 rounded-full border border-slate-200/80 pointer-events-auto shadow-sm">
             <span class="w-2.5 h-2.5 rounded-full bg-blue-600 animate-ping"></span>
-            <div id="brandHeaderTitle" class="text-xs font-black tracking-widest text-slate-800 uppercase">PHOTOBOOTH PRO</div>
+            <div id="brandHeaderTitle" class="text-xs font-black tracking-widest text-slate-800 uppercase">EAZY FOTOBOOTH</div>
         </div>
         <div class="flex items-center gap-2 pointer-events-auto">
             <!-- Operator Button to access Admin Panel -->
@@ -77,7 +77,7 @@
                             <div class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider mb-1">
                                 <i class="ph ph-shield-check"></i> Setup & Konfigurasi Event
                             </div>
-                            <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">PANEL ADMIN PHOTOBOOTH</h2>
+                            <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">PANEL ADMIN EAZY FOTOBOOTH</h2>
                             <p class="text-xs text-slate-500 font-medium mt-0.5">Konfigurasikan judul acara, template frame, background visual, dan integrasi cloud sebelum memulai sesi pelanggan.</p>
                         </div>
                     </div>
@@ -127,7 +127,7 @@
                                     </h4>
                                     <div>
                                         <label class="text-[11px] font-bold text-slate-700 block mb-1">Nama Brand Aplikasi (Kiri Atas)</label>
-                                        <input type="text" id="themeBrandName" placeholder="Contoh: PHOTOBOOTH PRO" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 transition font-medium" />
+                                        <input type="text" id="themeBrandName" placeholder="Contoh: EAZY FOTOBOOTH" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 transition font-medium" />
                                     </div>
                                     <div>
                                         <label class="text-[11px] font-bold text-slate-700 block mb-1">Badge Kanan Atas</label>
@@ -156,7 +156,7 @@
                                 </h4>
                                 <div>
                                     <label class="text-[11px] font-bold text-slate-700 block mb-1">Teks Judul Utama (Main Headline)</label>
-                                    <input type="text" id="themeLandingTitle" placeholder="Contoh: FUN BOOTH / SWEET 17 / WEDDING OF..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 transition" />
+                                    <input type="text" id="themeLandingTitle" placeholder="Contoh: EAZY FOTOBOOTH / SWEET 17 / WEDDING OF..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 transition" />
                                 </div>
                                 <div>
                                     <label class="text-[11px] font-bold text-slate-700 block mb-1">Tagline / Deskripsi Singkat</label>
@@ -532,24 +532,59 @@
             </div>
         </div>
 
-        <!-- ================= STATE 0: LANDING PAGE ================= -->
-        <div id="state-landing" class="absolute inset-0 z-10 flex flex-col items-center justify-center w-full h-full transition-opacity duration-500 bg-white/40 backdrop-blur-xs hide">
-            <div id="landingBadgeContainer" class="inline-flex items-center gap-2 bg-white/90 backdrop-blur-md px-5 py-1.5 rounded-full text-xs font-black tracking-widest text-blue-600 mb-4 border border-blue-200/80 shadow-md">
-                <i id="landingBadgeIcon" class="ph ph-camera-rotate text-base text-blue-600"></i>
-                <span id="landingBadgeText">KOREAN STYLE PHOTOBOOTH</span>
+        <!-- ================= STATE 0: HOME PAGE (EAZY FOTOBOOTH) ================= -->
+        <div id="state-landing" class="absolute inset-0 z-10 flex flex-col items-center justify-center w-full h-full transition-opacity duration-500 bg-white/30 backdrop-blur-xs hide px-4 py-8">
+            <div class="max-w-3xl w-full flex flex-col items-center text-center my-auto">
+                
+                <!-- Event Badge -->
+                <div id="landingBadgeContainer" class="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md px-5 py-2 rounded-full text-xs font-black tracking-widest text-blue-600 mb-4 border border-blue-200/80 shadow-sm transition hover:scale-105">
+                    <i id="landingBadgeIcon" class="ph ph-sparkle text-base text-amber-500"></i>
+                    <span id="landingBadgeText">KOREAN STYLE PHOTOBOOTH</span>
+                </div>
+
+                <!-- Main Headline -->
+                <h1 id="landingMainTitle" class="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black text-slate-900 drop-shadow-sm mb-3.5 tracking-tight text-center px-2 leading-none">
+                    EAZY FOTOBOOTH
+                </h1>
+
+                <!-- Subtitle / Event Message -->
+                <p id="landingSubtitle" class="text-slate-600 text-xs sm:text-sm md:text-base max-w-xl text-center mb-8 px-4 font-semibold leading-relaxed">
+                    Abadikan setiap pose secara otomatis dengan 3 format hasil: Photo Strip, Motion Video, dan Looping GIF
+                </p>
+
+                <!-- Interactive Feature Highlights Pills (Tablet & Kiosk Friendly) -->
+                <div class="flex flex-wrap justify-center items-center gap-2.5 sm:gap-3 mb-9 max-w-2xl px-2">
+                    <div class="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200 shadow-xs text-xs font-bold text-slate-800">
+                        <span class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm"><i class="ph ph-camera"></i></span>
+                        <span>Photo Strip HD</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200 shadow-xs text-xs font-bold text-slate-800">
+                        <span class="w-6 h-6 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center text-sm"><i class="ph ph-video-camera"></i></span>
+                        <span>Live Motion MP4</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200 shadow-xs text-xs font-bold text-slate-800">
+                        <span class="w-6 h-6 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-sm"><i class="ph ph-file-gif"></i></span>
+                        <span>Looping GIF</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200 shadow-xs text-xs font-bold text-slate-800">
+                        <span class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm"><i class="ph ph-qr-code"></i></span>
+                        <span>Instant QR Cloud</span>
+                    </div>
+                </div>
+
+                <!-- Grand Start CTA Button -->
+                <button id="btnLanding" class="btn-pulse bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-10 sm:px-14 md:px-18 py-4 sm:py-5 rounded-full font-black text-lg sm:text-xl md:text-2xl transition-all duration-300 flex items-center gap-3.5 shadow-[0_15px_35px_-5px_rgba(37,99,235,0.45)] active:scale-95">
+                    <span id="btnLandingText">TAP TO START</span> 
+                    <i class="ph ph-hand-tap text-2xl sm:text-3xl text-amber-300"></i>
+                </button>
+
+                <!-- Footer Status & Touch Hint -->
+                <div class="mt-8 flex items-center gap-2 text-slate-600 font-bold text-[11px] bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full border border-slate-200/80 shadow-xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span>
+                    <span>EAZY FOTOBOOTH &bull; Sentuh layar untuk mulai berfoto</span>
+                </div>
+
             </div>
-            <h1 id="landingMainTitle" class="text-6xl sm:text-7xl md:text-9xl font-black text-slate-900 drop-shadow-sm mb-4 tracking-tight text-center px-4">
-                FUN BOOTH
-            </h1>
-            <p id="landingSubtitle" class="text-slate-700 text-sm sm:text-base md:text-lg max-w-lg text-center mb-10 drop-shadow-xs px-4 font-semibold leading-relaxed">
-                Abadikan setiap pose secara otomatis dengan 3 format hasil: <br class="hidden sm:inline" />
-                <span class="text-blue-600 font-bold">📸 Photo Strip</span> &bull; 
-                <span class="text-pink-600 font-bold">🎬 Motion Video</span> &bull; 
-                <span class="text-purple-600 font-bold">✨ Looping GIF</span>
-            </p>
-            <button id="btnLanding" class="btn-pulse bg-slate-900 hover:bg-slate-800 text-white px-12 md:px-16 py-4 md:py-5 rounded-full font-black text-xl md:text-2xl transition-all duration-300 flex items-center gap-3 shadow-[0_15px_35px_-5px_rgba(15,23,42,0.35)] active:scale-95">
-                <span id="btnLandingText">TAP TO START</span> <i class="ph ph-hand-tap text-3xl text-amber-300"></i>
-            </button>
         </div>
 
         <!-- ================= STATE 1: INSTRUCTIONS ================= -->
@@ -558,7 +593,7 @@
                 <div id="guideBadge" class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-3 shadow-xs">
                     Panduan Singkat
                 </div>
-                <h2 id="guideTitle" class="text-3xl sm:text-4xl md:text-5xl font-black mb-2 text-slate-900 tracking-wide">CARA KERJA PHOTOBOOTH</h2>
+                <h2 id="guideTitle" class="text-3xl sm:text-4xl md:text-5xl font-black mb-2 text-slate-900 tracking-wide">CARA KERJA EAZY FOTOBOOTH</h2>
                 <p id="guideSubtitle" class="text-slate-500 text-xs sm:text-sm mb-8 max-w-md font-medium">3 langkah mudah untuk menghasilkan momen terbaik Anda</p>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl text-left mb-10 w-full px-2">

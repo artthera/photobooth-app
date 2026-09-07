@@ -4,18 +4,18 @@
  */
 
 const ThemeManager = (function() {
-    const STORAGE_KEY = 'photobooth_theme_custom_v2';
+    const STORAGE_KEY = 'eazy_fotobooth_theme_v3';
     
     const defaults = {
-        brandName: "PHOTOBOOTH PRO",
+        brandName: "EAZY FOTOBOOTH",
         brandBadge: "HD PHOTO & LIVE MOTION",
         landingBadge: "KOREAN STYLE PHOTOBOOTH",
-        landingTitle: "FUN BOOTH",
+        landingTitle: "EAZY FOTOBOOTH",
         landingSubtitle: "Abadikan setiap pose secara otomatis dengan 3 format hasil: Photo Strip, Motion Video, dan Looping GIF",
         landingBtnText: "TAP TO START",
         
         guideBadge: "Panduan Singkat",
-        guideTitle: "CARA KERJA PHOTOBOOTH",
+        guideTitle: "CARA KERJA EAZY FOTOBOOTH",
         guideSubtitle: "3 langkah mudah untuk menghasilkan momen terbaik Anda",
         guideBtnText: "MENGERTI, AYO MULAI",
         

@@ -42,7 +42,7 @@ const builtInFrames = [
         isBuiltIn: true,
         html: `<div class="w-full h-full bg-white text-black p-5 relative flex flex-col justify-between font-sans select-none border border-gray-200">
             <div class="flex justify-between items-center px-1">
-                <span class="text-[11px] font-black tracking-widest uppercase">PHOTOBOOTH PRO</span>
+                <span class="text-[11px] font-black tracking-widest uppercase">EAZY FOTOBOOTH</span>
                 <span class="text-[10px] font-bold text-gray-500">2026.08.22</span>
             </div>
             <div class="flex flex-col gap-3.5 flex-grow my-3">

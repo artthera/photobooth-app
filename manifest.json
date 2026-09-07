@@ -1,15 +1,15 @@
 {
-  "name": "Photobooth Pro & Gallery Cloud",
-  "short_name": "Photobooth",
-  "description": "Aplikasi Photobooth Event Profesional dengan Cloud Gallery & PWA Offline Support",
+  "name": "Eazy Fotobooth - Live Video, Photo Strip & GIF",
+  "short_name": "Eazy Fotobooth",
+  "description": "Software Photobooth Event & Kiosk Profesional dengan Live Motion, Photo Strip, GIF & Cloud Sync",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#0b0d12",
-  "theme_color": "#ff3b5c",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23ff3b5c'/><circle cx='50' cy='50' r='20' fill='%23ffffff'/><rect x='40' y='18' width='20' height='8' rx='4' fill='%23ffffff'/></svg>",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%232563eb'/><circle cx='50' cy='50' r='20' fill='%23ffffff'/><rect x='40' y='18' width='20' height='8' rx='4' fill='%23ffffff'/></svg>",
       "sizes": "192x192 512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
