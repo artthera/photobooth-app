@@ -185,13 +185,15 @@ function applyCanvasFilter(src, filterStr) {
         if (!filterStr || filterStr === 'none') return resolve(src);
         const img = new Image();
         img.onload = () => {
+            const nw = img.naturalWidth || img.width || 900;
+            const nh = img.naturalHeight || img.height || 675;
             const canvas = document.createElement('canvas');
-            canvas.width = img.width || 800; 
-            canvas.height = img.height || 600;
+            canvas.width = nw; 
+            canvas.height = nh;
             const ctx = canvas.getContext('2d');
             ctx.filter = filterStr; 
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            resolve(canvas.toDataURL('image/jpeg', 0.95));
+            resolve(canvas.toDataURL('image/jpeg', 0.96));
         };
         img.onerror = () => resolve(src);
         img.src = src;

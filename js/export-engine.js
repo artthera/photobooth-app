@@ -10,6 +10,51 @@ let finalStripImageUrl = null;
 let finalStripPngUrl = null;
 let finalStripBlob = null;
 
+// ================= TRUE COVER FIT HELPER (ZERO DISTORTION / NO STRETCH) =================
+function drawImageCover(ctx, img, x, y, w, h, offsetX = 0.5, offsetY = 0.5) {
+    if (!ctx || !img) return;
+    const nw = img.naturalWidth || img.videoWidth || img.width || w;
+    const nh = img.naturalHeight || img.videoHeight || img.height || h;
+    if (!nw || !nh || nw <= 0 || nh <= 0) return;
+
+    let sx = 0, sy = 0, sWidth = nw, sHeight = nh;
+    const rSource = nw / nh;
+    const rDest = w / h;
+
+    if (rSource > rDest) {
+        sWidth = nh * rDest;
+        sx = (nw - sWidth) * offsetX;
+    } else {
+        sHeight = nw / rDest;
+        sy = (nh - sHeight) * offsetY;
+    }
+
+    ctx.drawImage(img, sx, sy, sWidth, sHeight, x, y, w, h);
+}
+
+function renderCroppedPhotoForSlot(src, targetW, targetH, filterStr = 'none') {
+    return new Promise((resolve) => {
+        if (!src) return resolve('');
+        const img = new Image();
+        img.onload = () => {
+            const scale = 2.5; // Ultra-HD print quality scale
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(10, Math.round(targetW * scale));
+            canvas.height = Math.max(10, Math.round(targetH * scale));
+            const ctx = canvas.getContext('2d');
+            
+            if (filterStr && filterStr !== 'none') {
+                ctx.filter = filterStr;
+            }
+
+            drawImageCover(ctx, img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.96));
+        };
+        img.onerror = () => resolve(src);
+        img.src = src;
+    });
+}
+
 // ================= RENDER LIVE VIDEO FRAME PREVIEW =================
 function setupLiveVideoFramePreview() {
     const liveContainer = document.getElementById('liveVideoFrameContainer');
@@ -34,11 +79,11 @@ function setupLiveVideoFramePreview() {
 
         if (videoUrl) {
             slot.innerHTML = `
-                <video src="${videoUrl}" autoplay loop muted playsinline class="user-video w-full h-full object-cover pointer-events-none" style="filter: ${filters[currentFilter].css}"></video>
+                <video src="${videoUrl}" autoplay loop muted playsinline class="user-video w-full h-full object-cover pointer-events-none" style="filter: ${filters[currentFilter].css}; width: 100%; height: 100%; object-fit: cover; display: block;"></video>
             `;
         } else if (photoUrl) {
             slot.innerHTML = `
-                <img src="${photoUrl}" class="user-photo w-full h-full object-cover pointer-events-none" style="filter: ${filters[currentFilter].css}" />
+                <img src="${photoUrl}" class="user-photo w-full h-full object-cover pointer-events-none" style="filter: ${filters[currentFilter].css}; width: 100%; height: 100%; object-fit: cover; display: block;" />
             `;
         }
     });
@@ -332,9 +377,9 @@ async function downloadLiveVideoFrameMP4() {
 
                 ctx.filter = canvasFilter;
                 if (item.video && item.video.readyState >= 2) {
-                    ctx.drawImage(item.video, item.x, item.y, item.w, item.h);
+                    drawImageCover(ctx, item.video, item.x, item.y, item.w, item.h);
                 } else if (item.photo) {
-                    ctx.drawImage(item.photo, item.x, item.y, item.w, item.h);
+                    drawImageCover(ctx, item.photo, item.x, item.y, item.w, item.h);
                 }
                 ctx.restore();
             });
@@ -411,11 +456,11 @@ async function downloadGifImage() {
                 if (paddingVal > 0) {
                     const padX = (paddingVal / 100) * canvas.width;
                     const padY = (paddingVal / 100) * canvas.height;
-                    ctx.drawImage(img, padX, padY, canvas.width - (padX * 2), canvas.height - (padY * 2));
+                    drawImageCover(ctx, img, padX, padY, canvas.width - (padX * 2), canvas.height - (padY * 2));
                 } else {
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    drawImageCover(ctx, img, 0, 0, canvas.width, canvas.height);
                 }
-                resolve(canvas.toDataURL('image/jpeg', 0.9));
+                resolve(canvas.toDataURL('image/jpeg', 0.92));
             };
             img.onerror = () => resolve(src);
             img.src = src;
@@ -566,8 +611,10 @@ function initExportEngineEvents() {
                     offSlot.style.backgroundColor = 'transparent';
 
                     if (originalPhotoSrc) {
-                        const filteredPhotoSrc = await applyCanvasFilter(originalPhotoSrc, canvasFilter);
-                        offSlot.innerHTML = `<img src="${filteredPhotoSrc}" style="width:100%; height:100%; object-fit:cover; display:block;" />`;
+                        const slotW = offSlot.offsetWidth || (offSlot.clientWidth || 300);
+                        const slotH = offSlot.offsetHeight || (offSlot.clientHeight || 200);
+                        const filteredPhotoSrc = await renderCroppedPhotoForSlot(originalPhotoSrc, slotW, slotH, canvasFilter);
+                        offSlot.innerHTML = `<img src="${filteredPhotoSrc}" style="width:100%; height:100%; display:block; object-fit:cover;" />`;
                     } else {
                         offSlot.innerHTML = '';
                         offSlot.style.backgroundColor = '#e5e7eb';

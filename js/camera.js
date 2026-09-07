@@ -149,6 +149,28 @@ function deactivateCameraView() {
     }
 }
 
+// ================= DRAW IMAGE WITH TRUE COVER FIT (NO STRETCH) =================
+function drawImageCover(ctx, img, x, y, w, h, offsetX = 0.5, offsetY = 0.5) {
+    if (!ctx || !img) return;
+    const nw = img.naturalWidth || img.videoWidth || img.width || w;
+    const nh = img.naturalHeight || img.videoHeight || img.height || h;
+    if (!nw || !nh || nw <= 0 || nh <= 0) return;
+
+    let sx = 0, sy = 0, sWidth = nw, sHeight = nh;
+    const rSource = nw / nh;
+    const rDest = w / h;
+
+    if (rSource > rDest) {
+        sWidth = nh * rDest;
+        sx = (nw - sWidth) * offsetX;
+    } else {
+        sHeight = nw / rDest;
+        sy = (nh - sHeight) * offsetY;
+    }
+
+    ctx.drawImage(img, sx, sy, sWidth, sHeight, x, y, w, h);
+}
+
 // ================= LIVE VIDEO RECORDER =================
 const liveRecCanvas = document.createElement('canvas');
 liveRecCanvas.width = 640;
@@ -181,22 +203,12 @@ function startLiveRecording() {
 
     function drawLiveFrame() {
         if (video && video.videoWidth > 0 && video.videoHeight > 0) {
-            const videoRatio = video.videoWidth / video.videoHeight;
-            const targetRatio = liveRecCanvas.width / liveRecCanvas.height;
-            let sx = 0, sy = 0, drawWidth = video.videoWidth, drawHeight = video.videoHeight;
-            if (videoRatio > targetRatio) { 
-                drawWidth = video.videoHeight * targetRatio; 
-                sx = (video.videoWidth - drawWidth) / 2; 
-            } else { 
-                drawHeight = video.videoWidth / targetRatio; 
-                sy = (video.videoHeight - drawHeight) / 2; 
-            }
             liveRecCtx.save();
             if (currentFacingMode === 'user') {
                 liveRecCtx.translate(liveRecCanvas.width, 0);
                 liveRecCtx.scale(-1, 1);
             }
-            liveRecCtx.drawImage(video, sx, sy, drawWidth, drawHeight, 0, 0, liveRecCanvas.width, liveRecCanvas.height);
+            drawImageCover(liveRecCtx, video, 0, 0, liveRecCanvas.width, liveRecCanvas.height);
             liveRecCtx.restore();
         }
         if (liveRecorder && liveRecorder.state === 'recording') {
@@ -244,32 +256,17 @@ async function tangkapFotoDanLiveVideo() {
     const thumbnailContainer = document.getElementById('thumbnailContainer');
     const btnContinue = document.getElementById('btnContinue');
 
-    // 1. Capture Still Photo Canvas (Mirrored if facing user)
+    // 1. Capture Still Photo Canvas with True Aspect Ratio (Mirrored if facing user)
     const tempCanvas = document.createElement('canvas');
     tempCanvas.width = lebarFoto; 
     tempCanvas.height = tinggiFoto;
     const tCtx = tempCanvas.getContext('2d');
     
-    const vWidth = video.videoWidth || 640;
-    const vHeight = video.videoHeight || 480;
-    const videoRatio = vWidth / vHeight;
-    const targetRatio = lebarFoto / tinggiFoto;
-    let drawWidth = vWidth; 
-    let drawHeight = vHeight; 
-    let sx = 0, sy = 0;
-    if (videoRatio > targetRatio) { 
-        drawWidth = vHeight * targetRatio; 
-        sx = (vWidth - drawWidth) / 2; 
-    } else { 
-        drawHeight = vWidth / targetRatio; 
-        sy = (vHeight - drawHeight) / 2; 
-    }
-    
     if (currentFacingMode === 'user') {
         tCtx.translate(lebarFoto, 0); 
         tCtx.scale(-1, 1);
     }
-    tCtx.drawImage(video, sx, sy, drawWidth, drawHeight, 0, 0, lebarFoto, tinggiFoto);
+    drawImageCover(tCtx, video, 0, 0, lebarFoto, tinggiFoto);
     
     const photoDataUrl = tempCanvas.toDataURL('image/jpeg', 0.95);
 

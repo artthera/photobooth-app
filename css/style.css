@@ -56,8 +56,26 @@ body {
     -webkit-transform: scaleX(-1);
 }
 
-.user-photo {
+.user-photo, .user-video {
     transform: none;
+    width: 100%;
+    height: 100%;
+    object-fit: cover !important;
+    object-position: center center;
+    display: block;
+}
+
+.drop-slot {
+    position: relative;
+    overflow: hidden !important;
+}
+
+.drop-slot img, .drop-slot video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center center;
+    display: block !important;
 }
 
 /* Shutter Flash Screen Effect */
