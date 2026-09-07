@@ -26,6 +26,18 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // 5. Bind Main Navigation Flow
     bindAppNavigation();
+
+    // 6. Support direct Kiosk launch from Dashboard (mode=kiosk)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('mode') === 'kiosk') {
+        const stateAdmin = document.getElementById('state-admin');
+        const stateLanding = document.getElementById('state-landing');
+        if (stateAdmin) stateAdmin.classList.add('hide');
+        if (stateLanding) {
+            stateLanding.classList.remove('hide');
+            stateLanding.style.opacity = '1';
+        }
+    }
 });
 
 function bindAppNavigation() {
