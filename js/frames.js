@@ -164,11 +164,11 @@ function renderFramesListUI() {
 
     if (filteredList.length === 0) {
         frameList.innerHTML = `
-            <div class="text-center py-12 px-4 border border-dashed border-gray-800 rounded-3xl bg-[#141420]/60">
-                <i class="ph ph-frame-corners text-3xl text-gray-600 mb-2"></i>
-                <p class="text-xs text-gray-300 font-bold mb-1">Tidak ada template di kategori ini</p>
-                <p class="text-[11px] text-gray-500 mb-4">Gunakan "+ Upload Frame" atau ubah filter.</p>
-                <button onclick="document.querySelector('.cat-pill[data-cat=all]').click()" class="bg-gray-800 hover:bg-gray-700 text-gray-200 px-4 py-2 rounded-xl text-xs font-bold transition">
+            <div class="text-center py-10 px-4 border border-dashed border-slate-300 rounded-3xl bg-slate-50">
+                <i class="ph ph-frame-corners text-3xl text-slate-400 mb-2"></i>
+                <p class="text-xs text-slate-700 font-bold mb-1">Tidak ada template di kategori ini</p>
+                <p class="text-[11px] text-slate-500 mb-4">Gunakan "+ Upload Frame" atau ubah filter.</p>
+                <button onclick="document.querySelector('.cat-pill[data-cat=all]').click()" class="bg-white hover:bg-slate-100 text-slate-800 border border-slate-200 px-4 py-2 rounded-xl text-xs font-bold transition shadow-xs">
                     Lihat Semua Frame
                 </button>
             </div>
@@ -179,7 +179,7 @@ function renderFramesListUI() {
     filteredList.forEach((frame) => {
         const isSelected = currentSelectedFrame && currentSelectedFrame.id === frame.id;
         const card = document.createElement('div');
-        card.className = `frame-item-card cursor-pointer rounded-2xl p-3 bg-[#161624] transition-all flex items-center gap-3 relative group ${isSelected ? 'is-active' : ''}`;
+        card.className = `frame-item-card cursor-pointer rounded-2xl p-3 bg-white border border-slate-200 shadow-xs hover:border-blue-400 transition-all flex items-center gap-3 relative group ${isSelected ? 'is-active' : ''}`;
         card.dataset.frameId = frame.id;
         
         const miniPreviewHtml = generateMiniFramePreviewHtml(frame);
@@ -187,21 +187,21 @@ function renderFramesListUI() {
         card.innerHTML = `
             ${miniPreviewHtml}
             <div class="flex-grow min-w-0 pr-6">
-                <h4 class="text-xs font-black text-white truncate mb-1">${frame.name}</h4>
+                <h4 class="text-xs font-black text-slate-800 truncate mb-1">${frame.name}</h4>
                 <div class="flex flex-wrap items-center gap-1.5">
-                    <span class="text-[9px] bg-blue-500/20 text-blue-300 border border-blue-400/30 px-2 py-0.5 rounded-full font-bold">
+                    <span class="text-[9px] bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full font-bold">
                         ${frame.slotCount} Pose
                     </span>
-                    <span class="text-[9px] bg-gray-800/80 text-gray-400 px-1.5 py-0.5 rounded font-mono">
+                    <span class="text-[9px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-mono">
                         ${frame.width}&times;${frame.height}
                     </span>
-                    ${frame.isCustom ? '<span class="text-[8px] bg-purple-900/60 text-purple-300 border border-purple-600/40 px-1.5 py-0.5 rounded font-black">CUSTOM</span>' : ''}
+                    ${frame.isCustom ? '<span class="text-[8px] bg-purple-50 text-purple-700 border border-purple-200 px-1.5 py-0.5 rounded font-black">CUSTOM</span>' : ''}
                 </div>
             </div>
-            <div class="active-badge absolute top-2.5 right-2.5 bg-blue-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-lg items-center gap-1 ${isSelected ? 'flex' : 'hidden'}">
+            <div class="active-badge absolute top-2.5 right-2.5 bg-blue-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-md items-center gap-1 ${isSelected ? 'flex' : 'hidden'}">
                 <i class="ph ph-check-bold text-[10px]"></i> AKTIF
             </div>
-            <button class="btn-del-frame absolute bottom-2.5 right-2.5 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white w-6 h-6 rounded-lg flex items-center justify-center transition opacity-0 group-hover:opacity-100 border border-red-500/30 shadow">
+            <button class="btn-del-frame absolute bottom-2.5 right-2.5 bg-red-50 hover:bg-red-600 text-red-500 hover:text-white w-6 h-6 rounded-lg flex items-center justify-center transition opacity-0 group-hover:opacity-100 border border-red-200 shadow-xs">
                 <i class="ph ph-trash text-xs"></i>
             </button>
         `;
@@ -222,6 +222,9 @@ async function deleteFrameById(frameId) {
     await FrameDB.deleteFrame(frameId);
     renderFramesListUI();
     renderFrameManagerGrid();
+    if (typeof ThemeManager !== 'undefined' && typeof ThemeManager.renderDashFrames === 'function') {
+        ThemeManager.renderDashFrames();
+    }
     if (currentSelectedFrame && currentSelectedFrame.id === frameId) {
         if (frames.length > 0) {
             selectFrame(frames[0]);
@@ -244,10 +247,10 @@ function renderFrameManagerGrid() {
 
     if (frames.length === 0) {
         frameManagerGrid.innerHTML = `
-            <div class="col-span-full text-center py-10 text-gray-400">
-                <i class="ph ph-warning-circle text-3xl mb-2 text-yellow-500"></i>
-                <p class="text-sm font-bold text-white">Tidak ada frame yang aktif.</p>
-                <p class="text-xs text-gray-400 mt-1">Klik "+ Upload Frame Baru" atau "Reset ke Bawaan" untuk menambahkan frame.</p>
+            <div class="col-span-full text-center py-10 text-slate-400">
+                <i class="ph ph-warning-circle text-3xl mb-2 text-amber-500"></i>
+                <p class="text-sm font-bold text-slate-800">Tidak ada frame yang aktif.</p>
+                <p class="text-xs text-slate-500 mt-1">Klik "+ Upload Frame Baru" atau "Reset ke Bawaan" untuk menambahkan frame.</p>
             </div>
         `;
         return;
@@ -255,7 +258,7 @@ function renderFrameManagerGrid() {
 
     frames.forEach((frame) => {
         const card = document.createElement('div');
-        card.className = 'bg-[#181826] p-3.5 rounded-2xl border border-gray-800 flex flex-col justify-between shadow-lg relative group';
+        card.className = 'bg-white p-3.5 rounded-2xl border border-slate-200 flex flex-col justify-between shadow-xs relative group';
 
         const pWidth = 40;
         const pHeight = Math.min(54, Math.max(28, Math.round(40 / (frame.width / frame.height))));
@@ -263,26 +266,26 @@ function renderFrameManagerGrid() {
         card.innerHTML = `
             <div class="flex items-start justify-between gap-3 mb-3">
                 <div class="flex items-center gap-3">
-                    <div class="bg-gray-800 rounded-lg flex items-center justify-center border border-gray-700 overflow-hidden shrink-0 shadow-inner" style="width: ${pWidth}px; height: ${pHeight}px;">
-                        <span class="text-[9px] text-gray-400 font-bold">${frame.slotCount}P</span>
+                    <div class="bg-slate-100 rounded-lg flex items-center justify-center border border-slate-200 overflow-hidden shrink-0 shadow-inner" style="width: ${pWidth}px; height: ${pHeight}px;">
+                        <span class="text-[9px] text-slate-500 font-bold">${frame.slotCount}P</span>
                     </div>
                     <div>
-                        <h4 class="text-xs font-bold text-white line-clamp-1">${frame.name}</h4>
-                        <div class="text-[10px] text-gray-400 font-medium mt-0.5 flex items-center gap-1.5">
+                        <h4 class="text-xs font-bold text-slate-800 line-clamp-1">${frame.name}</h4>
+                        <div class="text-[10px] text-slate-500 font-medium mt-0.5 flex items-center gap-1.5">
                             <span>${frame.width}&times;${frame.height}px</span> &bull; 
                             <span>${frame.slotCount} Slots</span>
                         </div>
                     </div>
                 </div>
-                <span class="text-[8px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider ${frame.isCustom ? 'bg-indigo-900/60 text-indigo-300 border border-indigo-700/50' : 'bg-gray-800 text-gray-400'}">
+                <span class="text-[8px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider ${frame.isCustom ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}">
                     ${frame.isCustom ? 'CUSTOM' : 'BUILT-IN'}
                 </span>
             </div>
-            <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 mt-1">
-                <button class="btn-use-mgr text-[11px] font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 transition">
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 mt-1">
+                <button class="btn-use-mgr text-[11px] font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 transition">
                     <i class="ph ph-check-circle"></i> Gunakan Ini
                 </button>
-                <button class="btn-delete-mgr text-[11px] font-bold text-red-400 hover:text-red-300 flex items-center gap-1 transition">
+                <button class="btn-delete-mgr text-[11px] font-bold text-red-500 hover:text-red-600 flex items-center gap-1 transition">
                     <i class="ph ph-trash"></i> Hapus
                 </button>
             </div>
@@ -373,6 +376,9 @@ function initFrameManagerEvents() {
                         await FrameDB.saveAllFrames(frames);
                         renderFrameManagerGrid();
                         renderFramesListUI();
+                        if (typeof ThemeManager !== 'undefined' && typeof ThemeManager.renderDashFrames === 'function') {
+                            ThemeManager.renderDashFrames();
+                        }
                         if (frames.length > 0) selectFrame(frames[0]);
                         alert(`✨ Berhasil mengimpor ${imported.length} template frame!`);
                     } else {
@@ -394,6 +400,9 @@ function initFrameManagerEvents() {
             await FrameDB.saveAllFrames(frames);
             renderFrameManagerGrid();
             renderFramesListUI();
+            if (typeof ThemeManager !== 'undefined' && typeof ThemeManager.renderDashFrames === 'function') {
+                ThemeManager.renderDashFrames();
+            }
             if (frames.length > 0) selectFrame(frames[0]);
             alert("Template frame telah dikembalikan ke bawaan semula.");
         };
@@ -404,10 +413,10 @@ function initFrameManagerEvents() {
         pill.onclick = () => {
             document.querySelectorAll('.cat-pill').forEach(p => {
                 p.classList.remove('bg-blue-600', 'text-white', 'active');
-                p.classList.add('bg-gray-800/80', 'text-gray-400');
+                p.classList.add('bg-slate-100', 'text-slate-600');
             });
             pill.classList.add('bg-blue-600', 'text-white', 'active');
-            pill.classList.remove('bg-gray-800/80', 'text-gray-400');
+            pill.classList.remove('bg-slate-100', 'text-slate-600');
             currentFrameCategoryFilter = pill.dataset.cat;
             renderFramesListUI();
         };

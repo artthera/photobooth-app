@@ -14,7 +14,7 @@ function setupBuilder() {
     frameUntukGif.forEach((src, idx) => {
         const card = document.createElement('div');
         card.id = `palette-card-${idx}`;
-        card.className = `relative group bg-gray-800/80 rounded-xl overflow-hidden border cursor-pointer transition shadow-md ${idx === 0 ? 'selected-photo-card border-blue-500' : 'border-gray-700 hover:border-gray-500'}`;
+        card.className = `relative group bg-white rounded-xl overflow-hidden border cursor-pointer transition shadow-xs ${idx === 0 ? 'selected-photo-card border-blue-600 ring-2 ring-blue-500/30' : 'border-slate-200 hover:border-slate-400'}`;
         
         const img = document.createElement('img'); 
         img.src = src;
@@ -22,7 +22,7 @@ function setupBuilder() {
         img.style.filter = filters[currentFilter].css; 
         
         const badge = document.createElement('div');
-        badge.className = 'absolute top-1 left-1 bg-black/80 text-white text-[9px] font-black px-1.5 py-0.5 rounded flex items-center gap-1 shadow';
+        badge.className = 'absolute top-1 left-1 bg-slate-900/80 backdrop-blur-xs text-white text-[9px] font-black px-1.5 py-0.5 rounded flex items-center gap-1 shadow';
         badge.innerHTML = `<i class="ph ph-camera text-blue-400"></i> #${idx + 1}`;
 
         // Touch & Click Selection Support
@@ -30,7 +30,9 @@ function setupBuilder() {
             activeSelectedPhotoIdx = idx;
             document.querySelectorAll('#builderPhotos > div').forEach((c, i) => {
                 c.classList.toggle('selected-photo-card', i === idx);
-                c.classList.toggle('border-blue-500', i === idx);
+                c.classList.toggle('border-blue-600', i === idx);
+                c.classList.toggle('ring-2', i === idx);
+                c.classList.toggle('ring-blue-500/30', i === idx);
             });
         };
 
@@ -63,12 +65,12 @@ function setupBuilder() {
         Object.keys(filters).forEach(key => {
             const f = filters[key];
             const btn = document.createElement('div');
-            btn.className = `cursor-pointer border-2 rounded-2xl p-2.5 text-center bg-[#151522] transition-all hover:scale-[1.02] filter-btn ${currentFilter === key ? 'border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.4)]' : 'border-gray-800 hover:border-gray-600'}`;
+            btn.className = `cursor-pointer border-2 rounded-2xl p-2.5 text-center bg-white transition-all hover:scale-[1.02] filter-btn shadow-xs ${currentFilter === key ? 'border-blue-600 ring-2 ring-blue-500/30' : 'border-slate-200 hover:border-slate-300'}`;
             btn.innerHTML = `
-                <div class="w-full h-16 bg-black rounded-xl mb-2 overflow-hidden flex items-center justify-center border border-gray-700/50">
+                <div class="w-full h-16 bg-slate-100 rounded-xl mb-2 overflow-hidden flex items-center justify-center border border-slate-200">
                     <img src="${previewSrc}" class="w-full h-full object-cover" style="filter: ${f.css}">
                 </div>
-                <div class="text-[11px] font-bold text-white">${f.name}</div>
+                <div class="text-[11px] font-bold text-slate-800">${f.name}</div>
             `;
             btn.onclick = () => applyGlobalFilter(key, btn);
             filterList.appendChild(btn);
@@ -166,12 +168,12 @@ function applyGlobalFilter(filterId, btnElement) {
     currentFilter = filterId; 
     const filterCSS = filters[filterId].css;
     document.querySelectorAll('.filter-btn').forEach(d => {
-        d.classList.remove('border-blue-500', 'shadow-[0_0_15px_rgba(59,130,246,0.4)]');
-        d.classList.add('border-gray-800');
+        d.classList.remove('border-blue-600', 'ring-2', 'ring-blue-500/30');
+        d.classList.add('border-slate-200');
     });
     if (btnElement) {
-        btnElement.classList.add('border-blue-500', 'shadow-[0_0_15px_rgba(59,130,246,0.4)]');
-        btnElement.classList.remove('border-gray-800');
+        btnElement.classList.add('border-blue-600', 'ring-2', 'ring-blue-500/30');
+        btnElement.classList.remove('border-slate-200');
     }
     document.querySelectorAll('.user-photo, .user-video').forEach(el => { el.style.filter = filterCSS; });
 }

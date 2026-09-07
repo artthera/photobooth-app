@@ -204,13 +204,13 @@ function renderCustomSlotsUI() {
 
         if (customSlotItemList) {
             const item = document.createElement('div');
-            item.className = 'bg-[#181824] p-2 rounded-xl border border-gray-800 flex items-center justify-between text-xs text-gray-300';
+            item.className = 'bg-slate-50 p-2 rounded-xl border border-slate-200 flex items-center justify-between text-xs text-slate-700';
             item.innerHTML = `
                 <span class="font-bold flex items-center gap-1.5">
-                    <span class="w-4 h-4 rounded bg-blue-500/20 text-blue-400 text-[10px] flex items-center justify-center font-bold">${idx + 1}</span>
+                    <span class="w-4 h-4 rounded bg-blue-100 text-blue-700 text-[10px] flex items-center justify-center font-bold">${idx + 1}</span>
                     Slot #${idx + 1}
                 </span>
-                <span class="text-[10px] text-gray-500 font-mono">${slot.w}&times;${slot.h}px</span>
+                <span class="text-[10px] text-slate-500 font-mono">${slot.w}&times;${slot.h}px</span>
             `;
             customSlotItemList.appendChild(item);
         }
@@ -527,6 +527,10 @@ function initCustomFrameStudioEvents() {
 
             if (customFrameModal) customFrameModal.classList.add('hide');
             if (typeof renderFramesListUI === 'function') renderFramesListUI();
+            if (typeof renderFrameManagerGrid === 'function') renderFrameManagerGrid();
+            if (typeof ThemeManager !== 'undefined' && typeof ThemeManager.renderDashFrames === 'function') {
+                ThemeManager.renderDashFrames();
+            }
             if (typeof selectFrame === 'function') selectFrame(newFrameDef);
 
             alert(`🎉 Frame "${frameName}" berhasil disimpan secara permanen dan dipilih!`);
