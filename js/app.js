@@ -248,10 +248,19 @@ function restartPhotoSession() {
 
 window.restartPhotoSession = restartPhotoSession;
 
-// Window resize listener
-window.addEventListener('resize', () => { 
+// Window resize & tablet orientation change listener
+function handleViewportRelayout() {
     const stateBuilder = document.getElementById('state-builder');
     const customFrameModal = document.getElementById('customFrameModal');
-    if (stateBuilder && !stateBuilder.classList.contains('hide')) adjustFrameScale(); 
-    if (customFrameModal && !customFrameModal.classList.contains('hide')) adjustCustomStageScale();
+    if (stateBuilder && !stateBuilder.classList.contains('hide') && typeof adjustFrameScale === 'function') {
+        adjustFrameScale();
+    }
+    if (customFrameModal && !customFrameModal.classList.contains('hide') && typeof adjustCustomStageScale === 'function') {
+        adjustCustomStageScale();
+    }
+}
+
+window.addEventListener('resize', handleViewportRelayout);
+window.addEventListener('orientationchange', () => {
+    setTimeout(handleViewportRelayout, 150);
 });

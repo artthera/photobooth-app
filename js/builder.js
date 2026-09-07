@@ -151,10 +151,15 @@ function adjustFrameScale() {
     if (!wrapper || !editor || !currentSelectedFrame) return;
     const centerArea = wrapper.parentElement;
     if (!centerArea) return;
-    const maxWidth = centerArea.clientWidth - 30;
-    const maxHeight = centerArea.clientHeight - 60;
-    const scale = Math.min(maxWidth / editor.offsetWidth, maxHeight / editor.offsetHeight, 1.15); 
-    wrapper.style.transform = `scale(${Math.max(0.3, scale)})`;
+    
+    // Dynamically calculate based on center stage dimensions and tablet safe margins
+    const availableW = Math.max(80, centerArea.clientWidth - 36);
+    const availableH = Math.max(80, centerArea.clientHeight - 80);
+    const targetW = editor.offsetWidth || currentSelectedFrame.width || 400;
+    const targetH = editor.offsetHeight || currentSelectedFrame.height || 600;
+    
+    const scale = Math.min(availableW / targetW, availableH / targetH, 1.2); 
+    wrapper.style.transform = `scale(${Math.max(0.25, Math.round(scale * 1000) / 1000)})`;
 }
 
 function applyGlobalFilter(filterId, btnElement) {
