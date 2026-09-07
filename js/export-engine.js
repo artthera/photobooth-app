@@ -135,42 +135,111 @@ function prosesHasil() {
     const btnDownloadAllZip = document.getElementById('btnDownloadAllZip');
     if (btnDownloadAllZip) btnDownloadAllZip.onclick = downloadAllMomentsZip;
 
-    // QR Code & Google Drive Auto Upload
+    // ================= CUSTOMER SESSION & QR GENERATOR =================
+    const currentSessionId = 'pb_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+    const cfg = typeof ThemeManager !== 'undefined' ? ThemeManager.getConfig() : {};
+    const brandName = cfg.brandName || 'Eazy Fotobooth';
+
+    // Construct customer page URL
+    const basePath = window.location.href.split('?')[0].replace(/index\.html$/, '').replace(/\/$/, '');
+    const customerUrl = `${basePath}/customer.html?session=${currentSessionId}`;
+
+    // Prepare session data object
+    const sessionData = {
+        id: currentSessionId,
+        createdAt: Date.now(),
+        dateStr: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        brandName: brandName,
+        stripJpg: finalStripImageUrl,
+        stripPng: finalStripPngUrl,
+        rawShots: Array.isArray(frameUntukGif) ? [...frameUntukGif] : [],
+        liveVideos: Array.isArray(liveVideos) ? [...liveVideos] : [],
+        gifUrl: null,
+        gdriveUrl: null,
+        totalShots: frameUntukGif ? frameUntukGif.length : 0,
+        frameName: currentSelectedFrame ? currentSelectedFrame.name : 'Photo Strip'
+    };
+
+    // Save initial session to SessionDB
+    if (typeof SessionDB !== 'undefined') {
+        SessionDB.saveSession(sessionData);
+    }
+
+    // Generate GIF in background if frames exist, then update session
+    if (typeof gifshot !== 'undefined' && finalAnimFrames && finalAnimFrames.length > 0) {
+        gifshot.createGIF({
+            images: finalAnimFrames,
+            interval: 0.16,
+            gifWidth: 360,
+            gifHeight: 270,
+            numFrames: 10
+        }, function(obj) {
+            if (!obj.error && obj.image) {
+                sessionData.gifUrl = obj.image;
+                if (typeof SessionDB !== 'undefined') {
+                    SessionDB.saveSession(sessionData);
+                }
+            }
+        });
+    }
+
+    // QR Code & Google Drive Auto Upload Elements
     const qrContainer = document.getElementById("qrcode");
     const qrSpinner = document.getElementById("qrLoadingSpinner");
     const gdriveBadge = document.getElementById("gdriveStatusBadge");
     const btnOpenGdrive = document.getElementById("btnOpenGdriveFolder");
     const btnSetupGdrive = document.getElementById("btnSetupGdriveResults");
     const qrDesc = document.getElementById("qrDescriptionText");
+    const btnSimulate = document.getElementById("btnSimulateMobile");
 
     function renderQr(url) {
         if (!qrContainer) return;
         qrContainer.innerHTML = "";
         new QRCode(qrContainer, { 
             text: url, 
-            width: 110, 
-            height: 110, 
-            colorDark : "#000000", 
+            width: 120, 
+            height: 120, 
+            colorDark : "#0f172a", 
             colorLight : "#ffffff", 
             correctLevel : QRCode.CorrectLevel.M 
         });
     }
 
-    const defaultShareUrl = "https://photobooth.pro/share/" + Math.random().toString(36).substring(2, 10);
-    renderQr(defaultShareUrl);
+    // Render QR pointing directly to Customer Page
+    renderQr(customerUrl);
 
-    const cfg = typeof ThemeManager !== 'undefined' ? ThemeManager.getConfig() : {};
+    // Make QR container clickable for instant desktop simulation
+    if (qrContainer) {
+        qrContainer.style.cursor = 'pointer';
+        qrContainer.title = 'Klik untuk simulasi tampilan HP pelanggan';
+        qrContainer.onclick = () => {
+            window.open(customerUrl, '_blank');
+        };
+    }
+
+    // Setup Simulation Button
+    if (btnSimulate) {
+        btnSimulate.href = customerUrl;
+        btnSimulate.onclick = (e) => {
+            e.preventDefault();
+            window.open(customerUrl, '_blank');
+        };
+    }
+
     const webhookUrl = (cfg.gdriveWebhookUrl || '').trim();
     const autoUpload = cfg.gdriveAutoUpload !== false;
 
     if (webhookUrl && autoUpload) {
         if (qrSpinner) qrSpinner.classList.remove('hidden');
-        if (qrDesc) qrDesc.innerHTML = '<span class="text-emerald-400 font-bold"><i class="ph ph-cloud-arrow-up animate-pulse text-sm"></i> Menyimpan ke Google Drive...</span>';
+        if (qrDesc) qrDesc.innerHTML = '<span class="text-emerald-600 font-bold flex items-center gap-1"><i class="ph ph-cloud-arrow-up animate-pulse text-sm"></i> Menyimpan ke Google Drive...</span>';
 
         uploadToGoogleDrive(webhookUrl).then(result => {
             if (qrSpinner) qrSpinner.classList.add('hidden');
             if (result && result.success && result.folderUrl) {
-                renderQr(result.folderUrl);
+                sessionData.gdriveUrl = result.folderUrl;
+                if (typeof SessionDB !== 'undefined') {
+                    SessionDB.saveSession(sessionData);
+                }
                 if (gdriveBadge) gdriveBadge.classList.remove('hidden');
                 if (btnOpenGdrive) {
                     btnOpenGdrive.href = result.folderUrl;
@@ -178,14 +247,15 @@ function prosesHasil() {
                     btnOpenGdrive.classList.add('flex');
                 }
                 if (btnSetupGdrive) btnSetupGdrive.classList.add('hidden');
-                if (qrDesc) qrDesc.textContent = "Scan QR ini di HP untuk membuka folder Google Drive dan mendownload foto langsung ke HP Anda.";
+                if (qrDesc) qrDesc.innerHTML = '<span class="text-emerald-600 font-semibold flex items-center gap-1"><i class="ph ph-check-circle"></i> Tersimpan di Google Drive!</span> Scan QR ini di HP untuk membuka galeri hasil & unduh ke Drive.';
             } else {
                 console.warn("Google Drive upload response:", result);
-                if (qrDesc) qrDesc.innerHTML = '<span class="text-amber-400 text-[11px]"><i class="ph ph-warning"></i> Upload Google Drive selesai / scan QR di atas.</span>';
+                if (qrDesc) qrDesc.innerHTML = '<span class="text-slate-600">Scan QR di atas untuk membuka galeri hasil di HP pelanggan.</span>';
             }
         }).catch(err => {
             if (qrSpinner) qrSpinner.classList.add('hidden');
             console.error("Google Drive upload error:", err);
+            if (qrDesc) qrDesc.innerHTML = '<span class="text-slate-600">Scan QR di atas untuk membuka galeri hasil di HP pelanggan.</span>';
         });
     } else {
         if (gdriveBadge) gdriveBadge.classList.add('hidden');
@@ -194,6 +264,7 @@ function prosesHasil() {
             btnOpenGdrive.classList.remove('flex');
         }
         if (btnSetupGdrive) btnSetupGdrive.classList.remove('hidden');
+        if (qrDesc) qrDesc.textContent = "Scan QR ini di HP untuk membuka galeri hasil foto, video motion, dan mendownload langsung ke HP.";
     }
 }
 

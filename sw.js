@@ -1,10 +1,12 @@
 /**
  * Photobooth Pro - Service Worker (Offline Cache & PWA Support)
  */
-const CACHE_NAME = 'photobooth-cache-v2';
+const CACHE_NAME = 'photobooth-cache-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './customer.html',
+  './dashboard.html',
   './manifest.json',
   './css/style.css',
   './js/config.js',

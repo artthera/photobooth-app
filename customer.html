@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Galeri Hasil Foto - Eazy Fotobooth</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                        outfit: ['"Outfit"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2563eb',
+                        'primary-dark': '#1d4ed8',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Dependencies for ZIP & Confetti -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .heading-font {
+            font-family: 'Outfit', sans-serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+        }
+        .touch-action-manipulation {
+            touch-action: manipulation;
+        }
+        @keyframes pulse-subtle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        .animate-pulse-subtle {
+            animation: pulse-subtle 2.5s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 flex flex-col items-center pb-24 select-none touch-action-manipulation antialiased">
+
+    <!-- TOP APP BAR -->
+    <header class="w-full bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 px-4 py-3.5 transition-all">
+        <div class="max-w-md mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-sm shadow-blue-500/20">
+                    <i class="ph ph-camera text-xl"></i>
+                </div>
+                <div>
+                    <h1 id="brandTitle" class="heading-font font-black text-sm tracking-tight text-slate-900 leading-tight">EAZY FOTOBOOTH</h1>
+                    <p id="sessionDateBadge" class="text-[10px] font-semibold text-slate-500 flex items-center gap-1">
+                        <i class="ph ph-sparkle text-amber-500"></i> Galeri Hasil Foto
+                    </p>
+                </div>
+            </div>
+            
+            <button id="btnHeaderShare" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 transition">
+                <i class="ph ph-share-network text-base text-blue-600"></i>
+                <span>Bagikan</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="w-full max-w-md mx-auto px-4 pt-4 flex flex-col gap-4">
+
+        <!-- CELEBRATION HERO BANNER -->
+        <div class="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white p-5 rounded-3xl shadow-xl shadow-blue-600/15 relative overflow-hidden">
+            <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="relative z-10">
+                <div class="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-full text-[10px] font-extrabold tracking-wider uppercase text-white mb-2">
+                    <i class="ph ph-check-circle text-emerald-300 text-xs"></i> Hasil Foto Siap
+                </div>
+                <h2 class="heading-font text-xl sm:text-2xl font-black leading-tight tracking-tight">
+                    Momen Spesial Kamu! ✨
+                </h2>
+                <p class="text-xs text-blue-100 mt-1 leading-relaxed">
+                    Unduh foto strip HD, pose satuan, video motion, atau buka langsung di Google Drive.
+                </p>
+            </div>
+        </div>
+
+        <!-- GOOGLE DRIVE HERO CARD (Shown if GDrive folder exists) -->
+        <div id="gdriveContainer" class="hidden bg-emerald-50/90 border border-emerald-200 p-4 rounded-3xl flex flex-col gap-2.5 shadow-sm">
+            <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm shadow-emerald-600/20">
+                    <i class="ph ph-google-drive-logo text-2xl"></i>
+                </div>
+                <div class="flex-grow">
+                    <div class="flex items-center justify-between">
+                        <h3 class="heading-font text-sm font-bold text-slate-900">Folder Google Drive</h3>
+                        <span class="bg-emerald-200/70 text-emerald-800 text-[10px] font-black px-2 py-0.5 rounded-md">Cloud Backup</span>
+                    </div>
+                    <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">
+                        Semua file hasil photobooth tersimpan aman di cloud Google Drive.
+                    </p>
+                </div>
+            </div>
+            <a id="btnGdriveLink" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white py-2.5 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition">
+                <i class="ph ph-arrow-square-out text-base"></i>
+                <span>Buka di Google Drive</span>
+            </a>
+        </div>
+
+        <!-- QUICK ACTION BAR: DOWNLOAD ALL ZIP & SHARE -->
+        <div class="grid grid-cols-2 gap-2.5">
+            <button id="btnDownloadZipAll" class="bg-slate-900 hover:bg-slate-800 active:scale-95 text-white py-3 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition">
+                <i class="ph ph-file-zip text-base text-amber-400"></i>
+                <span id="zipBtnText">Unduh Semua (.ZIP)</span>
+            </button>
+            <button id="btnShareNative" class="bg-white hover:bg-slate-50 border border-slate-200 active:scale-95 text-slate-800 py-3 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition">
+                <i class="ph ph-paper-plane-tilt text-base text-blue-600"></i>
+                <span>Kirim / Share</span>
+            </button>
+        </div>
+
+        <!-- SECTION 1: PHOTO STRIP ULTRA-HD -->
+        <div class="bg-white border border-slate-200/90 rounded-3xl p-4 shadow-sm flex flex-col gap-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">
+                        <i class="ph ph-image text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="heading-font text-sm font-bold text-slate-900">Photo Strip Ultra-HD</h3>
+                        <span id="frameNamePill" class="text-[10px] text-slate-400 font-medium">Template Strip</span>
+                    </div>
+                </div>
+                <span class="text-[10px] font-extrabold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">
+                    Print Ready
+                </span>
+            </div>
+
+            <!-- Preview Image Strip -->
+            <div class="relative bg-slate-100 rounded-2xl p-2 flex justify-center items-center overflow-hidden min-h-[220px] group cursor-pointer" id="stripPreviewContainer" title="Ketuk untuk melihat foto penuh">
+                <img id="customerStripImg" src="" alt="Photo Strip" class="max-h-[360px] w-auto object-contain rounded-lg shadow-md transition-transform duration-200 group-hover:scale-[1.02]">
+                <div class="absolute bottom-3 right-3 bg-slate-900/75 backdrop-blur-xs text-white px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 shadow-sm">
+                    <i class="ph ph-magnifying-glass-plus"></i> Ketuk untuk Zoom
+                </div>
+            </div>
+
+            <!-- Download Buttons for Strip -->
+            <div class="grid grid-cols-2 gap-2 mt-1">
+                <button id="btnCustomerDownloadJpg" class="bg-blue-600 hover:bg-blue-700 active:scale-95 text-white py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+                    <i class="ph ph-download-simple text-sm"></i>
+                    <span>Download JPG</span>
+                </button>
+                <button id="btnCustomerDownloadPng" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-800 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition">
+                    <i class="ph ph-file-png text-sm text-purple-600"></i>
+                    <span>Download PNG</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SECTION 2: LIVE MOTION VIDEO (MP4) -->
+        <div id="videoMotionSection" class="bg-white border border-slate-200/90 rounded-3xl p-4 shadow-sm flex flex-col gap-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xs">
+                        <i class="ph ph-video-camera text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="heading-font text-sm font-bold text-slate-900">Live Motion Video</h3>
+                        <span class="text-[10px] text-slate-400 font-medium">Video gerak klip momen</span>
+                    </div>
+                </div>
+                <span class="text-[10px] font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                    HD Video
+                </span>
+            </div>
+
+            <!-- Video Player -->
+            <div class="bg-slate-950 rounded-2xl overflow-hidden aspect-video relative flex items-center justify-center shadow-inner">
+                <video id="customerVideoPlayer" src="" autoplay loop muted playsinline class="w-full h-full object-cover"></video>
+                <div class="absolute top-2 left-2 bg-slate-900/70 backdrop-blur-xs text-white text-[9px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> LIVE
+                </div>
+            </div>
+
+            <button id="btnCustomerDownloadVideo" class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition">
+                <i class="ph ph-film-slate text-sm"></i>
+                <span>Download Video Motion (.MP4)</span>
+            </button>
+        </div>
+
+        <!-- SECTION 3: LOOPING ANIMATED GIF -->
+        <div id="gifSection" class="bg-white border border-slate-200/90 rounded-3xl p-4 shadow-sm flex flex-col gap-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-xs">
+                        <i class="ph ph-file-gif text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="heading-font text-sm font-bold text-slate-900">Animasi GIF Looping</h3>
+                        <span class="text-[10px] text-slate-400 font-medium">Cocok untuk medsos & stiker</span>
+                    </div>
+                </div>
+                <span class="text-[10px] font-extrabold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">
+                    Looping
+                </span>
+            </div>
+
+            <!-- GIF Display -->
+            <div class="bg-slate-100 rounded-2xl p-2 flex justify-center items-center overflow-hidden min-h-[160px]">
+                <img id="customerGifImg" src="" alt="Animasi GIF" class="max-h-[220px] w-auto object-contain rounded-xl shadow-sm">
+            </div>
+
+            <button id="btnCustomerDownloadGif" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 active:scale-95 text-white py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition">
+                <i class="ph ph-download-simple text-sm"></i>
+                <span>Download Animasi GIF</span>
+            </button>
+        </div>
+
+        <!-- SECTION 4: FOTO ASLI SATUAN (RAW SHOTS GRID) -->
+        <div id="rawShotsSection" class="bg-white border border-slate-200/90 rounded-3xl p-4 shadow-sm flex flex-col gap-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-xs">
+                        <i class="ph ph-grid-four text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="heading-font text-sm font-bold text-slate-900">Foto Asli Satuan</h3>
+                        <span class="text-[10px] text-slate-400 font-medium">Download setiap pose terpisah</span>
+                    </div>
+                </div>
+                <span id="shotCountPill" class="text-[10px] font-extrabold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">
+                    0 Pose
+                </span>
+            </div>
+
+            <!-- Grid Container -->
+            <div id="rawShotsGrid" class="grid grid-cols-2 gap-2.5">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+
+        <!-- FOOTER INFO -->
+        <footer class="text-center text-slate-400 text-xs py-4 flex flex-col items-center gap-1.5">
+            <div class="flex items-center gap-1.5 text-slate-500 font-bold text-xs">
+                <i class="ph ph-camera text-blue-600"></i>
+                <span id="footerBrand">Eazy Fotobooth</span>
+            </div>
+            <p class="text-[11px] text-slate-400 max-w-xs">
+                Terima kasih telah mengabadikan momen berharga bersama kami.
+            </p>
+        </footer>
+
+    </main>
+
+    <!-- FLOATING TOAST NOTIFICATION -->
+    <div id="toastNotification" class="fixed bottom-6 z-50 bg-slate-900/95 text-white px-5 py-3 rounded-full text-xs font-bold shadow-2xl flex items-center gap-2 transition-all duration-300 opacity-0 pointer-events-none transform translate-y-4">
+        <i id="toastIcon" class="ph ph-check-circle text-emerald-400 text-base"></i>
+        <span id="toastMessage">Foto berhasil diunduh!</span>
+    </div>
+
+    <!-- LIGHTBOX MODAL -->
+    <div id="lightboxModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col items-center justify-between p-4 hidden opacity-0 transition-opacity duration-200">
+        <div class="w-full flex justify-between items-center text-white py-2">
+            <span id="lightboxTitle" class="text-xs font-bold text-slate-300">Pratinjau Foto</span>
+            <button id="btnCloseLightbox" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white text-lg">
+                <i class="ph ph-x"></i>
+            </button>
+        </div>
+        <div class="flex-grow flex items-center justify-center max-h-[75vh] w-full p-2">
+            <img id="lightboxImg" src="" alt="Full preview" class="max-h-full max-w-full object-contain rounded-lg shadow-2xl">
+        </div>
+        <div class="w-full max-w-xs py-2 flex justify-center">
+            <button id="btnLightboxDownload" class="bg-white hover:bg-slate-100 text-slate-900 font-bold px-6 py-3 rounded-2xl text-xs flex items-center gap-2 shadow-lg active:scale-95 transition">
+                <i class="ph ph-download-simple text-base text-blue-600"></i>
+                <span>Download Foto Ini</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="js/db.js"></script>
+    <script>
+        // State
+        let activeSession = null;
+        let lightboxDownloadUrl = '';
+        let lightboxDownloadFilename = '';
+
+        // Toast Helper
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toastNotification');
+            const toastMsg = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+            if (!toast) return;
+
+            toastMsg.textContent = message;
+            if (isError) {
+                toastIcon.className = "ph ph-warning text-amber-400 text-base";
+            } else {
+                toastIcon.className = "ph ph-check-circle text-emerald-400 text-base";
+            }
+
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+            }, 2500);
+        }
+
+        // Direct File Downloader
+        function triggerDownload(url, filename) {
+            if (!url) return;
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast(`Mengunduh ${filename}...`);
+        }
+
+        // Lightbox Handler
+        function openLightbox(imgSrc, title, filename) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const titleEl = document.getElementById('lightboxTitle');
+            if (!modal || !img) return;
+
+            img.src = imgSrc;
+            titleEl.textContent = title || "Pratinjau Foto";
+            lightboxDownloadUrl = imgSrc;
+            lightboxDownloadFilename = filename || `photo_${Date.now()}.jpg`;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+        }
+
+        function closeLightbox() {
+            const modal = document.getElementById('lightboxModal');
+            if (!modal) return;
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        }
+
+        document.getElementById('btnCloseLightbox').onclick = closeLightbox;
+        document.getElementById('lightboxModal').onclick = (e) => {
+            if (e.target.id === 'lightboxModal') closeLightbox();
+        };
+        document.getElementById('btnLightboxDownload').onclick = () => {
+            if (lightboxDownloadUrl) {
+                triggerDownload(lightboxDownloadUrl, lightboxDownloadFilename);
+            }
+        };
+
+        // Load Session Data
+        async function initCustomerPage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session');
+
+            let session = null;
+
+            if (sessionId && typeof SessionDB !== 'undefined') {
+                session = await SessionDB.getSession(sessionId);
+            }
+
+            if (!session && typeof SessionDB !== 'undefined') {
+                session = await SessionDB.getLatestSession();
+            }
+
+            // Fallback: Check localStorage if IndexedDB had no entry
+            if (!session) {
+                const latestId = localStorage.getItem('photobooth_latest_session_id');
+                if (latestId && typeof SessionDB !== 'undefined') {
+                    session = await SessionDB.getSession(latestId);
+                }
+            }
+
+            // If still no session (e.g. preview mode), render fallback demo
+            if (!session) {
+                renderEmptyDemoState();
+                return;
+            }
+
+            activeSession = session;
+            renderSessionUI(session);
+
+            // Trigger celebration confetti
+            try {
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 50,
+                        spread: 60,
+                        origin: { y: 0.6 }
+                    });
+                }
+            } catch(e) {}
+        }
+
+        // Render Session Data to DOM
+        function renderSessionUI(session) {
+            // Brand & Title
+            if (session.brandName) {
+                document.getElementById('brandTitle').textContent = session.brandName.toUpperCase();
+                document.getElementById('footerBrand').textContent = session.brandName;
+                document.title = `Galeri Hasil Foto - ${session.brandName}`;
+            }
+
+            if (session.dateStr) {
+                document.getElementById('sessionDateBadge').innerHTML = `<i class="ph ph-calendar text-blue-500"></i> ${session.dateStr}`;
+            }
+
+            if (session.frameName) {
+                document.getElementById('frameNamePill').textContent = session.frameName;
+            }
+
+            // Google Drive Container
+            const gdriveBox = document.getElementById('gdriveContainer');
+            const gdriveBtn = document.getElementById('btnGdriveLink');
+            if (session.gdriveUrl && gdriveBox && gdriveBtn) {
+                gdriveBtn.href = session.gdriveUrl;
+                gdriveBox.classList.remove('hidden');
+            } else if (gdriveBox) {
+                gdriveBox.classList.add('hidden');
+            }
+
+            // Photo Strip
+            const stripImg = document.getElementById('customerStripImg');
+            const btnJpg = document.getElementById('btnCustomerDownloadJpg');
+            const btnPng = document.getElementById('btnCustomerDownloadPng');
+            const stripPreviewBox = document.getElementById('stripPreviewContainer');
+
+            if (session.stripJpg) {
+                stripImg.src = session.stripJpg;
+                stripPreviewBox.onclick = () => openLightbox(session.stripJpg, "Photo Strip Ultra-HD", `photobooth_strip_${session.id}.jpg`);
+
+                btnJpg.onclick = () => triggerDownload(session.stripJpg, `photobooth_strip_${session.id}.jpg`);
+            }
+            if (session.stripPng) {
+                btnPng.onclick = () => triggerDownload(session.stripPng, `photobooth_strip_${session.id}.png`);
+            } else if (session.stripJpg) {
+                btnPng.onclick = () => triggerDownload(session.stripJpg, `photobooth_strip_${session.id}.jpg`);
+            }
+
+            // Live Motion Video
+            const videoSection = document.getElementById('videoMotionSection');
+            const videoPlayer = document.getElementById('customerVideoPlayer');
+            const btnVideo = document.getElementById('btnCustomerDownloadVideo');
+
+            const hasVideo = session.liveVideos && session.liveVideos.length > 0;
+            if (hasVideo && videoSection && videoPlayer) {
+                const videoSrc = session.liveVideos[0];
+                videoPlayer.src = videoSrc;
+                videoSection.classList.remove('hidden');
+                btnVideo.onclick = () => triggerDownload(videoSrc, `photobooth_motion_${session.id}.mp4`);
+            } else if (videoSection) {
+                videoSection.classList.add('hidden');
+            }
+
+            // Animated GIF
+            const gifSection = document.getElementById('gifSection');
+            const gifImg = document.getElementById('customerGifImg');
+            const btnGif = document.getElementById('btnCustomerDownloadGif');
+
+            if (session.gifUrl && gifSection && gifImg) {
+                gifImg.src = session.gifUrl;
+                gifSection.classList.remove('hidden');
+                btnGif.onclick = () => triggerDownload(session.gifUrl, `photobooth_animation_${session.id}.gif`);
+            } else if (gifSection) {
+                gifSection.classList.add('hidden');
+            }
+
+            // Raw Shots Grid
+            const shotsGrid = document.getElementById('rawShotsGrid');
+            const shotCountPill = document.getElementById('shotCountPill');
+            const rawShots = session.rawShots || [];
+
+            if (shotCountPill) {
+                shotCountPill.textContent = `${rawShots.length} Pose`;
+            }
+
+            if (shotsGrid) {
+                shotsGrid.innerHTML = '';
+                if (rawShots.length === 0) {
+                    document.getElementById('rawShotsSection').classList.add('hidden');
+                } else {
+                    document.getElementById('rawShotsSection').classList.remove('hidden');
+                    rawShots.forEach((shotSrc, idx) => {
+                        const card = document.createElement('div');
+                        card.className = "bg-slate-50 border border-slate-200/80 rounded-2xl p-2 flex flex-col gap-2 shadow-xs";
+                        card.innerHTML = `
+                            <div class="relative rounded-xl overflow-hidden aspect-[4/3] bg-slate-200 cursor-pointer group">
+                                <img src="${shotSrc}" alt="Pose ${idx + 1}" class="w-full h-full object-cover group-hover:scale-105 transition duration-200">
+                                <span class="absolute top-1.5 left-1.5 bg-slate-900/70 backdrop-blur-xs text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">
+                                    #${idx + 1}
+                                </span>
+                            </div>
+                            <button class="btn-download-raw bg-white hover:bg-slate-100 active:scale-95 border border-slate-200 text-slate-800 text-[11px] font-bold py-1.5 px-2 rounded-xl flex items-center justify-center gap-1 shadow-2xs transition">
+                                <i class="ph ph-download-simple text-blue-600 text-xs"></i> Pose ${idx + 1}
+                            </button>
+                        `;
+
+                        // Bind lightbox & download
+                        const imgBox = card.querySelector('div');
+                        imgBox.onclick = () => openLightbox(shotSrc, `Foto Asli - Pose ${idx + 1}`, `pose_${idx + 1}_${session.id}.jpg`);
+
+                        const btnDown = card.querySelector('.btn-download-raw');
+                        btnDown.onclick = () => triggerDownload(shotSrc, `pose_${idx + 1}_${session.id}.jpg`);
+
+                        shotsGrid.appendChild(card);
+                    });
+                }
+            }
+
+            // Bind Master Action Bar
+            bindMasterActions(session);
+        }
+
+        // Master Actions: ZIP Download & Native Web Share
+        function bindMasterActions(session) {
+            const btnZip = document.getElementById('btnDownloadZipAll');
+            const zipText = document.getElementById('zipBtnText');
+            const btnShare = document.getElementById('btnShareNative');
+            const btnHeaderShare = document.getElementById('btnHeaderShare');
+
+            if (btnZip) {
+                btnZip.onclick = async () => {
+                    if (typeof JSZip === 'undefined') {
+                        showToast("Library JSZip sedang disiapkan...", true);
+                        return;
+                    }
+
+                    const originalText = zipText.textContent;
+                    zipText.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Mengompres...';
+                    btnZip.disabled = true;
+
+                    try {
+                        const zip = new JSZip();
+                        const timestamp = Date.now();
+
+                        // 1. Photo Strip JPG
+                        if (session.stripJpg) {
+                            const b64 = session.stripJpg.replace(/^data:image\/[a-z]+;base64,/, "");
+                            zip.file(`photobooth_strip_${timestamp}.jpg`, b64, { base64: true });
+                        }
+
+                        // 2. Photo Strip PNG
+                        if (session.stripPng) {
+                            const b64 = session.stripPng.replace(/^data:image\/[a-z]+;base64,/, "");
+                            zip.file(`photobooth_strip_${timestamp}.png`, b64, { base64: true });
+                        }
+
+                        // 3. Raw Photos Folder
+                        if (session.rawShots && session.rawShots.length > 0) {
+                            const rawFolder = zip.folder("individual_photos");
+                            session.rawShots.forEach((shot, i) => {
+                                const b64 = shot.replace(/^data:image\/[a-z]+;base64,/, "");
+                                rawFolder.file(`pose_${i + 1}.jpg`, b64, { base64: true });
+                            });
+                        }
+
+                        // 4. GIF
+                        if (session.gifUrl) {
+                            const b64 = session.gifUrl.replace(/^data:image\/gif;base64,/, "");
+                            zip.file(`photobooth_animation_${timestamp}.gif`, b64, { base64: true });
+                        }
+
+                        // Generate ZIP
+                        const content = await zip.generateAsync({ type: "blob" });
+                        saveAs(content, `photobooth_all_moments_${timestamp}.zip`);
+                        showToast("File ZIP berhasil diunduh!");
+                    } catch (err) {
+                        console.error("ZIP Generation error:", err);
+                        showToast("Gagal mengunduh ZIP.", true);
+                    } finally {
+                        zipText.textContent = originalText;
+                        btnZip.disabled = false;
+                    }
+                };
+            }
+
+            const triggerShare = async () => {
+                const shareData = {
+                    title: session.brandName || 'Eazy Fotobooth',
+                    text: 'Lihat hasil fotobooth keren kami!',
+                    url: window.location.href
+                };
+
+                if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+                    try {
+                        await navigator.share(shareData);
+                    } catch (err) {
+                        if (err.name !== 'AbortError') copyLinkToClipboard();
+                    }
+                } else {
+                    copyLinkToClipboard();
+                }
+            };
+
+            if (btnShare) btnShare.onclick = triggerShare;
+            if (btnHeaderShare) btnHeaderShare.onclick = triggerShare;
+        }
+
+        function copyLinkToClipboard() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                showToast("Tautan galeri berhasil disalin!");
+            }).catch(() => {
+                showToast("Gagal menyalin tautan.", true);
+            });
+        }
+
+        // Demo / Empty State Fallback
+        function renderEmptyDemoState() {
+            document.getElementById('brandTitle').textContent = "EAZY FOTOBOOTH";
+            document.getElementById('sessionDateBadge').textContent = "Mode Simulasi Demo";
+            
+            // Dummy Canvas Strip for Demo
+            const canvas = document.createElement('canvas');
+            canvas.width = 360;
+            canvas.height = 720;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, 360, 720);
+            ctx.fillStyle = "#2563eb";
+            ctx.fillRect(20, 20, 320, 180);
+            ctx.fillRect(20, 220, 320, 180);
+            ctx.fillRect(20, 420, 320, 180);
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 20px Outfit";
+            ctx.fillText("POSE #1", 135, 115);
+            ctx.fillText("POSE #2", 135, 315);
+            ctx.fillText("POSE #3", 135, 515);
+            ctx.fillStyle = "#0f172a";
+            ctx.font = "bold 14px Outfit";
+            ctx.fillText("EAZY FOTOBOOTH DEMO", 90, 660);
+
+            const dummyStrip = canvas.toDataURL('image/jpeg', 0.9);
+
+            const dummySession = {
+                id: 'demo_' + Date.now(),
+                createdAt: Date.now(),
+                dateStr: new Date().toLocaleDateString('id-ID', { dateStyle: 'full' }),
+                brandName: 'Eazy Fotobooth',
+                stripJpg: dummyStrip,
+                stripPng: dummyStrip,
+                rawShots: [dummyStrip, dummyStrip, dummyStrip],
+                liveVideos: [],
+                gifUrl: null,
+                gdriveUrl: null,
+                frameName: 'Demo Strip 3-Cuts'
+            };
+
+            renderSessionUI(dummySession);
+        }
+
+        // Init on load
+        window.addEventListener('DOMContentLoaded', initCustomerPage);
+    </script>
+</body>
+</html>
