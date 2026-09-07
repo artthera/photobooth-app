@@ -19,13 +19,30 @@ let currentFilter = 'none';
 let currentSelectedFrame = null;
 
 // ================= CAMERA STREAM CONTROLLER =================
-async function initCameraStream(facingMode = currentFacingMode) {
-    currentFacingMode = facingMode;
+async function initCameraStream(facingMode = currentFacingMode, forceNew = false) {
     const video = document.getElementById('kamera');
     const cameraContainer = document.getElementById('cameraContainer');
     
     if (cameraContainer) cameraContainer.style.display = 'block';
     if (!video) return null;
+
+    // Reuse existing stream if already active and running (1x izin saja)
+    if (!forceNew && streamActive && streamActive.active) {
+        const videoTracks = streamActive.getVideoTracks();
+        if (videoTracks.length > 0 && videoTracks[0].readyState === 'live') {
+            videoTracks.forEach(track => track.enabled = true);
+            if (video.srcObject !== streamActive) {
+                video.srcObject = streamActive;
+            }
+            try {
+                await video.play();
+            } catch (e) {}
+            hideCameraError();
+            return streamActive;
+        }
+    }
+
+    currentFacingMode = facingMode;
 
     // Progressive fallbacks for robust camera compatibility across all devices
     const constraintsList = [
@@ -37,7 +54,7 @@ async function initCameraStream(facingMode = currentFacingMode) {
 
     let lastError = null;
 
-    // Stop existing tracks before opening new camera device
+    // Stop existing tracks only if switching camera or stream is dead
     if (streamActive) {
         try {
             streamActive.getTracks().forEach(track => track.stop());
@@ -70,7 +87,7 @@ async function initCameraStream(facingMode = currentFacingMode) {
             }
 
             hideCameraError();
-            console.log("Kamera berhasil diaktifkan:", constraint);
+            console.log("Kamera berhasil diaktifkan (disimpan untuk sesi selanjutnya):", constraint);
             return stream;
         } catch (err) {
             lastError = err;
@@ -85,7 +102,7 @@ async function initCameraStream(facingMode = currentFacingMode) {
 
 async function toggleCameraFacing() {
     const newFacing = currentFacingMode === 'user' ? 'environment' : 'user';
-    return await initCameraStream(newFacing);
+    return await initCameraStream(newFacing, true); // forceNew = true saat user sengaja membalik kamera
 }
 
 function showCameraError(err) {

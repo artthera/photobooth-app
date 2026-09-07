@@ -17,7 +17,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     initFrameManagerEvents();
     initExportEngineEvents();
 
-    // 4. Pre-warm / Request Camera Stream
+    // 4. Request Camera Stream 1x Saja
     try {
         await initCameraStream();
     } catch (err) { 
@@ -55,9 +55,6 @@ function bindAppNavigation() {
     // 1. Landing -> Instructions
     if (btnLanding && stateLanding && stateInstructions) {
         btnLanding.addEventListener('click', () => {
-            // Warm up camera on user gesture
-            initCameraStream();
-
             stateLanding.style.opacity = '0';
             setTimeout(() => { 
                 stateLanding.classList.add('hide'); 
@@ -92,7 +89,7 @@ function bindAppNavigation() {
     // 4. Retry Camera Permission Button
     if (btnRetryCamera) {
         btnRetryCamera.addEventListener('click', () => {
-            initCameraStream();
+            initCameraStream(currentFacingMode, true);
         });
     }
 
@@ -123,9 +120,6 @@ function bindAppNavigation() {
             stateCamera.classList.add('hide'); 
             stateBuilder.classList.remove('hide');
             deactivateCameraView();
-            if (streamActive) {
-                streamActive.getVideoTracks().forEach(track => track.enabled = false);
-            }
             setupBuilder();
         });
     }
@@ -159,6 +153,65 @@ function bindAppNavigation() {
         });
     }
 }
+
+// Reset photo session smoothly without reloading page / re-requesting permissions
+function restartPhotoSession() {
+    const stateLanding = document.getElementById('state-landing');
+    const stateInstructions = document.getElementById('state-instructions');
+    const stateCamera = document.getElementById('state-camera');
+    const stateBuilder = document.getElementById('state-builder');
+    const stateResults = document.getElementById('state-results');
+    const loadingResults = document.getElementById('loadingResults');
+    const masterActionBar = document.getElementById('masterActionBar');
+    const resultsGrid = document.getElementById('resultsGrid');
+    const thumbnailContainer = document.getElementById('thumbnailContainer');
+    const photoCounter = document.getElementById('photoCounter');
+    const settingsBar = document.getElementById('settingsBar');
+    const btnContinue = document.getElementById('btnContinue');
+
+    // Reset session data
+    jepretanKe = 0;
+    frameUntukGif = [];
+    liveVideos = [];
+    liveVideoBlobs = [];
+    retakeIndex = -1;
+    activeSelectedPhotoIdx = null;
+
+    if (thumbnailContainer) {
+        thumbnailContainer.innerHTML = '';
+        thumbnailContainer.classList.remove('capturing');
+    }
+    if (photoCounter) photoCounter.classList.add('hide');
+    if (settingsBar) settingsBar.classList.remove('hide');
+    if (btnContinue) btnContinue.classList.add('hide');
+    if (loadingResults) loadingResults.classList.add('hide');
+    if (masterActionBar) masterActionBar.classList.add('hide');
+    if (resultsGrid) resultsGrid.classList.add('hide');
+
+    // Hide subsequent states
+    if (stateResults) stateResults.classList.add('hide');
+    if (stateBuilder) stateBuilder.classList.add('hide');
+    if (stateCamera) stateCamera.classList.add('hide');
+    if (stateInstructions) stateInstructions.classList.add('hide');
+
+    // Show landing
+    if (stateLanding) {
+        stateLanding.classList.remove('hide');
+        stateLanding.style.opacity = '1';
+    }
+
+    // Re-apply theme background
+    if (typeof ThemeManager !== 'undefined' && ThemeManager.applyConfig) {
+        ThemeManager.applyConfig(ThemeManager.getConfig());
+    }
+
+    // Ensure camera track is alive
+    if (streamActive) {
+        streamActive.getVideoTracks().forEach(track => track.enabled = true);
+    }
+}
+
+window.restartPhotoSession = restartPhotoSession;
 
 // Window resize listener
 window.addEventListener('resize', () => { 
