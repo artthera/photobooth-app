@@ -847,50 +847,25 @@
             </div>
 
             <!-- Settings Bar (Initial Setup) -->
-            <div id="settingsBar" class="absolute bottom-36 left-1/2 -translate-x-1/2 w-[95%] max-w-xl glass-panel rounded-3xl p-3.5 grid grid-cols-4 gap-2.5 z-10 pointer-events-auto shadow-2xl">
-                <div>
-                    <label class="text-[10px] text-slate-700 font-black block mb-1 uppercase tracking-wider"><i class="ph ph-magic-wand text-blue-600"></i> Filter</label>
-                    <select id="settingFilter" class="w-full bg-white border border-slate-200 rounded-xl text-slate-800 p-2 text-xs outline-none cursor-pointer font-bold shadow-xs">
-                        <option value="none">Normal</option>
-                        <option value="bw">B & W</option>
-                        <option value="sepia">Sepia</option>
-                        <option value="vintage">Vintage TV</option>
-                        <option value="retro">Retro Pop</option>
-                        <option value="blur">Soft Focus</option>
-                        <option value="cool">Cool Tone</option>
-                        <option value="warm">Warm Tone</option>
-                        <option value="invert">Invert</option>
-                        <option value="high-contrast">High Contrast</option>
-                        <option value="bright">Brighten</option>
-                        <option value="moody">Moody</option>
-                        <option value="cyanotype">Cyanotype</option>
-                        <option value="chrome">Chrome</option>
-                        <option value="crt">Old TV (CRT)</option>
-                        <option value="cyberpunk">Cyberpunk</option>
-                        <option value="night-vision">Night Vision</option>
-                        <option value="pop-art">Pop Art</option>
-                        <option value="faded">Faded Film</option>
-                        <option value="duotone">Duotone Red</option>
-                    </select>
-                </div>
+            <div id="settingsBar" class="absolute bottom-36 left-1/2 -translate-x-1/2 w-[95%] max-w-lg glass-panel rounded-3xl p-3.5 grid grid-cols-3 gap-3 z-10 pointer-events-auto shadow-2xl">
                 <div>
                     <label class="text-[10px] text-slate-700 font-black block mb-1 uppercase tracking-wider"><i class="ph ph-timer text-blue-600"></i> Timer</label>
-                    <select id="settingTimer" class="w-full bg-white border border-slate-200 rounded-xl text-slate-800 p-2 text-xs outline-none cursor-pointer font-bold shadow-xs">
+                    <select id="settingTimer" class="w-full bg-white border border-slate-200 rounded-xl text-slate-800 p-2.5 text-xs outline-none cursor-pointer font-bold shadow-xs">
                         <option value="3">3 Detik</option>
                         <option value="5">5 Detik</option>
                     </select>
                 </div>
                 <div>
-                    <label class="text-[10px] text-slate-700 font-black block mb-1 uppercase tracking-wider"><i class="ph ph-images text-blue-600"></i> Pose</label>
-                    <select id="settingSnaps" class="w-full bg-white border border-slate-200 rounded-xl text-slate-800 p-2 text-xs outline-none cursor-pointer font-bold shadow-xs">
+                    <label class="text-[10px] text-slate-700 font-black block mb-1 uppercase tracking-wider"><i class="ph ph-images text-blue-600"></i> Jumlah Pose</label>
+                    <select id="settingSnaps" class="w-full bg-white border border-slate-200 rounded-xl text-slate-800 p-2.5 text-xs outline-none cursor-pointer font-bold shadow-xs">
                         <option value="3">3 Pose</option>
                         <option value="4" selected>4 Pose</option>
                         <option value="5">5 Pose</option>
                     </select>
                 </div>
                 <div class="flex items-end justify-center">
-                    <button id="btnMulaiFoto" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 w-full rounded-xl font-black text-xs transition shadow-md flex items-center justify-center gap-1.5 active:scale-95">
-                        <i class="ph ph-camera text-base"></i> CAPTURE
+                    <button id="btnMulaiFoto" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2.5 w-full rounded-xl font-black text-xs transition shadow-md flex items-center justify-center gap-1.5 active:scale-95">
+                        <i class="ph ph-camera text-base"></i> MULAI FOTO
                     </button>
                 </div>
             </div>

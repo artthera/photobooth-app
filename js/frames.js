@@ -6,12 +6,14 @@
 let frames = [...builtInFrames];
 let currentFrameCategoryFilter = 'all';
 
-// Load frames from IndexedDB (or seed with built-in on first run)
+// Load frames from IndexedDB (merge latest built-in definitions with custom frames)
 async function initFramesDatabase() {
     try {
         const stored = await FrameDB.getAllFrames();
         if (stored && stored.length > 0) {
-            frames = stored;
+            const customFrames = stored.filter(f => f.isCustom);
+            frames = [...builtInFrames, ...customFrames];
+            await FrameDB.saveAllFrames(frames);
         } else {
             frames = [...builtInFrames];
             await FrameDB.saveAllFrames(frames);
@@ -71,7 +73,7 @@ function generateMiniFramePreviewHtml(frame) {
                     <div class="bg-gray-300 rounded-xs"></div>
                     <div class="bg-gray-300 rounded-xs"></div>
                 </div>
-                <div class="w-full h-1 bg-black rounded-xs mt-0.5"></div>
+                <div class="w-full h-0.5 bg-black rounded-xs mt-0.5"></div>
             </div>
         `;
     } else if (frame.id === 'cinema_red_3') {
