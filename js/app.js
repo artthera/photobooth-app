@@ -30,8 +30,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     // 6. Support direct Kiosk launch from Dashboard (mode=kiosk)
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('mode') === 'kiosk') {
+        const stateLauncher = document.getElementById('state-launcher');
         const stateAdmin = document.getElementById('state-admin');
         const stateLanding = document.getElementById('state-landing');
+        if (stateLauncher) stateLauncher.classList.add('hide');
         if (stateAdmin) stateAdmin.classList.add('hide');
         if (stateLanding) {
             stateLanding.classList.remove('hide');
@@ -49,7 +51,8 @@ function bindAppNavigation() {
     const stateResults = document.getElementById('state-results');
     
     const btnLaunchBooth = document.getElementById('btnLaunchBooth');
-    const btnGoToAdmin = document.getElementById('btnGoToAdmin');
+    const btnHiddenAdminExit = document.getElementById('btnHiddenAdminExit');
+    
     const btnLanding = document.getElementById('btnLanding');
     const btnStartCapture = document.getElementById('btnStartCapture');
     const btnMulaiFoto = document.getElementById('btnMulaiFoto');
@@ -92,16 +95,27 @@ function bindAppNavigation() {
         btn.addEventListener('click', launchBoothSession);
     });
 
-    // Header Button -> Back to Admin Dashboard Anytime
-    if (btnGoToAdmin) {
-        btnGoToAdmin.addEventListener('click', () => {
-            [stateLanding, stateInstructions, stateCamera, stateBuilder, stateResults].forEach(el => {
-                if (el) el.classList.add('hide');
-            });
-            if (mainAppHeader) mainAppHeader.classList.add('hide');
-            if (stateAdmin) stateAdmin.classList.remove('hide');
-            ThemeManager.syncModalInputs(ThemeManager.getConfig());
-            ThemeManager.renderDashFrames();
+    // Hidden Operator Exit Trigger (Triple tap bottom-right corner)
+    if (btnHiddenAdminExit) {
+        let exitClicks = 0;
+        let exitTimeout;
+        btnHiddenAdminExit.addEventListener('click', () => {
+            exitClicks++;
+            if (exitClicks >= 3) {
+                // Exit Kiosk Mode -> return to admin
+                [stateLanding, stateInstructions, stateCamera, stateBuilder, stateResults].forEach(el => {
+                    if (el) el.classList.add('hide');
+                });
+                if (mainAppHeader) mainAppHeader.classList.add('hide');
+                if (stateAdmin) {
+                    stateAdmin.classList.remove('hide');
+                    ThemeManager.syncModalInputs(ThemeManager.getConfig());
+                    ThemeManager.renderDashFrames();
+                }
+                exitClicks = 0;
+            }
+            clearTimeout(exitTimeout);
+            exitTimeout = setTimeout(() => { exitClicks = 0; }, 600);
         });
     }
 

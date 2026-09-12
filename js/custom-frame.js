@@ -337,10 +337,29 @@ function handleCustomFrameFile(file) {
         const dataUrl = event.target.result;
         const img = new Image();
         img.onload = () => {
-            customOriginalDataUrl = dataUrl;
-            customProcessedOverlayUrl = dataUrl;
-            customFrameNaturalWidth = img.naturalWidth || 450;
-            customFrameNaturalHeight = img.naturalHeight || 750;
+            // Compress and Resize Image to prevent QuotaExceededError
+            const maxDimension = 1600;
+            let scale = 1;
+            if (img.naturalWidth > maxDimension || img.naturalHeight > maxDimension) {
+                scale = Math.min(maxDimension / img.naturalWidth, maxDimension / img.naturalHeight);
+            }
+            
+            const w = Math.round(img.naturalWidth * scale);
+            const h = Math.round(img.naturalHeight * scale);
+            
+            const tmpCanvas = document.createElement('canvas');
+            tmpCanvas.width = w;
+            tmpCanvas.height = h;
+            const tCtx = tmpCanvas.getContext('2d');
+            tCtx.drawImage(img, 0, 0, w, h);
+            
+            // Use PNG to prevent loss of exact Green Screen RGB values!
+            const processedUrl = tmpCanvas.toDataURL('image/png');
+
+            customOriginalDataUrl = processedUrl;
+            customProcessedOverlayUrl = processedUrl;
+            customFrameNaturalWidth = w;
+            customFrameNaturalHeight = h;
 
             const customFrameNameInput = document.getElementById('customFrameNameInput');
             const customUploadDropZone = document.getElementById('customUploadDropZone');
@@ -355,31 +374,37 @@ function handleCustomFrameFile(file) {
             // Show editor stage
             if (customUploadDropZone) customUploadDropZone.classList.add('hide');
             if (customEditorStageWrapper) customEditorStageWrapper.classList.remove('hide');
-            if (customFramePreviewImg) customFramePreviewImg.src = dataUrl;
+            if (customFramePreviewImg) customFramePreviewImg.src = processedUrl;
             if (customEditorStage) {
                 customEditorStage.style.width = customFrameNaturalWidth + 'px';
                 customEditorStage.style.height = customFrameNaturalHeight + 'px';
             }
 
-            // Auto-Detect Green Screen on upload
-            const detected = detectGreenScreenBoxes(img);
-            if (detected && detected.length > 0) {
-                customSlots = detected.map((box, i) => ({
-                    id: 'slot_' + (i + 1),
-                    x: box.x,
-                    y: box.y,
-                    w: box.w,
-                    h: box.h
-                }));
-                customProcessedOverlayUrl = makeGreenScreenTransparent(img);
-                if (customFramePreviewImg) customFramePreviewImg.src = customProcessedOverlayUrl;
-            } else {
-                const defaultCount = Math.min(Math.max(totalFoto, 3), 4);
-                customSlots = createDefaultSlots(customFrameNaturalWidth, customFrameNaturalHeight, defaultCount);
-            }
+            // Create compressed image element for detection
+            const compressedImg = new Image();
+            compressedImg.onload = () => {
+                // Auto-Detect Green Screen on upload
+                const detected = detectGreenScreenBoxes(compressedImg);
+                if (detected && detected.length > 0) {
+                    customSlots = detected.map((box, i) => ({
+                        id: 'slot_' + (i + 1),
+                        x: box.x,
+                        y: box.y,
+                        w: box.w,
+                        h: box.h
+                    }));
+                    customProcessedOverlayUrl = makeGreenScreenTransparent(compressedImg);
+                    if (customFramePreviewImg) customFramePreviewImg.src = customProcessedOverlayUrl;
+                } else {
+                    // Murni bebas! Tidak ada slot otomatis yang memaksa jumlah foto.
+                    // User harus menambah slot secara manual.
+                    customSlots = [];
+                }
 
-            renderCustomSlotsUI();
-            setTimeout(adjustCustomStageScale, 50);
+                renderCustomSlotsUI();
+                setTimeout(adjustCustomStageScale, 50);
+            };
+            compressedImg.src = processedUrl;
         };
         img.src = dataUrl;
     };
@@ -467,10 +492,12 @@ function initCustomFrameStudioEvents() {
 
     if (btnAddSlotManual) {
         btnAddSlotManual.onclick = () => {
-            const w = Math.round(customFrameNaturalWidth * 0.6);
+            const w = Math.round(customFrameNaturalWidth * 0.4);
             const h = Math.round(w * 0.75);
-            const x = Math.round((customFrameNaturalWidth - w) / 2);
-            const y = Math.round((customFrameNaturalHeight - h) / 2);
+            const offset = (customSlots.length * 40) % (customFrameNaturalWidth * 0.3);
+            const x = Math.round((customFrameNaturalWidth - w) / 2) + offset - (customFrameNaturalWidth * 0.15);
+            const y = Math.round((customFrameNaturalHeight - h) / 2) + offset - (customFrameNaturalWidth * 0.15);
+            
             customSlots.push({
                 id: 'slot_' + Date.now(),
                 x: x,

@@ -44,13 +44,23 @@ function doPost(e) {
       }
     }
 
-    // 2. Buat Subfolder Khusus Sesi Ini
-    const sessionFolder = parentFolder.createFolder(sessionName);
+    // 2. Buat atau Dapatkan Folder Tanggal Hari Ini
+    const dateFolderName = Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyy-MM-dd");
+    let dateFolder;
+    const dateFolderIterator = parentFolder.getFoldersByName(dateFolderName);
+    if (dateFolderIterator.hasNext()) {
+      dateFolder = dateFolderIterator.next();
+    } else {
+      dateFolder = parentFolder.createFolder(dateFolderName);
+    }
+
+    // 3. Buat Subfolder Khusus Sesi Ini di dalam Folder Tanggal
+    const sessionFolder = dateFolder.createFolder(sessionName);
     
     // Set agar siapa saja yang punya link bisa melihat & download foto
     sessionFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
-    // 3. Simpan File-file yang Dikirim
+    // 4. Simpan File-file yang Dikirim
     // A. Foto Strip JPG
     if (data.stripJpgBase64) {
       saveBase64File(sessionFolder, data.stripJpgBase64, 'Foto_Strip.jpg', 'image/jpeg');

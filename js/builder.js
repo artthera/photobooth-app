@@ -14,11 +14,11 @@ function setupBuilder() {
     frameUntukGif.forEach((src, idx) => {
         const card = document.createElement('div');
         card.id = `palette-card-${idx}`;
-        card.className = `relative group bg-white rounded-xl overflow-hidden border cursor-pointer transition shadow-xs ${idx === 0 ? 'selected-photo-card border-blue-600 ring-2 ring-blue-500/30' : 'border-slate-200 hover:border-slate-400'}`;
+        card.className = `relative w-full aspect-[4/3] group bg-white rounded-xl overflow-hidden border cursor-pointer transition shadow-xs ${idx === 0 ? 'selected-photo-card border-blue-600 ring-2 ring-blue-500/30' : 'border-slate-200 hover:border-slate-400'}`;
         
         const img = document.createElement('img'); 
         img.src = src;
-        img.className = 'user-photo w-full h-20 md:h-24 object-cover pointer-events-none';
+        img.className = 'user-photo w-full h-full object-cover pointer-events-none';
         img.style.filter = filters[currentFilter].css; 
         
         const badge = document.createElement('div');
@@ -119,14 +119,14 @@ function selectFrame(frameDef) {
         // Drag & Drop Listeners
         slot.ondragover = (e) => { 
             e.preventDefault(); 
-            slot.classList.add('scale-95', 'opacity-75'); 
+            slot.classList.add('scale-95', 'ring-4', 'ring-blue-500', 'ring-inset', 'opacity-90', 'brightness-110'); 
         };
         slot.ondragleave = () => { 
-            slot.classList.remove('scale-95', 'opacity-75'); 
+            slot.classList.remove('scale-95', 'ring-4', 'ring-blue-500', 'ring-inset', 'opacity-90', 'brightness-110'); 
         };
         slot.ondrop = (e) => {
             e.preventDefault(); 
-            slot.classList.remove('scale-95', 'opacity-75');
+            slot.classList.remove('scale-95', 'ring-4', 'ring-blue-500', 'ring-inset', 'opacity-90', 'brightness-110');
             const shotIdxStr = e.dataTransfer.getData("text/plain");
             const shotIdx = parseInt(shotIdxStr !== "" ? shotIdxStr : activeSelectedPhotoIdx);
             if (!isNaN(shotIdx) && frameUntukGif[shotIdx]) {
@@ -138,13 +138,145 @@ function selectFrame(frameDef) {
     setTimeout(adjustFrameScale, 30);
 }
 
+window.slotTransforms = {};
+
 function assignPhotoToSlot(slot, shotIdx) {
     slot.dataset.shotIndex = shotIdx;
     const filterCSS = filters[currentFilter].css;
-    slot.innerHTML = `<img src="${frameUntukGif[shotIdx]}" class="user-photo w-full h-full object-cover pointer-events-none select-none" style="filter: ${filterCSS}" />`;
+    const isCustom = currentSelectedFrame && currentSelectedFrame.isCustom;
+    
+    // Remove pointer-events-none so img can receive pan/zoom events
+    slot.innerHTML = `<img src="${frameUntukGif[shotIdx]}" class="user-photo w-full h-full object-cover select-none" style="filter: ${filterCSS}; cursor: grab;" />`;
+    
     slot.classList.remove('border-dashed'); 
     slot.style.borderStyle = 'none'; 
     slot.style.backgroundColor = 'transparent'; 
+    
+    if (isCustom) {
+        slot.style.overflow = 'visible'; // Let user pan outside the boundaries
+    } else {
+        slot.style.overflow = 'hidden';
+    }
+
+    // Visual feedback for placement
+    slot.style.transform = 'scale(0.8)';
+    setTimeout(() => {
+        slot.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        slot.style.transform = 'scale(1)';
+    }, 20);
+
+    setupPanZoom(slot);
+}
+
+function setupPanZoom(slot) {
+    const slotId = slot.dataset.slot || slot.getAttribute('data-slot');
+    if (!slotId) return;
+
+    if (!window.slotTransforms[slotId]) {
+        window.slotTransforms[slotId] = { x: 0, y: 0, scale: 1 };
+    }
+
+    const img = slot.querySelector('img.user-photo');
+    if (!img) return;
+
+    // Clean up old listeners on this img if it was re-assigned
+    if (img._hasPanZoom) return;
+    img._hasPanZoom = true;
+
+    let isDragging = false;
+    let startX, startY, initialTx, initialTy;
+    let initialDistance = 0, initialScale = 1;
+
+    const applyTransform = () => {
+        const t = window.slotTransforms[slotId];
+        img.style.transform = `translate(${t.x}px, ${t.y}px) scale(${t.scale})`;
+    };
+    applyTransform();
+
+    img.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        img.style.cursor = 'grabbing';
+        startX = e.clientX;
+        startY = e.clientY;
+        initialTx = window.slotTransforms[slotId].x;
+        initialTy = window.slotTransforms[slotId].y;
+        e.preventDefault(); 
+    });
+
+    img.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+            initialDistance = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            initialScale = window.slotTransforms[slotId].scale;
+        } else {
+            isDragging = true;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            initialTx = window.slotTransforms[slotId].x;
+            initialTy = window.slotTransforms[slotId].y;
+        }
+        // Don't preventDefault here to allow native drop bubbling if needed, but it stops scrolling.
+        // If we want smooth pan, we must prevent default.
+        if (e.cancelable) e.preventDefault();
+    }, { passive: false });
+
+    const onMove = (clientX, clientY) => {
+        if (!isDragging) return;
+        const stage = document.getElementById('frameEditor');
+        const rect = stage.getBoundingClientRect();
+        const stageScale = rect.width / (currentSelectedFrame ? currentSelectedFrame.width : 400);
+
+        const dx = (clientX - startX) / stageScale;
+        const dy = (clientY - startY) / stageScale;
+
+        window.slotTransforms[slotId].x = initialTx + dx;
+        window.slotTransforms[slotId].y = initialTy + dy;
+        applyTransform();
+    };
+
+    window.addEventListener('mousemove', (e) => {
+        onMove(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2) {
+            const currentDistance = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            const pinchScale = currentDistance / initialDistance;
+            let newScale = initialScale * pinchScale;
+            newScale = Math.max(0.1, Math.min(newScale, 5));
+            window.slotTransforms[slotId].scale = newScale;
+            applyTransform();
+            if (e.cancelable) e.preventDefault();
+            return;
+        }
+        if (isDragging) {
+            onMove(e.touches[0].clientX, e.touches[0].clientY);
+            if (e.cancelable) e.preventDefault();
+        }
+    }, { passive: false });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+        img.style.cursor = 'grab';
+    });
+    window.addEventListener('touchend', () => {
+        isDragging = false;
+        initialDistance = 0;
+    });
+
+    img.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        let newScale = window.slotTransforms[slotId].scale + delta;
+        newScale = Math.max(0.1, Math.min(newScale, 5));
+        window.slotTransforms[slotId].scale = newScale;
+        applyTransform();
+    }, { passive: false });
 }
 
 function adjustFrameScale() {

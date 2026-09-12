@@ -77,13 +77,30 @@ function setupLiveVideoFramePreview() {
         slot.style.borderStyle = 'none';
         slot.style.backgroundColor = 'transparent';
 
+        const isCustom = currentSelectedFrame && currentSelectedFrame.isCustom;
+        if (isCustom) {
+            slot.style.overflow = 'visible';
+        }
+
+        // Apply user Pan/Zoom transformations
+        let transformStr = "";
+        const slotId = slot.dataset.slot || slot.getAttribute('data-slot');
+        if (window.slotTransforms && slotId && window.slotTransforms[slotId]) {
+            const t = window.slotTransforms[slotId];
+            transformStr = `transform: translate(${t.x}px, ${t.y}px) scale(${t.scale});`;
+        } else if (isCustom) {
+            transformStr = `transform: scale(1.05);`; // Default bleed
+        }
+
+        const baseCSS = `width: 100%; height: 100%; position: absolute; top: 0; left: 0; ${transformStr}`;
+
         if (videoUrl) {
             slot.innerHTML = `
-                <video src="${videoUrl}" autoplay loop muted playsinline class="user-video w-full h-full object-cover pointer-events-none" style="filter: ${filters[currentFilter].css}; width: 100%; height: 100%; object-fit: cover; display: block;"></video>
+                <video src="${videoUrl}" autoplay loop muted playsinline class="user-video object-cover pointer-events-none" style="filter: ${filters[currentFilter].css}; object-fit: cover; display: block; ${baseCSS}"></video>
             `;
         } else if (photoUrl) {
             slot.innerHTML = `
-                <img src="${photoUrl}" class="user-photo w-full h-full object-cover pointer-events-none" style="filter: ${filters[currentFilter].css}; width: 100%; height: 100%; object-fit: cover; display: block;" />
+                <img src="${photoUrl}" class="user-photo object-cover pointer-events-none" style="filter: ${filters[currentFilter].css}; object-fit: cover; display: block; ${baseCSS}" />
             `;
         }
     });
@@ -714,6 +731,7 @@ async function generateHighResStripCanvas(frameDef, scale = 3) {
             const photoSrc = frameUntukGif[shotIdx] || frameUntukGif[i % frameUntukGif.length];
 
             slotDataList.push({
+                slotId: edSlot ? (edSlot.dataset.slot || edSlot.getAttribute('data-slot')) : null,
                 x: Math.round((s.x / frameDef.width) * finalCanvas.width),
                 y: Math.round((s.y / frameDef.height) * finalCanvas.height),
                 w: Math.round((s.w / frameDef.width) * finalCanvas.width),
@@ -737,6 +755,7 @@ async function generateHighResStripCanvas(frameDef, scale = 3) {
             const computedRadius = Math.round(rawRadius * (scaleFactorX / scale) * scale);
 
             slotDataList.push({
+                slotId: edSlot ? (edSlot.dataset.slot || edSlot.getAttribute('data-slot')) : null,
                 x: Math.round((edRect.left - editorRect.left) * scaleFactorX),
                 y: Math.round((edRect.top - editorRect.top) * scaleFactorY),
                 w: Math.round(edRect.width * scaleFactorX),
@@ -762,6 +781,14 @@ async function generateHighResStripCanvas(frameDef, scale = 3) {
         s.style.color = 'transparent';
     });
 
+    if (frameDef.isCustom) {
+        const rootDiv = offscreen.firstElementChild;
+        if (rootDiv && rootDiv.tagName.toLowerCase() === 'div') {
+            rootDiv.classList.remove('bg-white');
+            rootDiv.style.backgroundColor = 'transparent';
+        }
+    }
+
     const overlayCanvas = await html2canvas(offscreen, {
         scale: scale,
         useCORS: true,
@@ -773,32 +800,71 @@ async function generateHighResStripCanvas(frameDef, scale = 3) {
     offscreen.innerHTML = '';
 
     // 3. Composite onto finalCanvas
-    // Base 1: Draw Frame Structure (background, borders, header, footer text)
-    ctx.drawImage(overlayCanvas, 0, 0, finalCanvas.width, finalCanvas.height);
+    // Fill white background for all exports so transparent edges become white (standard JPG behavior)
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
 
-    // Base 2: Draw each photo directly into its slot with TRUE COVER FIT (ZERO DISTORTION)
-    for (const slot of slotDataList) {
-        if (!slot.photoSrc) continue;
+    const drawPhotos = async () => {
+        for (const slot of slotDataList) {
+            if (!slot.photoSrc) continue;
 
-        const img = await new Promise((resolve) => {
-            const image = new Image();
-            image.onload = () => resolve(image);
-            image.onerror = () => resolve(null);
-            image.src = slot.photoSrc;
-        });
+            const img = await new Promise((resolve) => {
+                const image = new Image();
+                image.onload = () => resolve(image);
+                image.onerror = () => resolve(null);
+                image.src = slot.photoSrc;
+            });
 
-        if (img) {
-            ctx.save();
-            drawRoundedRectPath(ctx, slot.x, slot.y, slot.w, slot.h, slot.borderRadius);
-            ctx.clip();
+            if (img) {
+                let drawX = slot.x;
+                let drawY = slot.y;
+                let drawW = slot.w;
+                let drawH = slot.h;
 
-            if (canvasFilter && canvasFilter !== 'none') {
-                ctx.filter = canvasFilter;
+                ctx.save();
+                drawRoundedRectPath(ctx, drawX, drawY, drawW, drawH, slot.borderRadius);
+                ctx.clip(); // Clip to the exact slot boundary
+
+                if (canvasFilter && canvasFilter !== 'none') {
+                    ctx.filter = canvasFilter;
+                }
+
+                // Apply user Pan/Zoom transformations
+                let tx = 0, ty = 0, userScale = 1;
+                if (window.slotTransforms && slot.slotId && window.slotTransforms[slot.slotId]) {
+                    const t = window.slotTransforms[slot.slotId];
+                    tx = t.x * scale; // Scale to the final canvas coordinate space
+                    ty = t.y * scale;
+                    userScale = t.scale;
+                } else if (frameDef.isCustom) {
+                    userScale = 1.05; // Default bleed if no transform applied
+                }
+
+                // The CSS transform-origin is 50% 50% (center of the image)
+                const cx = drawX + drawW / 2;
+                const cy = drawY + drawH / 2;
+
+                ctx.translate(cx, cy);
+                ctx.translate(tx, ty);
+                ctx.scale(userScale, userScale);
+                ctx.translate(-cx, -cy);
+
+                drawImageCover(ctx, img, drawX, drawY, drawW, drawH);
+                ctx.restore();
             }
-
-            drawImageCover(ctx, img, slot.x, slot.y, slot.w, slot.h);
-            ctx.restore();
         }
+    };
+
+    if (frameDef.isCustom) {
+        // Base 1: Draw photos directly into slots FIRST (behind the overlay)
+        await drawPhotos();
+        // Base 2: Draw the PNG overlay ON TOP of the photos
+        ctx.drawImage(overlayCanvas, 0, 0, finalCanvas.width, finalCanvas.height);
+    } else {
+        // Original behavior for default templates (draw CSS background first)
+        ctx.drawImage(overlayCanvas, 0, 0, finalCanvas.width, finalCanvas.height);
+        // Then draw photos ON TOP
+        await drawPhotos();
     }
 
     // Base 3: If Custom Frame has overlayUrl, draw the overlay on top

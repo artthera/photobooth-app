@@ -1,1320 +1,935 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Eazy Fotobooth - Live Video, Photo Strip & GIF</title>
-    
-    <!-- Libraries -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gifshot/0.3.2/gifshot.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    
-    <!-- Fonts -->
+    <title>Eazy Fotobooth - Software Photobooth Modern, Live Video & Strip HD</title>
+    <meta name="description" content="Eazy Fotobooth adalah software photobooth modern, interaktif, dan fleksibel untuk wedding, birthday, corporate event, dan self-photo studio. Menghasilkan Photo Strip Ultra-HD, Live Video Motion MP4, dan Animasi GIF.">
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Inter:wght@400;600;800;900&family=Montserrat:wght@400;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Poppins:wght@400;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    
-    <!-- Modular Custom Stylesheet -->
-    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                        heading: ['"Outfit"', 'sans-serif'],
+                        handwriting: ['"Caveat"', 'cursive'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Style -->
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .heading-font {
+            font-family: 'Outfit', sans-serif;
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(1deg); }
+        }
+        .animate-float {
+            animation: float-slow 4s ease-in-out infinite;
+        }
+        @keyframes pulse-subtle {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.85; }
+        }
+        .live-dot {
+            animation: pulse-subtle 1.5s infinite;
+        }
+    </style>
 </head>
-<body class="min-h-screen min-h-[100dvh] h-[100dvh] flex flex-col select-none bg-slate-50 text-slate-900 overflow-hidden">
+<body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
 
-    <!-- Flash Screen Effect -->
-    <div id="flashOverlay" class="flash-overlay"></div>
+    <!-- ================= 1. NAVIGATION BAR ================= -->
+    <header class="sticky top-0 z-50 glass-nav transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+            
+            <!-- Brand Logo -->
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition">
+                    <i class="ph ph-camera text-2xl font-bold"></i>
+                </div>
+                <div>
+                    <span class="heading-font font-black text-lg sm:text-xl tracking-tight text-slate-900 leading-none block">
+                        EAZY FOTOBOOTH
+                    </span>
+                    <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest block mt-0.5">
+                        Modern Photobooth Engine
+                    </span>
+                </div>
+            </a>
 
-    <!-- Top App Navigation Header (Shown during Photobooth session) -->
-    <header id="mainAppHeader" class="p-3 sm:p-4 flex justify-between items-center z-[100] absolute w-full top-0 pointer-events-none hide">
-        <div class="flex items-center gap-2.5 bg-white/90 backdrop-blur-md px-3.5 sm:px-4 py-2 rounded-full border border-slate-200/80 pointer-events-auto shadow-sm">
-            <span class="w-2.5 h-2.5 rounded-full bg-blue-600 animate-ping"></span>
-            <div id="brandHeaderTitle" class="text-xs font-black tracking-widest text-slate-800 uppercase">EAZY FOTOBOOTH</div>
-        </div>
-        <div class="flex items-center gap-2 pointer-events-auto">
-            <!-- Operator Button to access Dashboard Web -->
-            <button id="btnGoToAdmin" title="Buka Dashboard Web" class="bg-white/95 hover:bg-white text-slate-800 backdrop-blur-md px-3.5 sm:px-4 py-2 rounded-full text-xs font-black flex items-center gap-2 border border-slate-200 shadow-sm transition hover:border-slate-300 active:scale-95">
-                <i class="ph ph-sliders text-blue-600 text-base font-bold"></i>
-                <span>Dashboard Web</span>
-            </button>
-            <div id="brandHeaderBadge" class="bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-full border border-slate-200/80 text-[11px] font-bold text-slate-700 hidden sm:flex items-center gap-1.5 shadow-sm">
-                <i class="ph ph-sparkle text-amber-500"></i> HD PHOTO & LIVE MOTION
+            <!-- Desktop Navigation Links -->
+            <nav class="hidden lg:flex items-center gap-7 text-xs font-bold text-slate-600">
+                <a href="#tentang" class="hover:text-blue-600 transition">Tentang Kami</a>
+                <a href="#fitur" class="hover:text-blue-600 transition">Fitur Utama</a>
+                <a href="#katalog-frame" class="hover:text-blue-600 transition">Koleksi Frame</a>
+                <a href="#solusi-acara" class="hover:text-blue-600 transition">Solusi Acara</a>
+                <a href="#cara-kerja" class="hover:text-blue-600 transition">Cara Kerja</a>
+                <a href="#faq" class="hover:text-blue-600 transition">FAQ</a>
+            </nav>
+
+            <!-- Quick Action Buttons -->
+            <div class="flex items-center gap-2.5">
+                <a href="app.html" class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-black text-xs sm:text-sm shadow-md shadow-blue-500/25 transition active:scale-95">
+                    <span>🚀 Buka Aplikasi</span>
+                    <i class="ph ph-arrow-right font-bold hidden sm:inline"></i>
+                </a>
             </div>
         </div>
     </header>
 
-    <!-- Main Dynamic Application Container -->
-    <main class="flex-grow flex items-center justify-center relative overflow-hidden h-[100dvh] w-full bg-slate-50">
+    <!-- ================= 2. HERO SECTION ================= -->
+    <section class="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden bg-gradient-to-b from-blue-50/70 via-slate-50 to-slate-50">
         
-        <!-- Background Layers -->
-        <!-- Layer 1: Live Mirror Camera Feed Background -->
-        <div id="cameraContainer" class="absolute inset-0 w-full h-full z-0 overflow-hidden bg-slate-900">
-            <video id="kamera" autoplay playsinline muted class="w-full h-full object-cover transition-all duration-300"></video>
-        </div>
+        <!-- Ambient Gradient Blobs -->
+        <div class="absolute top-12 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-blue-400/15 via-purple-400/15 to-pink-400/15 rounded-full blur-3xl pointer-events-none -z-10"></div>
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-blue-300/10 rounded-full blur-2xl pointer-events-none -z-10"></div>
 
-        <!-- Layer 2: Custom Wallpaper Background Image -->
-        <div id="customBgImageLayer" class="absolute inset-0 w-full h-full z-0 bg-cover bg-center transition-all duration-500 opacity-0 pointer-events-none"></div>
-
-        <!-- Layer 3: Custom Solid or Gradient Background Color -->
-        <div id="customBgColorLayer" class="absolute inset-0 w-full h-full z-0 transition-all duration-500 opacity-0 pointer-events-none"></div>
-
-        <!-- Layer 4: Global Light Tint & Blur Overlay -->
-        <div id="globalBgOverlay" class="absolute inset-0 z-0 bg-white/20 pointer-events-none transition-all duration-300"></div>
-
-        <!-- ================= STATE -1: FULL CLEAN WEB DASHBOARD (DEFAULT ON LOAD) ================= -->
-        <div id="state-admin" class="w-full h-full overflow-y-auto flex flex-col bg-slate-50 absolute top-0 left-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
             
-            <!-- Top Dashboard Admin Header -->
-            <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 px-4 sm:px-8 py-3.5 flex items-center justify-between shadow-xs">
-                <div class="flex items-center gap-3.5">
-                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-xl shadow-md shrink-0">
-                        <i class="ph ph-sliders font-bold"></i>
-                    </div>
-                    <div>
+            <!-- Hero Pill Badge -->
+            <div class="inline-flex items-center gap-2 bg-white/90 border border-blue-200/80 px-4 py-1.5 rounded-full text-xs font-extrabold text-blue-700 shadow-xs mb-6 backdrop-blur-sm">
+                <span class="w-2 h-2 rounded-full bg-blue-600 live-dot"></span>
+                <span>✨ SOFTWARE PHOTOBOOTH NEXT-GEN INDONESIA</span>
+                <span class="bg-blue-100 text-blue-800 text-[10px] font-black px-2 py-0.5 rounded-full">v3.0 Ultra-HD</span>
+            </div>
+
+            <!-- Main Headline -->
+            <h1 class="heading-font text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.15] max-w-4xl">
+                Abadikan Setiap Momen Seru dengan <span class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">Eazy Fotobooth</span>
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mt-5 leading-relaxed font-medium">
+                Software photobooth all-in-one yang cepat, estetik, dan otomatis. Menghasilkan <b>Photo Strip Ultra-HD</b>, <b>Live Video Motion (MP4)</b>, serta <b>Animasi GIF</b> lengkap dengan scan QR ke HP pelanggan & auto-sync Google Drive.
+            </p>
+
+            <!-- Primary CTAs -->
+            <div class="flex flex-wrap items-center justify-center gap-3.5 mt-8 w-full max-w-md sm:max-w-none">
+                <a href="app.html" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-8 py-4 rounded-2xl font-black text-sm shadow-xl shadow-blue-500/25 transition active:scale-95">
+                    <i class="ph ph-camera text-xl text-amber-300 font-bold"></i>
+                    <span>LUNCURKAN PHOTOBOOTH</span>
+                </a>
+            </div>
+
+            <!-- Highlights Checklist -->
+            <div class="flex flex-wrap items-center justify-center gap-y-2 gap-x-6 text-xs font-bold text-slate-500 mt-7">
+                <span class="flex items-center gap-1.5"><i class="ph ph-check-circle-fill text-emerald-500 text-base"></i> 3-in-1 Output Sekaligus</span>
+                <span class="flex items-center gap-1.5"><i class="ph ph-check-circle-fill text-emerald-500 text-base"></i> Deteksi Green Screen AI</span>
+                <span class="flex items-center gap-1.5"><i class="ph ph-check-circle-fill text-emerald-500 text-base"></i> Zero Stretch Guaranteed</span>
+                <span class="flex items-center gap-1.5"><i class="ph ph-check-circle-fill text-emerald-500 text-base"></i> 100% Tablet & iPad Ready</span>
+            </div>
+
+            <!-- Interactive Visual Showcase Mockup -->
+            <div class="mt-12 w-full max-w-5xl relative">
+                <div class="bg-white p-3 sm:p-5 rounded-3xl sm:rounded-[36px] border border-slate-200/90 shadow-2xl shadow-blue-500/10 relative overflow-hidden">
+                    
+                    <!-- Top Window Controls -->
+                    <div class="flex items-center justify-between px-3 pb-3 border-b border-slate-100 mb-4">
                         <div class="flex items-center gap-2">
-                            <span class="text-sm sm:text-base font-black tracking-tight text-slate-900">EAZY FOTOBOOTH</span>
-                            <span class="bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Console Admin</span>
+                            <span class="w-3 h-3 rounded-full bg-red-400"></span>
+                            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                            <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+                            <span class="text-[11px] font-bold text-slate-400 ml-2 font-mono">eazy-fotobooth-suite://live-session</span>
                         </div>
-                        <p class="text-[11px] text-slate-500 font-medium hidden sm:block">Kelola konfigurasi acara, template frame, dan visual photobooth</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <div class="hidden md:flex items-center gap-2 bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span>
-                        <span>System Ready</span>
-                    </div>
-                    <!-- Quick Launch Button -->
-                    <button type="button" class="btn-launch-booth-trigger bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-5 sm:px-7 py-2.5 sm:py-3 rounded-2xl font-black text-xs sm:text-sm transition shadow-[0_8px_20px_-4px_rgba(37,99,235,0.4)] flex items-center gap-2 active:scale-95">
-                        <span>🚀 BUKA PHOTOBOOTH</span>
-                        <i class="ph ph-arrow-square-out font-bold text-base"></i>
-                    </button>
-                </div>
-            </header>
-
-            <!-- Main Dashboard Body with Sidebar & Content Area -->
-            <div class="flex-grow flex flex-col md:flex-row w-full max-w-7xl mx-auto px-3 sm:px-6 md:px-8 py-6 gap-6 pb-36">
-                
-                <!-- Left Sidebar Navigation Menu -->
-                <aside class="w-full md:w-64 shrink-0 flex flex-col gap-2.5">
-                    <div class="bg-white p-3 rounded-3xl border border-slate-200 shadow-xs flex flex-row md:flex-col gap-1 overflow-x-auto scrollbar-none">
-                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-black transition flex items-center gap-2.5 shrink-0 bg-blue-600 text-white shadow-xs" data-target="dashSectionOverview">
-                            <i class="ph ph-gauge text-base"></i> <span>Ringkasan & Status</span>
-                        </button>
-                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionBranding">
-                            <i class="ph ph-text-t text-base"></i> <span>Branding & Acara</span>
-                        </button>
-                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionFrames">
-                            <i class="ph ph-squares-four text-base"></i> <span>Template Frame</span>
-                        </button>
-                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionCustomStudio">
-                            <i class="ph ph-magic-wand text-base"></i> <span>Studio Frame Custom</span>
-                        </button>
-                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionVisual">
-                            <i class="ph ph-palette text-base"></i> <span>Background & Font</span>
-                        </button>
-                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionGdrive">
-                            <i class="ph ph-google-drive-logo text-emerald-600 text-base"></i> <span>Google Drive Cloud</span>
-                        </button>
-                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionPresets">
-                            <i class="ph ph-floppy-disk text-base"></i> <span>Backup & Preset</span>
-                        </button>
-                    </div>
-
-                    <!-- Quick Action Guidance Card -->
-                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-3xl border border-blue-100 hidden md:flex flex-col gap-2.5">
-                        <div class="flex items-center gap-2 text-xs font-black text-blue-900">
-                            <i class="ph ph-info text-blue-600 text-base"></i>
-                            <span>Mode Kiosk Booth</span>
+                        <div class="flex items-center gap-2 text-xs font-bold text-slate-500">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span>Studio 4K Ready</span>
                         </div>
-                        <p class="text-[11px] text-blue-700 leading-relaxed font-medium">
-                            Jalankan layar photobooth pada mode fullscreen browser (F11 di PC / Add to Home Screen di iPad) untuk pengalaman booth profesional.
-                        </p>
                     </div>
-                </aside>
 
-                <!-- Right Main Dashboard Content Sections Area -->
-                <main class="flex-grow flex flex-col gap-6">
-
-                    <!-- ================= SECTION 1: OVERVIEW & STATUS ================= -->
-                    <section id="dashSectionOverview" class="dash-section flex flex-col gap-5">
+                    <!-- 3 Showcase Columns -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         
-                        <!-- Welcome Banner -->
-                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-                            <div>
-                                <div class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider mb-2">
-                                    <i class="ph ph-sparkle text-amber-500"></i> Eazy Fotobooth Console v3.0
-                                </div>
-                                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Selamat Datang di Panel Admin</h2>
-                                <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Konfigurasikan seluruh detail acara Anda, lalu luncurkan sesi photobooth untuk pelanggan.</p>
+                        <!-- Column 1: Kiosk Camera Stage -->
+                        <div class="bg-slate-900 rounded-2xl p-4 text-white flex flex-col justify-between min-h-[280px] relative overflow-hidden">
+                            <div class="flex justify-between items-center z-10">
+                                <span class="bg-red-600 text-white text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> REC LIVE
+                                </span>
+                                <span class="bg-black/50 text-[10px] font-bold px-2 py-0.5 rounded">Pose 2/4</span>
                             </div>
-                            <button type="button" class="btn-launch-booth-trigger bg-slate-900 hover:bg-slate-800 text-white px-7 py-3.5 rounded-2xl font-black text-xs sm:text-sm transition shadow-md flex items-center justify-center gap-2 shrink-0 active:scale-95">
-                                <i class="ph ph-camera text-base text-amber-300"></i> Buka Layar Booth
-                            </button>
+                            <div class="my-auto text-center z-10 py-6">
+                                <div class="text-5xl font-black text-amber-300 drop-shadow-md">3</div>
+                                <div class="text-xs font-bold tracking-widest text-slate-300 mt-1 uppercase">Auto Countdown</div>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-md p-2 rounded-xl flex items-center justify-between text-xs z-10">
+                                <span class="font-bold">📸 Jepretan Otomatis</span>
+                                <span class="text-emerald-400 font-bold">HD Live Motion</span>
+                            </div>
+                            <!-- Background Pattern -->
+                            <div class="absolute inset-0 bg-gradient-to-tr from-slate-950 to-blue-950 opacity-90"></div>
                         </div>
 
-                        <!-- 4 Telemetry Status Cards -->
-                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-                            <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs flex flex-col justify-between gap-3">
-                                <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
-                                    <i class="ph ph-camera"></i>
-                                </div>
-                                <div>
-                                    <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Format Output</div>
-                                    <div class="text-lg sm:text-xl font-black text-slate-900 mt-0.5">3 in 1 HD</div>
-                                    <div class="text-[10px] text-emerald-600 font-bold mt-0.5">JPG &bull; MP4 &bull; GIF</div>
-                                </div>
+                        <!-- Column 2: Photo Strip Output Preview -->
+                        <div class="bg-gradient-to-b from-blue-50 to-indigo-50 rounded-2xl p-4 flex flex-col items-center justify-between border border-blue-100 min-h-[280px]">
+                            <div class="w-full flex justify-between items-center">
+                                <span class="text-[10px] font-black text-blue-700 bg-blue-100 px-2.5 py-0.5 rounded-full">OUTPUT #1</span>
+                                <span class="text-[10px] font-bold text-slate-500">Korean 4-Cut</span>
                             </div>
 
-                            <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs flex flex-col justify-between gap-3">
-                                <div class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
-                                    <i class="ph ph-squares-four"></i>
-                                </div>
-                                <div>
-                                    <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Template Frame</div>
-                                    <div class="text-lg sm:text-xl font-black text-slate-900 mt-0.5" id="dashCountFrames">5 Active</div>
-                                    <div class="text-[10px] text-purple-600 font-bold mt-0.5">IndexedDB Sync</div>
-                                </div>
+                            <!-- Mini Korean Strip Graphic -->
+                            <div class="w-28 bg-white p-2 rounded-xl shadow-lg border border-slate-200 my-2 flex flex-col gap-1.5 select-none">
+                                <div class="text-[6px] font-black text-center tracking-widest uppercase text-slate-700">EAZY FOTOBOOTH</div>
+                                <div class="w-full h-8 bg-slate-200 rounded flex items-center justify-center text-[8px] font-bold text-slate-400">Pose 1</div>
+                                <div class="w-full h-8 bg-slate-200 rounded flex items-center justify-center text-[8px] font-bold text-slate-400">Pose 2</div>
+                                <div class="w-full h-8 bg-slate-200 rounded flex items-center justify-center text-[8px] font-bold text-slate-400">Pose 3</div>
+                                <div class="w-full h-8 bg-slate-200 rounded flex items-center justify-center text-[8px] font-bold text-slate-400">Pose 4</div>
+                                <div class="text-[5px] font-bold text-center text-slate-400">&hearts; SWEET MEMORIES &hearts;</div>
                             </div>
 
-                            <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs flex flex-col justify-between gap-3">
-                                <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
-                                    <i class="ph ph-google-drive-logo"></i>
-                                </div>
-                                <div>
-                                    <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Cloud Storage</div>
-                                    <div class="text-lg sm:text-xl font-black text-slate-900 mt-0.5" id="dashGdriveStatusText">Auto-Upload</div>
-                                    <div class="text-[10px] text-emerald-600 font-bold mt-0.5">Google Drive Ready</div>
-                                </div>
-                            </div>
-
-                            <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs flex flex-col justify-between gap-3">
-                                <div class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
-                                    <i class="ph ph-devices"></i>
-                                </div>
-                                <div>
-                                    <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Touch & Tablet</div>
-                                    <div class="text-lg sm:text-xl font-black text-slate-900 mt-0.5">100% Friendly</div>
-                                    <div class="text-[10px] text-amber-600 font-bold mt-0.5">Portrait & Landscape</div>
-                                </div>
+                            <div class="text-[11px] font-bold text-blue-800 text-center">
+                                Cetak Super Tajam &bull; Zero Distortion
                             </div>
                         </div>
 
-                        <!-- Quick Start Steps Workflow -->
-                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-4">
-                            <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                                <i class="ph ph-rocket-launch text-blue-600 text-lg"></i> Alur Kerja Cepat Operator
+                        <!-- Column 3: Customer Mobile Experience -->
+                        <div class="bg-slate-900 rounded-2xl p-4 text-white flex flex-col justify-between min-h-[280px] border border-slate-800 relative">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[10px] font-black text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-800">SCAN QR HP</span>
+                                <span class="text-[10px] text-slate-400">Instant Download</span>
+                            </div>
+
+                            <div class="flex flex-col items-center my-auto py-2">
+                                <div class="w-20 h-20 bg-white rounded-2xl p-2 flex items-center justify-center shadow-lg">
+                                    <i class="ph ph-qr-code text-5xl text-slate-900"></i>
+                                </div>
+                                <span class="text-[11px] font-bold text-slate-200 mt-2">Scan kamera HP &rarr; Buka Galeri</span>
+                                <span class="text-[9px] text-emerald-400 font-bold mt-0.5 flex items-center gap-1">
+                                    <i class="ph ph-cloud-arrow-up"></i> Auto-Sync Google Drive
+                                </span>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ================= 3. STATS & TELEMETRY BAR ================= -->
+    <section class="border-y border-slate-200 bg-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div class="flex flex-col items-center">
+                <div class="heading-font text-3xl sm:text-4xl font-black text-blue-600">3-in-1</div>
+                <div class="text-xs font-bold text-slate-800 mt-1">Photo + Video + GIF</div>
+                <div class="text-[10px] text-slate-400">Dihasilkan dalam 1 sesi foto</div>
+            </div>
+            <div class="flex flex-col items-center">
+                <div class="heading-font text-3xl sm:text-4xl font-black text-purple-600">8+ Preset</div>
+                <div class="text-xs font-bold text-slate-800 mt-1">Template Frame Bawaan</div>
+                <div class="text-[10px] text-slate-400">Korean 4-cut, receipt, Y2K, film</div>
+            </div>
+            <div class="flex flex-col items-center">
+                <div class="heading-font text-3xl sm:text-4xl font-black text-emerald-600">100%</div>
+                <div class="text-xs font-bold text-slate-800 mt-1">Touchscreen & Tablet</div>
+                <div class="text-[10px] text-slate-400">iPad, Android Tab, Kiosk PC</div>
+            </div>
+            <div class="flex flex-col items-center">
+                <div class="heading-font text-3xl sm:text-4xl font-black text-amber-500">Cloud</div>
+                <div class="text-xs font-bold text-slate-800 mt-1">Google Drive Auto-Sync</div>
+                <div class="text-[10px] text-slate-400">Backup otomatis tanpa server luar</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 4. ABOUT / PROFILE SECTION ================= -->
+    <section id="tentang" class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                
+                <!-- Left: Story & Mission -->
+                <div>
+                    <div class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider mb-4">
+                        <i class="ph ph-sparkle text-amber-500"></i> PROFIL EAZY FOTOBOOTH
+                    </div>
+                    <h2 class="heading-font text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+                        Software Photobooth Modern untuk Pengalaman Acara yang Tak Terlupakan
+                    </h2>
+                    <p class="text-sm sm:text-base text-slate-600 mt-4 leading-relaxed font-medium">
+                        <b>Eazy Fotobooth</b> dirancang khusus untuk memenuhi kebutuhan Event Organizer, Fotografer, Wedding Planner, dan Pemilik Bisnis Self-Photo Studio di era digital. Kami menggabungkan kecepatan, estetika visual ala photobox Korea, dan kemudahan pengoperasian mandiri (self-service booth).
+                    </p>
+                    <p class="text-sm sm:text-base text-slate-600 mt-3 leading-relaxed font-medium">
+                        Dengan dukungan teknologi web modern, Eazy Fotobooth dapat dijalankan langsung di browser pada laptop, PC Kiosk touchscreen, hingga tablet iPad/Android tanpa memerlukan instalasi software yang berat dan rumit.
+                    </p>
+
+                    <!-- 4 Feature Pillars -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+                        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
+                            <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg mb-2">
+                                <i class="ph ph-lightning font-bold"></i>
+                            </div>
+                            <h4 class="text-xs font-black text-slate-900 uppercase">Cepat & Zero Lag</h4>
+                            <p class="text-[11px] text-slate-500 mt-1 leading-snug">Proses jepret hingga hasil selesai kurang dari 5 detik.</p>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
+                            <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg mb-2">
+                                <i class="ph ph-magic-wand font-bold"></i>
+                            </div>
+                            <h4 class="text-xs font-black text-slate-900 uppercase">AI Chroma-Key Studio</h4>
+                            <p class="text-[11px] text-slate-500 mt-1 leading-snug">Deteksi green screen otomatis untuk frame kustom tanpa batas.</p>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
+                            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg mb-2">
+                                <i class="ph ph-qr-code font-bold"></i>
+                            </div>
+                            <h4 class="text-xs font-black text-slate-900 uppercase">Mobile QR Gallery</h4>
+                            <p class="text-[11px] text-slate-500 mt-1 leading-snug">Tampilan mobile khusus tamu untuk download foto & video instan.</p>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
+                            <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg mb-2">
+                                <i class="ph ph-palette font-bold"></i>
+                            </div>
+                            <h4 class="text-xs font-black text-slate-900 uppercase">Kustomisasi Penuh</h4>
+                            <p class="text-[11px] text-slate-500 mt-1 leading-snug">Ubah branding, wallpaper, logo, font, dan teks acara sesuka hati.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Visual Card -->
+                <div class="relative">
+                    <div class="bg-gradient-to-tr from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+                        <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-white/10 rounded-full blur-2xl"></div>
+                        <div class="relative z-10">
+                            <span class="text-xs font-extrabold uppercase tracking-widest text-blue-200 block mb-2">KEMUDAHAN SAT-SET</span>
+                            <h3 class="heading-font text-2xl sm:text-3xl font-black leading-tight">
+                                Dari Pesta Pernikahan hingga Aktivasi Brand Internasional
                             </h3>
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3.5">
-                                    <span class="w-7 h-7 rounded-xl bg-blue-600 text-white font-black text-xs flex items-center justify-center shrink-0">1</span>
-                                    <div>
-                                        <h4 class="text-xs font-black text-slate-800">Atur Identitas & Acara</h4>
-                                        <p class="text-[11px] text-slate-500 mt-0.5">Kustomisasi judul acara, badge, dan background visual sesuai tema pesta.</p>
-                                    </div>
+                            <p class="text-xs sm:text-sm text-blue-100 mt-3 leading-relaxed">
+                                Eazy Fotobooth telah dirancang agar siapa saja dapat mengoperasikannya dalam hitungan menit. Cukup hubungkan kamera atau webcam, buka aplikasi di browser, dan biarkan tamu menikmati pengalaman berfoto mandiri yang seru!
+                            </p>
+
+                            <div class="border-t border-white/20 pt-6 mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <div>
+                                    <div class="text-xs font-bold text-blue-200">Ingin Menguji Fitur Sekarang?</div>
+                                    <div class="text-sm font-black text-white mt-0.5">Mulai Simulasi Interaktif &rarr;</div>
                                 </div>
-                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3.5">
-                                    <span class="w-7 h-7 rounded-xl bg-purple-600 text-white font-black text-xs flex items-center justify-center shrink-0">2</span>
-                                    <div>
-                                        <h4 class="text-xs font-black text-slate-800">Pilih / Buat Frame</h4>
-                                        <p class="text-[11px] text-slate-500 mt-0.5">Aktifkan template bawaan atau upload frame custom dengan Studio Green Screen.</p>
-                                    </div>
-                                </div>
-                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3.5">
-                                    <span class="w-7 h-7 rounded-xl bg-emerald-600 text-white font-black text-xs flex items-center justify-center shrink-0">3</span>
-                                    <div>
-                                        <h4 class="text-xs font-black text-slate-800">Luncurkan Photobooth</h4>
-                                        <p class="text-[11px] text-slate-500 mt-0.5">Klik tombol Buka Photobooth untuk memulai sesi mandiri pelanggan.</p>
-                                    </div>
-                                </div>
+                                <a href="app.html?mode=kiosk" class="bg-white text-blue-700 hover:bg-blue-50 px-6 py-3 rounded-xl font-black text-xs transition shadow-md active:scale-95 shrink-0">
+                                    Buka Booth Sekarang
+                                </a>
                             </div>
                         </div>
-
-                    </section>
-
-                    <!-- ================= SECTION 2: BRANDING & EVENT TEXTS ================= -->
-                    <section id="dashSectionBranding" class="dash-section hide flex flex-col gap-5">
-                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-6">
-                            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
-                                <div>
-                                    <h3 class="text-lg font-black text-slate-900">Identitas & Teks Beranda Acara</h3>
-                                    <p class="text-xs text-slate-500 font-medium mt-0.5">Ubah judul acara, badge, dan pesan sambutan yang tampil pada layar pelanggan.</p>
-                                </div>
-                                <button type="button" class="btn-save-dash bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                                    <i class="ph ph-floppy-disk"></i> Simpan
-                                </button>
-                            </div>
-
-                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                <div class="flex flex-col gap-4">
-                                    <div>
-                                        <label class="text-xs font-bold text-slate-700 block mb-1.5">Nama Brand Aplikasi (Header Kiri)</label>
-                                        <input type="text" id="themeBrandName" placeholder="Contoh: EAZY FOTOBOOTH" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 font-bold outline-none focus:border-blue-500 transition" />
-                                    </div>
-
-                                    <div>
-                                        <label class="text-xs font-bold text-slate-700 block mb-1.5">Badge Header Kanan Atas</label>
-                                        <input type="text" id="themeBrandBadge" placeholder="Contoh: HD PHOTO & LIVE MOTION" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 font-medium outline-none focus:border-blue-500 transition" />
-                                    </div>
-
-                                    <div>
-                                        <label class="text-xs font-bold text-slate-700 block mb-1.5">Teks Badge Beranda (Atas Judul)</label>
-                                        <input type="text" id="themeLandingBadge" placeholder="Contoh: KOREAN STYLE PHOTOBOOTH / WEDDING CELEBRATION" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 font-medium outline-none focus:border-blue-500 transition" />
-                                    </div>
-
-                                    <div>
-                                        <label class="text-xs font-bold text-slate-700 block mb-1.5">Judul Utama Beranda (Main Headline)</label>
-                                        <input type="text" id="themeLandingTitle" placeholder="Contoh: EAZY FOTOBOOTH / SWEET 17 SARAH / WEDDING OF ALEX & DIANA" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-black text-slate-900 outline-none focus:border-blue-500 transition" />
-                                    </div>
-
-                                    <div>
-                                        <label class="text-xs font-bold text-slate-700 block mb-1.5">Tagline / Pesan Singkat Beranda</label>
-                                        <textarea id="themeLandingSubtitle" rows="3" placeholder="Tuliskan ucapan singkat..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 font-medium outline-none focus:border-blue-500 transition resize-none"></textarea>
-                                    </div>
-
-                                    <div>
-                                        <label class="text-xs font-bold text-slate-700 block mb-1.5">Teks Tombol Mulai Foto</label>
-                                        <input type="text" id="themeLandingBtnText" placeholder="Contoh: TAP TO START" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 font-bold outline-none focus:border-blue-500 transition" />
-                                    </div>
-                                </div>
-
-                                <!-- Live Interactive Tablet Mockup Preview -->
-                                <div class="bg-slate-100 p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center">
-                                    <div class="text-[11px] font-black text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                                        <i class="ph ph-device-tablet text-blue-600 text-base"></i> Live Preview Layar Kiosk
-                                    </div>
-                                    <div class="w-full max-w-sm bg-white rounded-3xl border border-slate-300 shadow-xl p-6 sm:p-8 flex flex-col items-center text-center relative overflow-hidden">
-                                        <span id="mockupBadge" class="bg-blue-50 text-blue-600 border border-blue-200 text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-wider mb-3">KOREAN STYLE PHOTOBOOTH</span>
-                                        <h3 id="mockupTitle" class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight mb-2">EAZY FOTOBOOTH</h3>
-                                        <p id="mockupSubtitle" class="text-[11px] text-slate-500 line-clamp-2 mb-6 font-medium">Abadikan setiap pose secara otomatis dengan 3 format hasil.</p>
-                                        <div id="mockupBtn" class="bg-blue-600 text-white px-7 py-3 rounded-full text-xs font-black shadow-md flex items-center gap-2">
-                                            <span id="mockupBtnText">TAP TO START</span> <i class="ph ph-hand-tap text-amber-300"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-[10px] text-slate-400 font-medium mt-3 text-center">Preview terupdate seketika saat Anda mengetik di formulir.</p>
-                                </div>
-                            </div>
-
-                            <!-- Sub Section: Panduan & Hasil Texts -->
-                            <div class="border-t border-slate-100 pt-6 grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col gap-3">
-                                    <h4 class="text-xs font-black text-blue-600 uppercase tracking-wider flex items-center gap-1.5">
-                                        <i class="ph ph-info"></i> Teks Halaman Panduan
-                                    </h4>
-                                    <div>
-                                        <label class="text-[10px] font-bold text-slate-600 block mb-1">Badge Panduan</label>
-                                        <input type="text" id="themeGuideBadge" placeholder="Panduan Singkat" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 font-medium" />
-                                    </div>
-                                    <div>
-                                        <label class="text-[10px] font-bold text-slate-600 block mb-1">Judul Panduan</label>
-                                        <input type="text" id="themeGuideTitle" placeholder="CARA KERJA EAZY FOTOBOOTH" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 font-medium" />
-                                    </div>
-                                </div>
-
-                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col gap-3">
-                                    <h4 class="text-xs font-black text-pink-600 uppercase tracking-wider flex items-center gap-1.5">
-                                        <i class="ph ph-sparkle"></i> Teks Halaman Hasil
-                                    </h4>
-                                    <div>
-                                        <label class="text-[10px] font-bold text-slate-600 block mb-1">Badge Hasil</label>
-                                        <input type="text" id="themeResultsBadge" placeholder="HASIL SIAP DI-DOWNLOAD" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 font-medium" />
-                                    </div>
-                                    <div>
-                                        <label class="text-[10px] font-bold text-slate-600 block mb-1">Judul Hasil</label>
-                                        <input type="text" id="themeResultsTitle" placeholder="YOUR PHOTOBOOTH MOMENTS" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 font-medium" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- ================= SECTION 3: TEMPLATE FRAME ================= -->
-                    <section id="dashSectionFrames" class="dash-section hide flex flex-col gap-5">
-                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-5">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
-                                <div>
-                                    <h3 class="text-lg font-black text-slate-900">Daftar Template Frame Event</h3>
-                                    <p class="text-xs text-slate-500 font-medium mt-0.5">Template frame yang aktif dan dapat dipilih oleh pelanggan saat berfoto.</p>
-                                </div>
-                                <div class="flex flex-wrap items-center gap-2">
-                                    <button type="button" id="btnDashManageAllFrames" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-200">
-                                        <i class="ph ph-squares-four text-blue-600"></i> Kelola Semua Frame
-                                    </button>
-                                    <button type="button" id="btnDashOpenCustomStudio" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-sm">
-                                        <i class="ph ph-magic-wand text-amber-300"></i> + Upload Frame Custom
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Dynamic Frame Grid Container -->
-                            <div id="dashFrameGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-                                <!-- Populated by JS -->
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- ================= SECTION 4: STUDIO FRAME CUSTOM ================= -->
-                    <section id="dashSectionCustomStudio" class="dash-section hide flex flex-col gap-5">
-                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-5">
-                            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
-                                <div>
-                                    <h3 class="text-lg font-black text-slate-900">Studio Frame Custom & Green Screen</h3>
-                                    <p class="text-xs text-slate-500 font-medium mt-0.5">Upload file desain frame PNG/JPG, AI deteksi green screen otomatis, dan atur posisi slot foto.</p>
-                                </div>
-                                <button type="button" id="btnOpenFullCustomModal" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                                    <i class="ph ph-arrows-out-simple"></i> Buka Editor Penuh
-                                </button>
-                            </div>
-
-                            <div class="bg-slate-50 p-6 rounded-3xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-center cursor-pointer hover:border-blue-500 transition py-12" onclick="document.getElementById('dashCustomFileInput').click()">
-                                <input type="file" id="dashCustomFileInput" accept="image/*" class="hidden" />
-                                <div class="w-16 h-16 rounded-3xl bg-blue-50 text-blue-600 flex items-center justify-center text-3xl mb-3 shadow-sm">
-                                    <i class="ph ph-cloud-arrow-up font-bold"></i>
-                                </div>
-                                <h4 class="text-sm font-black text-slate-800">Upload Desain Frame Baru</h4>
-                                <p class="text-xs text-slate-500 mt-1 max-w-sm font-medium">Klik untuk memilih file PNG transparan atau JPG dengan area green screen.</p>
-                            </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
-                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-                                    <div class="text-xs font-black text-slate-800 mb-1">Portrait Strip 2&times;6</div>
-                                    <p class="text-[11px] text-slate-500 leading-relaxed font-medium">Ukuran standar cetak 600 &times; 1800 px (3 atau 4 slot pose foto).</p>
-                                </div>
-                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-                                    <div class="text-xs font-black text-slate-800 mb-1">Square Grid 4&times;4</div>
-                                    <p class="text-[11px] text-slate-500 leading-relaxed font-medium">Ukuran feed Instagram 1200 &times; 1200 px (4 foto grid kolase 2&times;2).</p>
-                                </div>
-                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-                                    <div class="text-xs font-black text-slate-800 mb-1">Landscape Card 4&times;6</div>
-                                    <p class="text-[11px] text-slate-500 leading-relaxed font-medium">Ukuran postcard 1800 &times; 1200 px (3 atau 4 foto horizontal).</p>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- ================= SECTION 5: BACKGROUND & FONT ================= -->
-                    <section id="dashSectionVisual" class="dash-section hide flex flex-col gap-5">
-                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-6">
-                            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
-                                <div>
-                                    <h3 class="text-lg font-black text-slate-900">Latar Belakang (Background) & Font Typography</h3>
-                                    <p class="text-xs text-slate-500 font-medium mt-0.5">Pilih tema warna, preset gradasi estetik, foto wallpaper, dan gaya font.</p>
-                                </div>
-                                <button type="button" class="btn-save-dash bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                                    <i class="ph ph-floppy-disk"></i> Simpan
-                                </button>
-                            </div>
-
-                            <!-- Background Mode Selector -->
-                            <div>
-                                <label class="text-xs font-black text-slate-800 uppercase tracking-wider block mb-3 flex items-center gap-1.5">
-                                    <i class="ph ph-monitor text-blue-600"></i> Mode Latar Belakang (Background)
-                                </label>
-                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                    <button type="button" class="theme-bg-mode-btn p-3.5 rounded-2xl border flex flex-col items-center gap-2 transition text-center" data-mode="camera">
-                                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl"><i class="ph ph-camera"></i></div>
-                                        <div><div class="text-xs font-bold text-slate-800">Live Kamera</div><div class="text-[10px] text-slate-500">Mirror kamera</div></div>
-                                    </button>
-                                    <button type="button" class="theme-bg-mode-btn p-3.5 rounded-2xl border flex flex-col items-center gap-2 transition text-center" data-mode="gradient">
-                                        <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl"><i class="ph ph-sparkle"></i></div>
-                                        <div><div class="text-xs font-bold text-slate-800">Gradient Estetik</div><div class="text-[10px] text-slate-500">Gradasi modern</div></div>
-                                    </button>
-                                    <button type="button" class="theme-bg-mode-btn p-3.5 rounded-2xl border flex flex-col items-center gap-2 transition text-center" data-mode="color">
-                                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl"><i class="ph ph-paint-bucket"></i></div>
-                                        <div><div class="text-xs font-bold text-slate-800">Warna Solid</div><div class="text-[10px] text-slate-500">1 warna solid</div></div>
-                                    </button>
-                                    <button type="button" class="theme-bg-mode-btn p-3.5 rounded-2xl border flex flex-col items-center gap-2 transition text-center" data-mode="image">
-                                        <div class="w-10 h-10 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center text-xl"><i class="ph ph-image"></i></div>
-                                        <div><div class="text-xs font-bold text-slate-800">Upload Foto</div><div class="text-[10px] text-slate-500">Wallpaper custom</div></div>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Preset Gradasi -->
-                            <div id="themeGradientOptions" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col gap-3">
-                                <span class="text-xs font-black text-slate-800 flex items-center gap-1.5"><i class="ph ph-palette text-blue-600"></i> Pilihan Preset Gradasi</span>
-                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #f8fafc 0%, #eef2f6 50%, #ffffff 100%)" style="background: linear-gradient(135deg, #f8fafc 0%, #eef2f6 50%, #ffffff 100%);"><span class="text-[11px] font-bold text-slate-800">Clean Pearl White</span></button>
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #fdf4ff 0%, #fae8ff 50%, #f0fdf4 100%)" style="background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 50%, #f0fdf4 100%);"><span class="text-[11px] font-bold text-slate-800">Pastel Blossom</span></button>
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #f8fafc 100%)" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #f8fafc 100%);"><span class="text-[11px] font-bold text-slate-800">Sky Breeze</span></button>
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #fef3c7 0%, #fef9c3 50%, #fffbeb 100%)" style="background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 50%, #fffbeb 100%);"><span class="text-[11px] font-bold text-slate-800">Warm Vanilla</span></button>
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #f0fdf4 100%)" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #f0fdf4 100%);"><span class="text-[11px] font-bold text-slate-800">Fresh Mint</span></button>
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #e0e7ff 100%)" style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #e0e7ff 100%);"><span class="text-[11px] font-bold text-slate-800">Lavender Milk</span></button>
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #fff1f2 0%, #ffe4e6 50%, #fdf2f8 100%)" style="background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 50%, #fdf2f8 100%);"><span class="text-[11px] font-bold text-slate-800">Rose Petal</span></button>
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%)" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);"><span class="text-[11px] font-bold text-white">Cyber Dark</span></button>
-                                </div>
-                            </div>
-
-                            <!-- Solid Color Options -->
-                            <div id="themeColorOptions" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between hide">
-                                <div>
-                                    <span class="text-xs font-bold text-slate-800 block mb-0.5">Warna Latar Belakang Solid</span>
-                                    <span class="text-[11px] text-slate-500">Pilih 1 warna solid untuk latar beranda</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <span id="themeBgColorHex" class="text-xs font-mono text-slate-800 bg-white px-3 py-1.5 rounded-lg border border-slate-200">#ffffff</span>
-                                    <input type="color" id="themeBgColorInput" value="#ffffff" class="w-10 h-10 rounded-xl cursor-pointer bg-transparent border-0" />
-                                </div>
-                            </div>
-
-                            <!-- Upload Image Wallpaper Options -->
-                            <div id="themeImageOptions" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col gap-3 hide">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <span class="text-xs font-bold text-slate-800 block mb-0.5">Upload Wallpaper / Gambar Custom</span>
-                                        <span class="text-[11px] text-slate-500">Format PNG, JPG, JPEG, GIF atau WebP</span>
-                                    </div>
-                                    <input type="file" id="themeBgFileInput" accept="image/*" class="hidden" />
-                                    <button type="button" onclick="document.getElementById('themeBgFileInput').click()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-xs">
-                                        <i class="ph ph-folder-open text-base"></i> Pilih File
-                                    </button>
-                                </div>
-
-                                <div id="themeBgImagePreviewWrapper" class="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-200 hide">
-                                    <div class="flex items-center gap-3">
-                                        <img id="themeBgImageThumbnail" src="" class="w-14 h-10 object-cover rounded-lg border border-slate-200 shadow-xs" alt="Wallpaper Preview" />
-                                        <div>
-                                            <div class="text-xs font-bold text-slate-800" id="themeBgImageName">custom_wallpaper.jpg</div>
-                                            <div class="text-[10px] text-emerald-600 font-bold">Gambar aktif digunakan</div>
-                                        </div>
-                                    </div>
-                                    <button type="button" id="btnRemoveBgImage" class="text-xs text-red-600 hover:text-red-700 px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 transition flex items-center gap-1 font-bold">
-                                        <i class="ph ph-trash"></i> Hapus
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Typography Font Selector -->
-                            <div>
-                                <label class="text-xs font-black text-slate-800 uppercase tracking-wider block mb-3 flex items-center gap-1.5">
-                                    <i class="ph ph-text-t text-blue-600"></i> Pilihan Gaya Font (Typography)
-                                </label>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="themeFontGrid">
-                                    <button type="button" class="theme-font-card p-3.5 rounded-2xl border text-left flex flex-col justify-between transition bg-white border-slate-200" data-font="'Plus Jakarta Sans', system-ui, sans-serif" style="font-family: 'Plus Jakarta Sans', sans-serif;">
-                                        <div class="text-sm font-black text-slate-900">Plus Jakarta Sans</div>
-                                        <div class="text-[10px] text-slate-500 mt-1">Modern & Clean (Default)</div>
-                                    </button>
-                                    <button type="button" class="theme-font-card p-3.5 rounded-2xl border text-left flex flex-col justify-between transition bg-white border-slate-200" data-font="'Poppins', system-ui, sans-serif" style="font-family: 'Poppins', sans-serif;">
-                                        <div class="text-sm font-black text-slate-900">Poppins</div>
-                                        <div class="text-[10px] text-slate-500 mt-1">Geometric & Friendly</div>
-                                    </button>
-                                    <button type="button" class="theme-font-card p-3.5 rounded-2xl border text-left flex flex-col justify-between transition bg-white border-slate-200" data-font="'Outfit', system-ui, sans-serif" style="font-family: 'Outfit', sans-serif;">
-                                        <div class="text-sm font-black text-slate-900">Outfit</div>
-                                        <div class="text-[10px] text-slate-500 mt-1">Bold & Futuristic</div>
-                                    </button>
-                                    <button type="button" class="theme-font-card p-3.5 rounded-2xl border text-left flex flex-col justify-between transition bg-white border-slate-200" data-font="'Montserrat', system-ui, sans-serif" style="font-family: 'Montserrat', sans-serif;">
-                                        <div class="text-sm font-black text-slate-900">Montserrat</div>
-                                        <div class="text-[10px] text-slate-500 mt-1">Urban & Powerful</div>
-                                    </button>
-                                    <button type="button" class="theme-font-card p-3.5 rounded-2xl border text-left flex flex-col justify-between transition bg-white border-slate-200" data-font="'Space Grotesk', system-ui, sans-serif" style="font-family: 'Space Grotesk', sans-serif;">
-                                        <div class="text-sm font-black text-slate-900">Space Grotesk</div>
-                                        <div class="text-[10px] text-slate-500 mt-1">Neo-Brutalist Tech</div>
-                                    </button>
-                                    <button type="button" class="theme-font-card p-3.5 rounded-2xl border text-left flex flex-col justify-between transition bg-white border-slate-200" data-font="'Playfair Display', serif" style="font-family: 'Playfair Display', serif;">
-                                        <div class="text-sm font-black text-slate-900">Playfair Display</div>
-                                        <div class="text-[10px] text-slate-500 mt-1">Serif Luxury / Wedding</div>
-                                    </button>
-                                    <button type="button" class="theme-font-card p-3.5 rounded-2xl border text-left flex flex-col justify-between transition bg-white border-slate-200" data-font="'Caveat', cursive" style="font-family: 'Caveat', cursive;">
-                                        <div class="text-base font-bold text-slate-900">Caveat Handwriting</div>
-                                        <div class="text-[10px] text-slate-500 mt-0.5">Cute Hand-drawn Style</div>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Color Accent Selector -->
-                            <div>
-                                <label class="text-xs font-black text-slate-800 uppercase tracking-wider block mb-3 flex items-center gap-1.5">
-                                    <i class="ph ph-palette text-blue-600"></i> Warna Aksen Utama
-                                </label>
-                                <div class="flex flex-wrap items-center gap-2.5" id="themeAccentGrid">
-                                    <button type="button" class="theme-accent-btn px-4 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#2563eb" data-end="#7c3aed">
-                                        <span class="w-3.5 h-3.5 rounded-full bg-blue-600"></span> Royal Blue
-                                    </button>
-                                    <button type="button" class="theme-accent-btn px-4 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#ec4899" data-end="#f43f5e">
-                                        <span class="w-3.5 h-3.5 rounded-full bg-pink-500"></span> Neon Rose
-                                    </button>
-                                    <button type="button" class="theme-accent-btn px-4 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#d97706" data-end="#b45309">
-                                        <span class="w-3.5 h-3.5 rounded-full bg-amber-500"></span> Warm Amber
-                                    </button>
-                                    <button type="button" class="theme-accent-btn px-4 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#059669" data-end="#047857">
-                                        <span class="w-3.5 h-3.5 rounded-full bg-emerald-600"></span> Emerald Mint
-                                    </button>
-                                    <button type="button" class="theme-accent-btn px-4 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#7c3aed" data-end="#6366f1">
-                                        <span class="w-3.5 h-3.5 rounded-full bg-purple-600"></span> Vivid Purple
-                                    </button>
-                                    <button type="button" class="theme-accent-btn px-4 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition bg-white border-slate-200" data-color="#0f172a" data-end="#334155">
-                                        <span class="w-3.5 h-3.5 rounded-full bg-slate-900"></span> Slate Black
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Visual Effects Sliders -->
-                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex flex-col gap-4">
-                                <h4 class="text-xs font-black text-blue-600 uppercase tracking-wider flex items-center gap-1.5">
-                                    <i class="ph ph-sliders"></i> Pengaturan Efek Visual Latar
-                                </h4>
-                                
-                                <div class="flex flex-col gap-1.5">
-                                    <div class="flex justify-between items-center text-xs">
-                                        <label class="font-bold text-slate-700">Kegelapan Overlay (Dim / Tint)</label>
-                                        <span id="themeOverlayOpacityVal" class="font-mono text-blue-600 font-bold">5%</span>
-                                    </div>
-                                    <input type="range" id="themeOverlayOpacity" min="0" max="90" step="5" value="5" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
-                                </div>
-
-                                <div class="flex flex-col gap-1.5 pt-2 border-t border-slate-200">
-                                    <div class="flex justify-between items-center text-xs">
-                                        <label class="font-bold text-slate-700">Efek Blur Latar Belakang</label>
-                                        <span id="themeBgBlurVal" class="font-mono text-blue-600 font-bold">0px</span>
-                                    </div>
-                                    <input type="range" id="themeBgBlur" min="0" max="20" step="1" value="0" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- ================= SECTION 6: GOOGLE DRIVE CLOUD ================= -->
-                    <section id="dashSectionGdrive" class="dash-section hide flex flex-col gap-5">
-                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-5">
-                            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl">
-                                        <i class="ph ph-google-drive-logo"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-lg font-black text-slate-900">Integrasi Google Drive Cloud</h3>
-                                        <p class="text-xs text-slate-500 font-medium mt-0.5">Upload otomatis foto strip, video, & GIF ke Google Drive per sesi foto.</p>
-                                    </div>
-                                </div>
-                                <span class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full font-bold">100% GRATIS</span>
-                            </div>
-
-                            <div>
-                                <label class="text-xs font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
-                                    <i class="ph ph-link text-blue-600"></i> URL Web App Google Apps Script
-                                </label>
-                                <div class="flex gap-2">
-                                    <input type="url" id="themeGdriveWebhookUrl" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-emerald-500 transition font-mono" />
-                                    <button type="button" id="btnTestGdriveWebhook" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 shadow-xs">
-                                        <i class="ph ph-plugs-connected"></i> Test Koneksi
-                                    </button>
-                                </div>
-                                <div id="gdriveTestStatus" class="text-[11px] mt-2 hidden font-medium"></div>
-                            </div>
-
-                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
-                                <div>
-                                    <div class="text-xs font-bold text-slate-900">Auto-Upload Setelah Selesai Sesi</div>
-                                    <div class="text-[10px] text-slate-500 font-medium">QR Code di layar otomatis mengarahkan ke link folder Google Drive sesi tersebut.</div>
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="themeGdriveAutoUpload" class="sr-only peer" checked>
-                                    <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
-                                </label>
-                            </div>
-
-                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 text-xs flex flex-col gap-2.5">
-                                <div class="font-black text-slate-800 flex items-center gap-1.5 text-xs">
-                                    <i class="ph ph-info text-blue-600"></i> Cara Memasang Script Google Drive:
-                                </div>
-                                <ol class="list-decimal list-inside text-slate-600 text-[11px] space-y-1.5 leading-relaxed font-medium">
-                                    <li>Buka file <span class="text-emerald-700 font-mono font-bold">google-apps-script.js</span> di workspace ini.</li>
-                                    <li>Buka <a href="https://script.google.com/" target="_blank" class="text-blue-600 underline hover:text-blue-500 font-bold">script.google.com</a> lalu buat proyek baru (New Project).</li>
-                                    <li>Copy semua kode dari file tersebut dan paste ke editor Google Apps Script.</li>
-                                    <li>Klik <b>Deploy &gt; New deployment</b>, pilih tipe <b>Web app</b>.</li>
-                                    <li>Set <b>Execute as: Me</b> dan <b>Who has access: Anyone</b>, lalu klik <b>Deploy</b>.</li>
-                                    <li>Salin <b>Web app URL</b> lalu tempel di kolom input di atas!</li>
-                                </ol>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- ================= SECTION 7: BACKUP & PRESET ================= -->
-                    <section id="dashSectionPresets" class="dash-section hide flex flex-col gap-5">
-                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-5">
-                            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
-                                <div>
-                                    <h3 class="text-lg font-black text-slate-900">Backup & Restore Preset Tema</h3>
-                                    <p class="text-xs text-slate-500 font-medium mt-0.5">Ekspor konfigurasi tema acara ke file .json atau pulihkan tema tersimpan.</p>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between gap-4">
-                                    <div>
-                                        <h4 class="text-xs font-black text-slate-800 flex items-center gap-1.5">
-                                            <i class="ph ph-download text-blue-600 text-base"></i> Export Preset (.json)
-                                        </h4>
-                                        <p class="text-[11px] text-slate-500 mt-1 font-medium">Simpan seluruh pengaturan teks, warna, font, dan Google Drive ke file lokal komputer.</p>
-                                    </div>
-                                    <button type="button" id="btnExportThemePreset" class="bg-white hover:bg-slate-100 text-slate-800 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 border border-slate-200 shadow-xs">
-                                        <i class="ph ph-floppy-disk text-blue-600"></i> Download Preset (.json)
-                                    </button>
-                                </div>
-
-                                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between gap-4">
-                                    <div>
-                                        <h4 class="text-xs font-black text-slate-800 flex items-center gap-1.5">
-                                            <i class="ph ph-upload text-blue-600 text-base"></i> Restore Preset (.json)
-                                        </h4>
-                                        <p class="text-[11px] text-slate-500 mt-1 font-medium">Muat preset tema yang pernah Anda simpan sebelumnya ke photobooth.</p>
-                                    </div>
-                                    <input type="file" id="importThemeFileInput" accept=".json" class="hidden" />
-                                    <button type="button" id="btnImportThemeTrigger" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs">
-                                        <i class="ph ph-folder-open"></i> Buka File Preset (.json)
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="p-5 rounded-2xl bg-red-50/50 border border-red-100 flex items-center justify-between">
-                                <div>
-                                    <h4 class="text-xs font-black text-red-900">Reset ke Pengaturan Default</h4>
-                                    <p class="text-[11px] text-red-700 font-medium">Kembalikan seluruh teks, warna, dan tema ke tampilan cerah bawaan Eazy Fotobooth.</p>
-                                </div>
-                                <button type="button" id="btnResetThemeDefaults" class="bg-white hover:bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-bold transition border border-red-200 shadow-xs">
-                                    Reset Default
-                                </button>
-                            </div>
-                        </div>
-                    </section>
-
-                </main>
-            </div>
-
-            <!-- Sticky Bottom Admin Action Bar -->
-            <div class="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md border-t border-slate-200 p-4 px-6 z-40 flex flex-wrap items-center justify-between gap-3 shadow-lg">
-                <div class="flex flex-wrap items-center gap-2">
-                    <button type="button" id="btnSaveThemeSettings" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-5 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2 border border-slate-200">
-                        <i class="ph ph-floppy-disk text-base text-blue-600"></i> <span>Simpan Pengaturan</span>
-                    </button>
-                    <a href="dashboard.html" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2 border border-slate-200">
-                        <i class="ph ph-arrow-square-out text-base text-blue-600"></i> <span>Halaman Dashboard Terpisah</span>
-                    </a>
+                    </div>
                 </div>
 
-                <!-- Big Main Launch Photobooth Button -->
-                <button type="button" id="btnLaunchBooth" class="btn-launch-booth-trigger bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-8 py-3.5 rounded-2xl font-black text-sm transition shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] flex items-center gap-2.5 active:scale-95">
-                    <span>🚀 BUKA PHOTOBOOTH (MULAI SESI PELANGGAN)</span>
-                    <i class="ph ph-arrow-right font-bold text-base"></i>
-                </button>
             </div>
         </div>
+    </section>
 
-        <!-- ================= STATE 0: HOME PAGE (EAZY FOTOBOOTH) ================= -->
-        <div id="state-landing" class="absolute inset-0 z-10 flex flex-col items-center justify-center w-full h-full transition-opacity duration-500 bg-white/30 backdrop-blur-xs hide px-4 py-8">
-            <div class="max-w-3xl w-full flex flex-col items-center text-center my-auto">
-                
-                <!-- Event Badge -->
-                <div id="landingBadgeContainer" class="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md px-5 py-2 rounded-full text-xs font-black tracking-widest text-blue-600 mb-4 border border-blue-200/80 shadow-sm transition hover:scale-105">
-                    <i id="landingBadgeIcon" class="ph ph-sparkle text-base text-amber-500"></i>
-                    <span id="landingBadgeText">KOREAN STYLE PHOTOBOOTH</span>
+    <!-- ================= 5. CORE FEATURES (FITUR LENGKAP) ================= -->
+    <section id="fitur" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <div class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider mb-3">
+                    FITUR LENGKAP
                 </div>
-
-                <!-- Main Headline -->
-                <h1 id="landingMainTitle" class="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black text-slate-900 drop-shadow-sm mb-3.5 tracking-tight text-center px-2 leading-none">
-                    EAZY FOTOBOOTH
-                </h1>
-
-                <!-- Subtitle / Event Message -->
-                <p id="landingSubtitle" class="text-slate-600 text-xs sm:text-sm md:text-base max-w-xl text-center mb-8 px-4 font-semibold leading-relaxed">
-                    Abadikan setiap pose secara otomatis dengan 3 format hasil: Photo Strip, Motion Video, dan Looping GIF
+                <h2 class="heading-font text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+                    Semua yang Anda Butuhkan dalam 1 Software Photobooth
+                </h2>
+                <p class="text-sm sm:text-base text-slate-500 mt-3 font-medium">
+                    Dirancang dengan detail tingkat tinggi untuk memberikan performa maksimal saat event berlangsung.
                 </p>
-
-                <!-- Interactive Feature Highlights Pills (Tablet & Kiosk Friendly) -->
-                <div class="flex flex-wrap justify-center items-center gap-2.5 sm:gap-3 mb-9 max-w-2xl px-2">
-                    <div class="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200 shadow-xs text-xs font-bold text-slate-800">
-                        <span class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm"><i class="ph ph-camera"></i></span>
-                        <span>Photo Strip HD</span>
-                    </div>
-                    <div class="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200 shadow-xs text-xs font-bold text-slate-800">
-                        <span class="w-6 h-6 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center text-sm"><i class="ph ph-video-camera"></i></span>
-                        <span>Live Motion MP4</span>
-                    </div>
-                    <div class="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200 shadow-xs text-xs font-bold text-slate-800">
-                        <span class="w-6 h-6 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-sm"><i class="ph ph-file-gif"></i></span>
-                        <span>Looping GIF</span>
-                    </div>
-                    <div class="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200 shadow-xs text-xs font-bold text-slate-800">
-                        <span class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm"><i class="ph ph-qr-code"></i></span>
-                        <span>Instant QR Cloud</span>
-                    </div>
-                </div>
-
-                <!-- Grand Start CTA Button -->
-                <button id="btnLanding" class="btn-pulse bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-10 sm:px-14 md:px-18 py-4 sm:py-5 rounded-full font-black text-lg sm:text-xl md:text-2xl transition-all duration-300 flex items-center gap-3.5 shadow-[0_15px_35px_-5px_rgba(37,99,235,0.45)] active:scale-95">
-                    <span id="btnLandingText">TAP TO START</span> 
-                    <i class="ph ph-hand-tap text-2xl sm:text-3xl text-amber-300"></i>
-                </button>
-
-                <!-- Footer Status & Touch Hint -->
-                <div class="mt-8 flex items-center gap-2 text-slate-600 font-bold text-[11px] bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full border border-slate-200/80 shadow-xs">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span>
-                    <span>EAZY FOTOBOOTH &bull; Sentuh layar untuk mulai berfoto</span>
-                </div>
-
             </div>
-        </div>
 
-        <!-- ================= STATE 1: INSTRUCTIONS ================= -->
-        <div id="state-instructions" class="absolute inset-0 z-10 flex flex-col items-center justify-center w-full h-full bg-slate-50/95 backdrop-blur-xl hide transition-opacity duration-500 p-4">
-            <div class="max-w-4xl w-full flex flex-col items-center text-center">
-                <div id="guideBadge" class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-3 shadow-xs">
-                    Panduan Singkat
-                </div>
-                <h2 id="guideTitle" class="text-3xl sm:text-4xl md:text-5xl font-black mb-2 text-slate-900 tracking-wide">CARA KERJA EAZY FOTOBOOTH</h2>
-                <p id="guideSubtitle" class="text-slate-500 text-xs sm:text-sm mb-8 max-w-md font-medium">3 langkah mudah untuk menghasilkan momen terbaik Anda</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl text-left mb-10 w-full px-2">
-                    <div class="bg-white p-5 rounded-3xl border border-slate-200/90 relative shadow-lg">
-                        <span class="absolute top-3 right-4 text-2xl font-black text-slate-200">01</span>
-                        <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
-                            <i class="ph ph-video-camera text-2xl font-bold"></i>
+                <!-- Feature 1 -->
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-2xl mb-4 shadow-md shadow-blue-600/20">
+                            <i class="ph ph-images"></i>
                         </div>
-                        <h3 class="font-black text-sm sm:text-base mb-1 text-slate-800">LIVE REC COUNT</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed font-medium">Saat hitung mundur berjalan, kamera merekam klip live motion dari gerakanmu.</p>
-                    </div>
-                    
-                    <div class="bg-white p-5 rounded-3xl border border-slate-200/90 relative shadow-lg">
-                        <span class="absolute top-3 right-4 text-2xl font-black text-slate-200">02</span>
-                        <div class="w-10 h-10 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center mb-3">
-                            <i class="ph ph-camera text-2xl font-bold"></i>
-                        </div>
-                        <h3 class="font-black text-sm sm:text-base mb-1 text-slate-800">STILL SNAP AT 0</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed font-medium">Di akhir hitung mundur (flash), foto still beresolusi tinggi diambil sebagai hasil pose.</p>
-                    </div>
-                    
-                    <div class="bg-white p-5 rounded-3xl border border-slate-200/90 relative shadow-lg">
-                        <span class="absolute top-3 right-4 text-2xl font-black text-slate-200">03</span>
-                        <div class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3">
-                            <i class="ph ph-frame-corners text-2xl font-bold"></i>
-                        </div>
-                        <h3 class="font-black text-sm sm:text-base mb-1 text-slate-800">FRAME STUDIO</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed font-medium">Gunakan template estetik, <b>Kelola Frame Event</b>, atau <b>Upload Frame Sendiri</b>!</p>
-                    </div>
-                    
-                    <div class="bg-white p-5 rounded-3xl border border-slate-200/90 relative shadow-lg">
-                        <span class="absolute top-3 right-4 text-2xl font-black text-slate-200">04</span>
-                        <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
-                            <i class="ph ph-download-simple text-2xl font-bold"></i>
-                        </div>
-                        <h3 class="font-black text-sm sm:text-base mb-1 text-slate-800">3 FORMAT OUTPUT</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed font-medium">Download <b>Photo Strip (JPG)</b>, <b>Motion Strip (MP4)</b>, dan <b>GIF</b>!</p>
-                    </div>
-                </div>
-
-                <button id="btnStartCapture" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-10 md:px-14 py-4 rounded-full font-black text-base md:text-lg transition flex items-center gap-2 shadow-[0_10px_30px_-5px_rgba(37,99,235,0.4)] active:scale-95">
-                    <span id="btnStartCaptureText">MENGERTI, AYO MULAI</span> <i class="ph ph-arrow-right font-bold text-xl"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- ================= STATE 2: CAMERA UI ================= -->
-        <div id="state-camera" class="absolute inset-0 z-10 w-full h-full hide transition-opacity duration-500 pointer-events-none">
-            
-            <!-- Live Recording Indicator Overlay -->
-            <div id="liveRecBadge" class="absolute top-5 left-5 bg-red-600 text-white font-black text-xs px-4 py-2 rounded-full flex items-center gap-2.5 tracking-wider shadow-xl z-30 hide border border-red-400">
-                <span class="w-2.5 h-2.5 rounded-full bg-white live-dot"></span>
-                <span>REC LIVE MOTION</span>
-            </div>
-
-            <!-- Flip / Switch Camera Button -->
-            <button id="btnFlipCamera" title="Ganti Kamera (Depan / Belakang)" class="absolute top-5 right-5 bg-white/95 hover:bg-white text-slate-800 p-2.5 rounded-full shadow-lg border border-slate-200 z-30 pointer-events-auto transition active:scale-90 flex items-center justify-center">
-                <i class="ph ph-camera-rotate text-xl text-blue-600"></i>
-            </button>
-
-            <!-- Camera Error & Permission Recovery Overlay -->
-            <div id="cameraErrorOverlay" class="absolute inset-0 z-40 bg-slate-900/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center text-white hide pointer-events-auto">
-                <div class="w-16 h-16 rounded-3xl bg-red-500/20 border border-red-500/40 text-red-400 flex items-center justify-center text-3xl mb-4">
-                    <i class="ph ph-camera-slash"></i>
-                </div>
-                <h3 class="text-xl font-black mb-2">Kamera Tidak Dapat Diakses</h3>
-                <p id="cameraErrorMessage" class="text-slate-300 text-xs sm:text-sm max-w-md mb-6 leading-relaxed">
-                    Pastikan Anda mengizinkan akses kamera di browser dan tidak ada aplikasi lain yang sedang menggunakan kamera.
-                </p>
-                <button id="btnRetryCamera" class="bg-blue-600 hover:bg-blue-500 text-white font-black px-7 py-3.5 rounded-2xl text-xs flex items-center gap-2 transition shadow-lg active:scale-95">
-                    <i class="ph ph-arrow-counter-clockwise font-bold text-base"></i> Izinkan & Coba Lagi
-                </button>
-            </div>
-
-            <!-- Countdown Overlay -->
-            <div id="countdownOverlay" class="absolute inset-0 flex flex-col items-center justify-center hide bg-black/35 backdrop-blur-[2px] z-20">
-                <div id="teksCountdown" class="text-[170px] sm:text-[220px] font-black text-white drop-shadow-[0_0_40px_rgba(0,0,0,0.95)] animate-pulse leading-none">3</div>
-                <div class="text-white font-black text-xs sm:text-sm tracking-widest flex items-center gap-2 bg-slate-900/80 px-5 py-2 rounded-full border border-white/20 shadow-xl mt-4">
-                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span> Merekam Video Live Pose...
-                </div>
-            </div>
-
-            <!-- Settings Bar (Initial Setup) -->
-            <div id="settingsBar" class="absolute bottom-36 left-1/2 -translate-x-1/2 w-[95%] max-w-lg glass-panel rounded-3xl p-3.5 grid grid-cols-3 gap-3 z-10 pointer-events-auto shadow-2xl">
-                <div>
-                    <label class="text-[10px] text-slate-700 font-black block mb-1 uppercase tracking-wider"><i class="ph ph-timer text-blue-600"></i> Timer</label>
-                    <select id="settingTimer" class="w-full bg-white border border-slate-200 rounded-xl text-slate-800 p-2.5 text-xs outline-none cursor-pointer font-bold shadow-xs">
-                        <option value="3">3 Detik</option>
-                        <option value="5">5 Detik</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-[10px] text-slate-700 font-black block mb-1 uppercase tracking-wider"><i class="ph ph-images text-blue-600"></i> Jumlah Pose</label>
-                    <select id="settingSnaps" class="w-full bg-white border border-slate-200 rounded-xl text-slate-800 p-2.5 text-xs outline-none cursor-pointer font-bold shadow-xs">
-                        <option value="3">3 Pose</option>
-                        <option value="4" selected>4 Pose</option>
-                        <option value="5">5 Pose</option>
-                    </select>
-                </div>
-                <div class="flex items-end justify-center">
-                    <button id="btnMulaiFoto" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2.5 w-full rounded-xl font-black text-xs transition shadow-md flex items-center justify-center gap-1.5 active:scale-95">
-                        <i class="ph ph-camera text-base"></i> MULAI FOTO
-                    </button>
-                </div>
-            </div>
-
-            <!-- Progress Counter -->
-            <div id="photoCounter" class="absolute bottom-[136px] left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md px-4 py-1.5 rounded-full border border-slate-200 text-slate-800 font-black text-xs shadow-md hide z-10 pointer-events-auto flex items-center gap-2">
-                <i class="ph ph-camera text-blue-600"></i>
-                <span id="textCounter">0/4</span>
-            </div>
-
-            <!-- Thumbnail Tray -->
-            <div class="absolute bottom-4 w-full z-10 flex justify-center pointer-events-auto px-4">
-                <div id="thumbnailContainer" class="thumbnail-container capturing"></div>
-            </div>
-
-            <!-- Continue Button -->
-            <button id="btnContinue" class="absolute bottom-6 right-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-7 py-3.5 rounded-full font-black text-sm hide z-20 transition-all flex items-center gap-2 shadow-[0_10px_25px_-5px_rgba(37,99,235,0.5)] pointer-events-auto active:scale-95">
-                LANJUTKAN KE FRAME <i class="ph ph-arrow-right font-bold text-base"></i>
-            </button>
-        </div>
-
-        <!-- ================= STATE 3: FRAME BUILDER ================= -->
-        <div id="state-builder" class="w-full h-full hide flex flex-col md:flex-row bg-slate-100 pt-14 absolute top-0 left-0 z-20">
-            <!-- Left Panel: Captured Photos Palette -->
-            <div class="w-full md:w-72 bg-white h-48 md:h-full p-4 overflow-y-auto flex flex-col gap-3 border-b md:border-b-0 md:border-r border-slate-200 shrink-0 shadow-sm z-10">
-                <div class="text-left pb-2 border-b border-slate-100">
-                    <h3 class="font-black text-xs text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                        <i class="ph ph-images text-blue-600 text-base"></i> DAFTAR FOTO
-                    </h3>
-                    <p class="text-[10px] text-slate-500 mt-1 font-medium">Tap/drag foto lalu pilih slot frame di tengah untuk menukar posisi.</p>
-                </div>
-                <div id="builderPhotos" class="grid grid-cols-4 md:grid-cols-1 gap-2.5 overflow-y-auto"></div>
-            </div>
-            
-            <!-- Center Canvas Editor Area -->
-            <div class="flex-grow h-full flex flex-col items-center justify-center p-3 sm:p-6 relative overflow-hidden bg-slate-100">
-                <div class="absolute top-3 text-slate-600 text-[11px] font-bold tracking-wider flex items-center gap-2 bg-white/90 px-4 py-1.5 rounded-full border border-slate-200 z-10 shadow-xs">
-                    <i class="ph ph-squares-four text-blue-600 text-sm"></i> Susun foto sesuai nomor slot pada frame
-                </div>
-                
-                <div id="frameWrapper" class="relative shadow-2xl transition-transform duration-200 ease-out my-auto flex items-center justify-center" style="transform-origin: center center;">
-                    <div id="frameEditor" class="relative bg-white overflow-hidden shadow-[0_15px_40px_-10px_rgba(0,0,0,0.2)]"></div>
-                </div>
-
-                <button id="btnSelesaiEdit" class="absolute bottom-5 right-5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-7 py-3 rounded-full font-black text-sm transition-all flex items-center gap-2 shadow-[0_10px_25px_-5px_rgba(16,185,129,0.4)] active:scale-95 z-20">
-                    SELESAI & BUAT HASIL <i class="ph ph-check-circle text-lg font-bold"></i>
-                </button>
-            </div>
-
-            <!-- Right Panel: Frame & Filter Selectors -->
-            <div class="w-full md:w-96 lg:w-[380px] bg-white h-72 md:h-full flex flex-col border-t md:border-t-0 md:border-l border-slate-200 shrink-0 shadow-lg z-10">
-                
-                <!-- Main Tabs Header -->
-                <div class="p-2.5 bg-slate-50 border-b border-slate-200 flex gap-2">
-                    <button id="tabFrameBtn" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-black text-white bg-blue-600 shadow-sm transition flex items-center justify-center gap-2">
-                        <i class="ph ph-frame-corners text-base"></i> TEMPLATE FRAME
-                    </button>
-                    <button id="tabFilterBtn" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-200/60 transition flex items-center justify-center gap-2">
-                        <i class="ph ph-magic-wand text-base"></i> FILTER
-                    </button>
-                </div>
-                
-                <!-- Top Action Bar -->
-                <div class="p-3 bg-white border-b border-slate-200 flex flex-col gap-2.5">
-                    <div class="grid grid-cols-2 gap-2">
-                        <button id="btnOpenCustomModal" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white py-2.5 px-3 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95">
-                            <i class="ph ph-plus-circle text-base"></i> + UPLOAD FRAME
-                        </button>
-                        <button id="btnOpenFrameManager" class="bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 py-2.5 px-3 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 border border-slate-200 transition active:scale-95">
-                            <i class="ph ph-sliders-horizontal text-base text-blue-600"></i> KELOLA EVENT
-                        </button>
-                    </div>
-
-                    <!-- Category Filter Pills -->
-                    <div id="frameCategoryPills" class="flex items-center gap-1.5 overflow-x-auto pb-1 pt-0.5 scrollbar-none text-[11px]">
-                        <button class="cat-pill active px-3 py-1 rounded-full font-bold bg-blue-600 text-white transition shrink-0" data-cat="all">Semua</button>
-                        <button class="cat-pill px-3 py-1 rounded-full font-bold bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition shrink-0" data-cat="4">4 Cuts</button>
-                        <button class="cat-pill px-3 py-1 rounded-full font-bold bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition shrink-0" data-cat="3">3 Cuts</button>
-                        <button class="cat-pill px-3 py-1 rounded-full font-bold bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition shrink-0" data-cat="5">5 Cuts</button>
-                        <button class="cat-pill px-3 py-1 rounded-full font-bold bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition shrink-0" data-cat="custom">Custom</button>
-                    </div>
-                </div>
-
-                <!-- Template Frame List Area -->
-                <div id="frameList" class="p-3 overflow-y-auto flex flex-col gap-2.5 flex-grow bg-slate-50/50"></div>
-                
-                <!-- Filter List Area -->
-                <div id="filterList" class="p-3.5 overflow-y-auto grid grid-cols-2 gap-3 flex-grow hide content-start bg-slate-50/50"></div>
-            </div>
-        </div>
-
-        <!-- ================= STATE 4: RESULTS (3 OUTPUTS + DOWNLOAD ALL) ================= -->
-        <div id="state-results" class="w-full h-full pt-16 overflow-y-auto hide flex flex-col items-center bg-slate-50 absolute top-0 left-0 z-30">
-            <div class="text-center mt-2 mb-6 px-4">
-                <div id="resultsBadge" class="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 px-4 py-1.5 rounded-full text-xs font-black text-blue-700 mb-2 shadow-xs">
-                    <i class="ph ph-sparkle text-amber-500"></i> <span id="resultsBadgeText">HASIL SIAP DI-DOWNLOAD</span>
-                </div>
-                <h2 id="resultsTitle" class="text-3xl md:text-4xl font-black tracking-wide text-slate-900">YOUR PHOTOBOOTH MOMENTS</h2>
-                <p id="resultsSubtitle" class="text-slate-500 text-xs md:text-sm mt-1 max-w-md mx-auto font-medium">Semua foto, video live motion, dan animasi GIF berhasil dibuat dengan kualitas tinggi!</p>
-            </div>
-            
-            <!-- Loading Indicator during processing -->
-            <div id="loadingResults" class="text-center py-20 flex flex-col items-center hide">
-                <div class="loader mb-6"></div>
-                <p class="text-slate-900 tracking-wider text-sm font-black mt-2" id="loadingText">MENGHASILKAN PHOTO STRIP ULTRA-HD...</p>
-                <p class="text-slate-500 text-xs mt-1 font-medium" id="loadingSubtext">Menyinkronkan frame foto & live motion clips...</p>
-            </div>
-
-            <!-- Master Action Bar: Download All ZIP -->
-            <div id="masterActionBar" class="w-full max-w-5xl px-6 mb-6 flex flex-wrap items-center justify-between gap-4 hide">
-                <button id="btnDownloadAllZip" class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-6 py-3.5 rounded-2xl font-black text-sm flex items-center gap-2.5 transition shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] active:scale-95">
-                    <i class="ph ph-file-zip text-xl"></i> DOWNLOAD ALL IN ONE (ZIP)
-                </button>
-                <button id="btnAmbilFotoBaru" onclick="restartPhotoSession()" class="bg-white hover:bg-slate-100 text-slate-800 px-5 py-3 rounded-2xl font-bold text-xs flex items-center gap-2 border border-slate-200 shadow-sm transition">
-                    <i class="ph ph-camera-rotate text-base text-blue-600"></i> AMBIL FOTO BARU
-                </button>
-            </div>
-
-            <!-- 3 Results Showcase Grid -->
-            <div id="resultsGrid" class="grid grid-cols-1 lg:grid-cols-3 gap-6 justify-center items-start w-full max-w-6xl px-6 pb-12 hide">
-                
-                <!-- OUTPUT 1: Photo Strip (Static Frame) -->
-                <div class="output-card p-5 rounded-3xl shadow-lg flex flex-col items-center">
-                    <div class="flex items-center justify-between w-full mb-3 pb-2.5 border-b border-slate-100">
-                        <div class="flex items-center gap-2.5">
-                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-sm">1</span>
-                            <div class="text-left">
-                                <h3 class="text-slate-900 font-black text-sm uppercase tracking-wider">Photo Strip</h3>
-                                <p class="text-[10px] text-slate-500 font-medium">High-Res Print Quality (JPG)</p>
-                            </div>
-                        </div>
-                        <span class="text-[10px] bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full font-bold border border-blue-200">STILL PHOTO</span>
-                    </div>
-
-                    <div class="p-3 bg-slate-100/70 rounded-2xl shadow-inner flex items-center justify-center w-full min-h-[340px] max-h-[460px] overflow-hidden border border-slate-200">
-                        <img id="hasilStrip" alt="Photo Strip" class="max-w-full max-h-[430px] h-auto object-contain rounded-lg shadow-md" />
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2 w-full mt-4">
-                        <button id="btnDownloadStrip" class="bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl font-bold text-xs flex justify-center items-center gap-1.5 transition shadow-sm">
-                            <i class="ph ph-download-simple text-base"></i> Download JPG
-                        </button>
-                        <button id="btnDownloadStripPng" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 rounded-xl font-bold text-xs flex justify-center items-center gap-1.5 transition border border-slate-200">
-                            <i class="ph ph-image text-base"></i> Download PNG
-                        </button>
-                    </div>
-                </div>
-
-                <!-- OUTPUT 2: Live Video Frame (Motion Strip MP4) -->
-                <div class="output-card p-5 rounded-3xl shadow-lg flex flex-col items-center">
-                    <div class="flex items-center justify-between w-full mb-3 pb-2.5 border-b border-slate-100">
-                        <div class="flex items-center gap-2.5">
-                            <span class="w-8 h-8 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center font-black text-sm">2</span>
-                            <div class="text-left">
-                                <h3 class="text-slate-900 font-black text-sm uppercase tracking-wider">Motion Strip</h3>
-                                <p class="text-[10px] text-slate-500 font-medium">Live Video Looping (MP4)</p>
-                            </div>
-                        </div>
-                        <span class="text-[10px] bg-pink-50 text-pink-700 px-2.5 py-0.5 rounded-full font-bold border border-pink-200 flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-pink-500 live-dot"></span> LIVE
-                        </span>
-                    </div>
-
-                    <div class="p-3 bg-slate-100/70 rounded-2xl shadow-inner flex items-center justify-center w-full min-h-[340px] max-h-[460px] overflow-hidden relative border border-slate-200">
-                        <div id="liveVideoFrameWrapper" class="flex items-center justify-center transform origin-center">
-                            <div id="liveVideoFrameContainer" class="relative bg-white overflow-hidden shadow-md rounded-lg"></div>
-                        </div>
-                    </div>
-
-                    <button id="btnDownloadLiveVideo" class="mt-4 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white py-3 rounded-xl font-bold w-full flex justify-center items-center gap-2 transition shadow-sm text-xs">
-                        <i class="ph ph-video-camera text-base"></i> Download Video Live (MP4)
-                    </button>
-                </div>
-
-                <!-- OUTPUT 3: Looping Animated GIF -->
-                <div class="output-card p-5 rounded-3xl shadow-lg flex flex-col items-center">
-                    <div class="flex items-center justify-between w-full mb-3 pb-2.5 border-b border-slate-100">
-                        <div class="flex items-center gap-2.5">
-                            <span class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-black text-sm">3</span>
-                            <div class="text-left">
-                                <h3 class="text-slate-900 font-black text-sm uppercase tracking-wider">Animasi GIF</h3>
-                                <p class="text-[10px] text-slate-500 font-medium">Looping GIF dari kumpulan pose</p>
-                            </div>
-                        </div>
-                        <span class="text-[10px] bg-purple-50 text-purple-700 px-2.5 py-0.5 rounded-full font-bold border border-purple-200">GIF</span>
-                    </div>
-
-                    <div id="animPreviewContainer" class="p-0 bg-white rounded-2xl shadow-inner w-full flex justify-center items-center overflow-hidden relative border border-slate-200" style="width: 100%; aspect-ratio: 4/3; max-height: 230px;">
-                        <img id="liveAnimImg" src="" class="w-full h-full object-cover" />
-                    </div>
-                    
-                    <!-- GIF Controls -->
-                    <div class="mt-3 bg-slate-50 p-3 rounded-2xl border border-slate-200 w-full text-xs shadow-inner flex flex-col gap-2.5">
-                        <div class="flex items-center justify-between gap-3">
-                            <label class="text-slate-700 font-bold text-[10px] shrink-0 w-14 uppercase"><i class="ph ph-clock"></i> Speed</label>
-                            <input type="range" id="animSpeed" min="250" max="1500" step="50" value="650" style="direction: rtl;" class="w-full cursor-pointer accent-purple-600 h-1 bg-slate-200 rounded-lg" title="Kecepatan perpindahan pose animasi GIF">
-                        </div>
-                        <div class="flex items-center justify-between gap-3">
-                            <label class="text-slate-700 font-bold text-[10px] shrink-0 w-14 uppercase"><i class="ph ph-frame-corners"></i> Border</label>
-                            <input type="range" id="animBorder" min="0" max="15" step="1" value="0" class="w-full cursor-pointer accent-purple-600 h-1 bg-slate-200 rounded-lg">
-                        </div>
-                        <div class="flex items-center justify-between gap-3">
-                            <label class="text-slate-700 font-bold text-[10px] shrink-0 w-14 uppercase"><i class="ph ph-palette"></i> Warna</label>
-                            <input type="color" id="animColor" value="#ffffff" class="w-full h-6 p-0 border-0 rounded cursor-pointer bg-transparent">
-                        </div>
-                    </div>
-
-                    <button id="btnDownloadGif" class="mt-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white py-3 rounded-xl font-bold w-full flex justify-center items-center gap-2 transition shadow-sm text-xs">
-                        <i class="ph ph-file-gif text-base"></i> Download GIF Image
-                    </button>
-                </div>
-
-            </div>
-
-            <!-- QR Section & Reset -->
-            <div id="qrSection" class="w-full max-w-4xl flex flex-col md:flex-row items-center justify-between bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-lg mb-16 gap-6 hide">
-                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
-                    <div class="relative shrink-0 group cursor-pointer" title="Klik QR Code untuk membuka halaman simulasi HP pelanggan">
-                        <div id="qrcode" class="bg-white p-2.5 rounded-2xl shadow-md border-2 border-slate-200 group-hover:border-blue-500 group-hover:shadow-blue-100 flex items-center justify-center min-w-[135px] min-h-[135px] transition-all"></div>
-                        <div class="mt-1.5 text-center">
-                            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200 group-hover:bg-blue-600 group-hover:text-white transition">
-                                <i class="ph ph-cursor-click"></i> Klik untuk Simulasi
-                            </span>
-                        </div>
-                        <div id="qrLoadingSpinner" class="hidden absolute inset-0 bg-white/95 backdrop-blur-xs rounded-2xl flex flex-col items-center justify-center gap-1.5 text-slate-900 shadow-lg">
-                            <i class="ph ph-spinner animate-spin text-2xl text-emerald-600"></i>
-                            <span class="text-[9px] font-black text-slate-700 tracking-wider">MENYIMPAN...</span>
-                        </div>
-                    </div>
-                    <div class="text-left">
-                        <div id="gdriveStatusBadge" class="hidden inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold mb-1.5">
-                            <i class="ph ph-google-drive-logo text-xs"></i> Google Drive Cloud Terhubung
-                        </div>
-                        <h4 class="text-base sm:text-lg font-bold text-slate-900 mb-1 flex items-center gap-2">
-                            <i class="ph ph-qr-code text-blue-600"></i> Scan & Simpan ke HP Pelanggan
-                        </h4>
-                        <p id="qrDescriptionText" class="text-xs text-slate-500 max-w-sm leading-relaxed mb-3 font-medium">
-                            Scan QR dengan kamera smartphone untuk membuka halaman galeri hasil foto, video motion MP4, animasi GIF, dan link Google Drive.
+                        <h3 class="heading-font text-base font-black text-slate-900">3 Format Output Sekaligus</h3>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed font-medium">
+                            Setiap sesi menghasilkan Photo Strip Ultra-HD (JPG/PNG print ready), Live Video Motion looping (MP4), dan Animasi GIF mini.
                         </p>
-                        <div id="gdriveActionButtons" class="flex flex-wrap items-center gap-2 mt-1">
-                            <a id="btnSimulateMobile" href="customer.html" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm active:scale-95">
-                                <i class="ph ph-device-mobile text-base"></i> Buka Tampilan HP (Simulasi)
-                            </a>
-                            <a id="btnOpenGdriveFolder" href="#" target="_blank" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm active:scale-95">
-                                <i class="ph ph-arrow-square-out text-sm"></i> Buka Google Drive
-                            </a>
-                            <button id="btnSetupGdriveResults" type="button" class="text-[11px] text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl transition flex items-center gap-1 border border-slate-200 font-bold">
-                                <i class="ph ph-google-drive-logo text-emerald-600"></i> Setup Google Drive
-                            </button>
-                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-200/60 text-[11px] font-bold text-blue-600 flex items-center gap-1">
+                        <i class="ph ph-check-bold"></i> Direct Canvas Compositing
                     </div>
                 </div>
-                <button onclick="restartPhotoSession()" class="bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-full font-black transition flex items-center justify-center gap-2 text-sm shadow-md shrink-0 active:scale-95">
-                    <i class="ph ph-arrow-counter-clockwise text-lg"></i> SESI BARU
-                </button>
+
+                <!-- Feature 2 -->
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200 hover:border-purple-300 hover:shadow-lg transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-2xl mb-4 shadow-md shadow-purple-600/20">
+                            <i class="ph ph-magic-wand"></i>
+                        </div>
+                        <h3 class="heading-font text-base font-black text-slate-900">Studio Frame Custom & AI Chroma-Key</h3>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed font-medium">
+                            Upload desain frame PNG transparan atau gambar dengan green screen. Sistem AI akan otomatis mendeteksi kotak foto dan menjadikannya transparan.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-200/60 text-[11px] font-bold text-purple-600 flex items-center gap-1">
+                        <i class="ph ph-check-bold"></i> Drag & Resize Slot Bebas
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200 hover:border-emerald-300 hover:shadow-lg transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-2xl mb-4 shadow-md shadow-emerald-600/20">
+                            <i class="ph ph-google-drive-logo"></i>
+                        </div>
+                        <h3 class="heading-font text-base font-black text-slate-900">Google Drive Auto-Backup</h3>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed font-medium">
+                            Integrasi Google Apps Script otomatis mengunggah seluruh hasil sesi ke folder Google Drive secara instan tanpa limit storage.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-200/60 text-[11px] font-bold text-emerald-600 flex items-center gap-1">
+                        <i class="ph ph-check-bold"></i> Cloud Backup Aman
+                    </div>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200 hover:border-amber-300 hover:shadow-lg transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl mb-4 shadow-md shadow-amber-500/20">
+                            <i class="ph ph-device-mobile"></i>
+                        </div>
+                        <h3 class="heading-font text-base font-black text-slate-900">Halaman Khusus Tamu / Pelanggan</h3>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed font-medium">
+                            Scan QR di layar langsung membuka halaman galeri estetik mobile pelanggan dengan tombol download strip, pose satuan, MP4, dan ZIP.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-200/60 text-[11px] font-bold text-amber-600 flex items-center gap-1">
+                        <i class="ph ph-check-bold"></i> Responsive Mobile First
+                    </div>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200 hover:border-pink-300 hover:shadow-lg transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-pink-600 text-white flex items-center justify-center text-2xl mb-4 shadow-md shadow-pink-600/20">
+                            <i class="ph ph-paint-brush"></i>
+                        </div>
+                        <h3 class="heading-font text-base font-black text-slate-900">Branding & Visual Acara Kustom</h3>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed font-medium">
+                            Ganti nama acara, subjudul, wallpaper background kustom, preset gradasi estetik, dan pilihan font typography langsung dari Dashboard.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-200/60 text-[11px] font-bold text-pink-600 flex items-center gap-1">
+                        <i class="ph ph-check-bold"></i> Live Kiosk Preview
+                    </div>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200 hover:border-indigo-300 hover:shadow-lg transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-2xl mb-4 shadow-md shadow-indigo-600/20">
+                            <i class="ph ph-sparkle"></i>
+                        </div>
+                        <h3 class="heading-font text-base font-black text-slate-900">Filter Estetik & Stiker Interaktif</h3>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed font-medium">
+                            Koleksi filter warna populer (B&W, Vintage, Cyberpunk, Soft Glow) dan fitur drag & drop stiker emoji untuk mempercantik hasil foto.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-200/60 text-[11px] font-bold text-indigo-600 flex items-center gap-1">
+                        <i class="ph ph-check-bold"></i> Permanent Canvas Baking
+                    </div>
+                </div>
+
             </div>
         </div>
-    </main>
+    </section>
 
-    <!-- ================= MODAL 1: CUSTOM FRAME STUDIO ================= -->
-    <div id="customFrameModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 hide">
-        <div class="bg-white border border-slate-200 w-full max-w-5xl h-[92vh] max-h-[850px] rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-900">
+    <!-- ================= 6. FRAME SHOWCASE ================= -->
+    <section id="katalog-frame" class="py-20 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <!-- Modal Header -->
-            <div class="p-4 px-6 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg shadow-xs">
-                        <i class="ph ph-paint-brush font-bold"></i>
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-1.5 bg-purple-50 text-purple-700 border border-purple-200 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider mb-2">
+                        KOLEKSI TEMPLATE
                     </div>
-                    <div>
-                        <h3 class="text-slate-900 font-black text-sm sm:text-base tracking-wide">CUSTOM FRAME STUDIO</h3>
-                        <p class="text-[11px] text-slate-500 font-medium">Upload PNG/JPG frame, atur posisi slot, dan deteksi green screen otomatis.</p>
-                    </div>
+                    <h2 class="heading-font text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+                        Pilihan Frame Bawaan Populer & Estetik
+                    </h2>
+                    <p class="text-sm text-slate-500 mt-1 font-medium">
+                        Tersedia berbagai pilihan frame siap pakai untuk berbagai tema event Anda.
+                    </p>
                 </div>
-                <button id="btnCloseCustomModal" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 hover:text-slate-900 flex items-center justify-center transition">
-                    <i class="ph ph-x font-bold text-base"></i>
-                </button>
+                <a href="app.html" class="inline-flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-700 bg-white border border-slate-200 px-4 py-2.5 rounded-xl shadow-xs transition shrink-0">
+                    <i class="ph ph-plus-circle text-base"></i> Buat Frame Kustom Sendiri
+                </a>
             </div>
 
-            <!-- Modal Body -->
-            <div class="flex-grow flex flex-col md:flex-row overflow-hidden">
+            <!-- Frame Grid Showcase -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                 
-                <!-- Left: Upload & Interactive Visual Canvas Stage -->
-                <div class="flex-grow bg-slate-100 p-4 flex flex-col items-center justify-center relative overflow-hidden border-b md:border-b-0 md:border-r border-slate-200">
-                    
-                    <!-- Upload Drop Zone (Initial State) -->
-                    <div id="customUploadDropZone" class="w-full max-w-md border-2 border-dashed border-slate-300 hover:border-blue-500 bg-white rounded-3xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition shadow-sm">
-                        <input type="file" id="customFrameFileInput" accept="image/png, image/jpeg, image/jpg, image/webp" class="hidden" />
-                        <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4 text-3xl shadow-inner">
-                            <i class="ph ph-cloud-arrow-up"></i>
-                        </div>
-                        <h4 class="text-slate-900 font-black text-base mb-1">PILIH ATAU TARIK FILE FRAME</h4>
-                        <p class="text-xs text-slate-500 max-w-xs mb-4 font-medium">Format PNG (transparan) atau JPG (dengan warna hijau green screen).</p>
-                        <button type="button" onclick="document.getElementById('customFrameFileInput').click()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-full text-xs font-bold transition shadow-sm flex items-center gap-2">
-                            <i class="ph ph-folder-open text-base"></i> BROWSE GAMBAR
-                        </button>
-                    </div>
-
-                    <!-- Interactive Slot Stage (Shown once image is loaded) -->
-                    <div id="customEditorStageWrapper" class="w-full h-full flex items-center justify-center relative overflow-hidden hide">
-                        <div id="customEditorStage" class="relative bg-transparent shadow-xl overflow-hidden select-none" style="transform-origin: center center;">
-                            <img id="customFramePreviewImg" class="w-full h-full object-fill pointer-events-none select-none block" alt="Custom Frame" />
-                            <div id="customSlotsOverlay" class="absolute inset-0 w-full h-full pointer-events-none"></div>
+                <!-- Frame 1 -->
+                <div class="bg-white rounded-3xl p-4 border border-slate-200 shadow-xs hover:border-blue-400 hover:shadow-md transition flex flex-col justify-between">
+                    <div class="bg-slate-100 rounded-2xl p-3 flex justify-center items-center min-h-[180px]">
+                        <div class="w-20 bg-white p-1.5 rounded-lg shadow border border-slate-200 flex flex-col gap-1">
+                            <div class="text-[5px] font-black text-center text-slate-700 uppercase">KOREAN WHITE</div>
+                            <div class="w-full h-5 bg-slate-200 rounded"></div>
+                            <div class="w-full h-5 bg-slate-200 rounded"></div>
+                            <div class="w-full h-5 bg-slate-200 rounded"></div>
+                            <div class="w-full h-5 bg-slate-200 rounded"></div>
+                            <div class="text-[4px] text-center text-slate-400">&hearts; MEMORIES</div>
                         </div>
                     </div>
-
-                </div>
-
-                <!-- Right: Control Panel -->
-                <div class="w-full md:w-80 bg-white p-4.5 flex flex-col gap-4 overflow-y-auto shrink-0">
-                    
-                    <div>
-                        <label class="text-[11px] font-bold text-slate-700 block mb-1.5 uppercase tracking-wider">Nama Frame</label>
-                        <input type="text" id="customFrameNameInput" placeholder="Contoh: My Aesthetic Frame" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 transition font-medium" />
-                    </div>
-
-                    <!-- Green Screen Auto-Detect Card -->
-                    <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 flex flex-col gap-2.5">
+                    <div class="mt-3">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
-                                <i class="ph ph-magic-wand text-emerald-600 text-base"></i> Auto-Detect Green Screen
-                            </span>
-                            <span class="text-[9px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-bold border border-emerald-200">CHROMA KEY</span>
+                            <h4 class="text-xs font-black text-slate-900">Korean White</h4>
+                            <span class="text-[10px] bg-blue-50 text-blue-700 font-bold px-1.5 py-0.5 rounded">4 Cuts</span>
                         </div>
-                        <p class="text-[10px] text-slate-500 leading-relaxed font-medium">
-                            Otomatis mendeteksi area hijau pada frame untuk diubah menjadi slot foto dan membuat warna hijau transparan.
-                        </p>
-                        <button id="btnAutoDetectGreenScreen" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white py-2 px-3 rounded-xl text-xs font-black transition flex items-center justify-center gap-1.5 shadow-sm disabled:opacity-50">
-                            <i class="ph ph-sparkle text-base"></i> DETEKSI GREEN SCREEN
-                        </button>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Gaya strip minimalis photobox Korea.</p>
                     </div>
+                </div>
 
-                    <!-- Slot Management Controls -->
-                    <div class="flex flex-col gap-2">
-                        <div class="flex justify-between items-center">
-                            <label class="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Daftar Slot Foto (<span id="customSlotCountText">0</span>)</label>
-                            <button id="btnAddSlotManual" class="text-[10px] font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200 transition">
-                                <i class="ph ph-plus font-bold"></i> Tambah Slot
-                            </button>
+                <!-- Frame 2 -->
+                <div class="bg-white rounded-3xl p-4 border border-slate-200 shadow-xs hover:border-blue-400 hover:shadow-md transition flex flex-col justify-between">
+                    <div class="bg-slate-950 rounded-2xl p-3 flex justify-center items-center min-h-[180px]">
+                        <div class="w-20 bg-[#111116] p-1.5 rounded-lg shadow border border-gray-800 flex flex-col gap-1">
+                            <div class="text-[5px] font-black text-center text-slate-200 uppercase">STUDIO CUT</div>
+                            <div class="w-full h-5 bg-gray-800 rounded"></div>
+                            <div class="w-full h-5 bg-gray-800 rounded"></div>
+                            <div class="w-full h-5 bg-gray-800 rounded"></div>
+                            <div class="w-full h-5 bg-gray-800 rounded"></div>
+                            <div class="text-[4px] text-center text-slate-400">#MOMENTS</div>
                         </div>
-                        <div class="text-[10px] text-slate-500 font-medium">
-                            *Tips: Tarik slot untuk memindahkan, tarik titik sudut/tepi untuk memperlebar / memperkecil.
+                    </div>
+                    <div class="mt-3">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-black text-slate-900">Korean Matte Black</h4>
+                            <span class="text-[10px] bg-slate-900 text-white font-bold px-1.5 py-0.5 rounded">4 Cuts</span>
                         </div>
-                        <div id="customSlotItemList" class="flex flex-col gap-1.5 max-h-36 overflow-y-auto pr-1"></div>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Gaya monokrom gelap elegan.</p>
                     </div>
+                </div>
 
-                    <!-- Bottom Action Buttons -->
-                    <div class="mt-auto pt-3 border-t border-slate-200 flex flex-col gap-2">
-                        <button id="btnChangeFrameImage" class="text-xs text-slate-600 hover:text-slate-900 py-1.5 transition flex items-center justify-center gap-1.5 font-bold">
-                            <i class="ph ph-arrows-clockwise text-base"></i> Ganti Gambar Frame
-                        </button>
-                        <button id="btnSaveCustomFrame" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white py-3 px-4 rounded-xl text-xs font-black transition flex items-center justify-center gap-2 shadow-sm active:scale-95 disabled:opacity-50">
-                            <i class="ph ph-check text-base font-bold"></i> SIMPAN & GUNAKAN FRAME
-                        </button>
+                <!-- Frame 3 -->
+                <div class="bg-white rounded-3xl p-4 border border-slate-200 shadow-xs hover:border-blue-400 hover:shadow-md transition flex flex-col justify-between">
+                    <div class="bg-slate-100 rounded-2xl p-3 flex justify-center items-center min-h-[180px]">
+                        <div class="w-24 bg-white p-1.5 rounded-lg shadow border border-slate-300 flex flex-col gap-1">
+                            <div class="text-[5px] font-black text-center text-slate-800 uppercase border-b pb-0.5">RECEIPT OF LOVE</div>
+                            <div class="grid grid-cols-2 gap-1 my-1">
+                                <div class="w-full h-6 bg-slate-200 rounded"></div>
+                                <div class="w-full h-6 bg-slate-200 rounded"></div>
+                                <div class="w-full h-6 bg-slate-200 rounded"></div>
+                                <div class="w-full h-6 bg-slate-200 rounded"></div>
+                            </div>
+                            <div class="text-[4px] font-mono text-center text-slate-500">TOTAL : FOREVER</div>
+                        </div>
                     </div>
+                    <div class="mt-3">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-black text-slate-900">Receipt Style</h4>
+                            <span class="text-[10px] bg-purple-50 text-purple-700 font-bold px-1.5 py-0.5 rounded">4 Cuts</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Gaya struk belanja viral dengan barcode.</p>
+                    </div>
+                </div>
 
+                <!-- Frame 4 -->
+                <div class="bg-white rounded-3xl p-4 border border-slate-200 shadow-xs hover:border-blue-400 hover:shadow-md transition flex flex-col justify-between">
+                    <div class="bg-red-950 rounded-2xl p-3 flex justify-center items-center min-h-[180px]">
+                        <div class="w-20 bg-[#B31B1B] p-1.5 rounded-lg shadow border-x-4 border-x-[#6c1010] flex flex-col gap-1">
+                            <div class="text-[5px] font-black text-center text-white bg-[#8B0000] rounded py-0.5">CINEMA</div>
+                            <div class="w-full h-7 bg-white rounded"></div>
+                            <div class="w-full h-7 bg-white rounded"></div>
+                            <div class="w-full h-7 bg-white rounded"></div>
+                            <div class="text-[4px] text-center text-white">&copy; PHOTOBOOTH</div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-black text-slate-900">Red Cinema Film</h4>
+                            <span class="text-[10px] bg-red-50 text-red-700 font-bold px-1.5 py-0.5 rounded">3 Cuts</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Gaya rol film bioskop klasik.</p>
+                    </div>
+                </div>
+
+                <!-- Frame 5 -->
+                <div class="bg-white rounded-3xl p-4 border border-slate-200 shadow-xs hover:border-blue-400 hover:shadow-md transition flex flex-col justify-between">
+                    <div class="bg-gradient-to-b from-pink-200 via-purple-200 to-blue-200 rounded-2xl p-3 flex justify-center items-center min-h-[180px]">
+                        <div class="w-20 bg-white/90 p-1.5 rounded-lg shadow flex flex-col gap-1">
+                            <div class="text-[5px] font-black text-center text-pink-700">&star; LUCKY STAR</div>
+                            <div class="w-full h-5 bg-pink-100 rounded"></div>
+                            <div class="w-full h-5 bg-pink-100 rounded"></div>
+                            <div class="w-full h-5 bg-pink-100 rounded"></div>
+                            <div class="w-full h-5 bg-pink-100 rounded"></div>
+                            <div class="text-[4px] text-center text-pink-500">Y2K CLUB</div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-black text-slate-900">Pastel Y2K</h4>
+                            <span class="text-[10px] bg-pink-50 text-pink-700 font-bold px-1.5 py-0.5 rounded">4 Cuts</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Gaya retro pastel 2000-an berkilau.</p>
+                    </div>
+                </div>
+
+                <!-- Frame 6 -->
+                <div class="bg-white rounded-3xl p-4 border border-slate-200 shadow-xs hover:border-blue-400 hover:shadow-md transition flex flex-col justify-between">
+                    <div class="bg-zinc-900 rounded-2xl p-3 flex justify-center items-center min-h-[180px]">
+                        <div class="w-18 bg-[#18181b] p-1.5 rounded-lg shadow border border-gray-700 flex flex-col gap-0.5">
+                            <div class="text-[4px] font-mono text-center text-gray-400">FILM STRIP</div>
+                            <div class="w-full h-4 bg-gray-800 rounded"></div>
+                            <div class="w-full h-4 bg-gray-800 rounded"></div>
+                            <div class="w-full h-4 bg-gray-800 rounded"></div>
+                            <div class="w-full h-4 bg-gray-800 rounded"></div>
+                            <div class="w-full h-4 bg-gray-800 rounded"></div>
+                            <div class="text-[3px] font-mono text-center text-gray-500">ISO 400</div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-black text-slate-900">Minimalist Film Strip</h4>
+                            <span class="text-[10px] bg-zinc-800 text-white font-bold px-1.5 py-0.5 rounded">5 Cuts</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Strip film vertikal 5 pose foto.</p>
+                    </div>
+                </div>
+
+                <!-- Frame 7 -->
+                <div class="bg-white rounded-3xl p-4 border border-slate-200 shadow-xs hover:border-blue-400 hover:shadow-md transition flex flex-col justify-between">
+                    <div class="bg-blue-950 rounded-2xl p-3 flex justify-center items-center min-h-[180px]">
+                        <div class="w-24 bg-[#1E3A8A] p-2 rounded-xl shadow flex flex-col gap-1">
+                            <div class="grid grid-cols-2 gap-1">
+                                <div class="w-full h-6 bg-blue-300 rounded"></div>
+                                <div class="w-full h-6 bg-blue-300 rounded"></div>
+                                <div class="w-full h-6 bg-blue-300 rounded"></div>
+                                <div class="w-full h-6 bg-blue-300 rounded"></div>
+                            </div>
+                            <div class="text-[5px] font-black text-center text-white">GOOD VIBES</div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-black text-slate-900">Modern 2x2 Grid</h4>
+                            <span class="text-[10px] bg-blue-50 text-blue-700 font-bold px-1.5 py-0.5 rounded">4 Cuts</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Gaya feed Instagram kotak modern.</p>
+                    </div>
+                </div>
+
+                <!-- Frame 8 -->
+                <div class="bg-white rounded-3xl p-4 border border-slate-200 shadow-xs hover:border-blue-400 hover:shadow-md transition flex flex-col justify-between">
+                    <div class="bg-amber-50/80 rounded-2xl p-3 flex justify-center items-center min-h-[180px]">
+                        <div class="w-20 bg-[#f8f6f0] p-1.5 rounded-lg shadow border border-slate-200 flex flex-col gap-1">
+                            <div class="text-[5px] font-bold text-center text-slate-600">SNAPSHOTS</div>
+                            <div class="w-full h-6 bg-white p-0.5 rounded shadow-xs"><div class="w-full h-full bg-slate-200 rounded"></div></div>
+                            <div class="w-full h-6 bg-white p-0.5 rounded shadow-xs"><div class="w-full h-full bg-slate-200 rounded"></div></div>
+                            <div class="w-full h-6 bg-white p-0.5 rounded shadow-xs"><div class="w-full h-full bg-slate-200 rounded"></div></div>
+                            <div class="text-[6px] font-handwriting text-center text-slate-600">sweet moments</div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-black text-slate-900">Polaroid Trio</h4>
+                            <span class="text-[10px] bg-amber-50 text-amber-700 font-bold px-1.5 py-0.5 rounded">3 Cuts</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Tiga kartu polaroid vintage estetik.</p>
+                    </div>
                 </div>
 
             </div>
-
         </div>
-    </div>
+    </section>
 
-    <!-- ================= MODAL 2: FRAME MANAGER ================= -->
-    <div id="frameManagerModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 hide">
-        <div class="bg-white border border-slate-200 w-full max-w-4xl h-[88vh] max-h-[750px] rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-900">
-            
-            <!-- Manager Header -->
-            <div class="p-4 px-6 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg shadow-xs">
-                        <i class="ph ph-sliders-horizontal font-bold"></i>
+    <!-- ================= 7. USE CASES (SOLUSI ACARA) ================= -->
+    <section id="solusi-acara" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <div class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider mb-3">
+                    SOLUSI EVENT
+                </div>
+                <h2 class="heading-font text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+                    Cocok untuk Segala Jenis Acara & Usaha
+                </h2>
+                <p class="text-sm sm:text-base text-slate-500 mt-3 font-medium">
+                    Fleksibilitas tinggi yang siap menyesuaikan dengan tema dekorasi dan identitas brand Anda.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200 flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center text-2xl shrink-0">
+                        💍
                     </div>
                     <div>
-                        <h3 class="text-slate-900 font-black text-sm sm:text-base tracking-wide">KELOLA TEMPLATE FRAME EVENT</h3>
-                        <p class="text-[11px] text-slate-500 font-medium">Atur & hapus template bawaan/kustom agar event Anda siap pakai dengan cepat (satset).</p>
+                        <h4 class="heading-font text-base font-black text-slate-900">Wedding & Engagement</h4>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed font-medium">Souvenir digital interaktif yang langsung masuk ke smartphone setiap tamu undangan.</p>
                     </div>
                 </div>
-                <button id="btnCloseFrameManager" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 hover:text-slate-900 flex items-center justify-center transition">
-                    <i class="ph ph-x font-bold text-base"></i>
-                </button>
-            </div>
 
-            <!-- Manager Toolbar -->
-            <div class="p-3 px-6 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs">
-                <div class="flex items-center gap-2">
-                    <button id="btnExportPreset" class="bg-white hover:bg-slate-100 text-slate-800 px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5 border border-slate-200 transition shadow-xs">
-                        <i class="ph ph-download text-sm text-blue-600"></i> Export Preset (.json)
-                    </button>
-                    <input type="file" id="importPresetFileInput" accept=".json" class="hidden" />
-                    <button id="btnImportPresetTrigger" class="bg-white hover:bg-slate-100 text-slate-800 px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5 border border-slate-200 transition shadow-xs">
-                        <i class="ph ph-upload text-sm text-blue-600"></i> Import Preset
-                    </button>
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200 flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl shrink-0">
+                        🎂
+                    </div>
+                    <div>
+                        <h4 class="heading-font text-base font-black text-slate-900">Birthday & Sweet 17</h4>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed font-medium">Abadikan momen seru bersama sahabat dengan pose lucu dan stiker stiker seru.</p>
+                    </div>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button id="btnResetToDefaults" class="text-slate-500 hover:text-red-600 px-3 py-2 rounded-xl font-bold flex items-center gap-1.5 transition text-[11px]">
-                        <i class="ph ph-arrow-counter-clockwise text-sm"></i> Reset ke Bawaan
-                    </button>
+
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200 flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl shrink-0">
+                        🏢
+                    </div>
+                    <div>
+                        <h4 class="heading-font text-base font-black text-slate-900">Corporate & Brand Activation</h4>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed font-medium">Tampilkan logo sponsor perusahaan dan tautan campaign pada strip serta galeri HP.</p>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200 flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl shrink-0">
+                        🎓
+                    </div>
+                    <div>
+                        <h4 class="heading-font text-base font-black text-slate-900">Wisuda & Prom Night</h4>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed font-medium">Kenangan masa sekolah atau kelulusan yang tersimpan abadi di cloud drive.</p>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200 flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl shrink-0">
+                        ☕
+                    </div>
+                    <div>
+                        <h4 class="heading-font text-base font-black text-slate-900">Cafe, Mall & Pop-up Kiosk</h4>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed font-medium">Setup kiosk photobooth mandiri tanpa perlu menempatkan operator khusus.</p>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200 flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl shrink-0">
+                        📸
+                    </div>
+                    <div>
+                        <h4 class="heading-font text-base font-black text-slate-900">Studio Self-Photo</h4>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed font-medium">Software pendukung untuk studio self-photo dengan kualitas foto lab cetak.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 8. HOW IT WORKS (CARA KERJA) ================= -->
+    <section id="cara-kerja" class="py-20 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <div class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider mb-3">
+                    ALUR PENGGUNAAN
+                </div>
+                <h2 class="heading-font text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+                    Mudah, Cepat, dan 100% Sat-Set
+                </h2>
+                <p class="text-sm sm:text-base text-slate-500 mt-3 font-medium">
+                    Hanya 4 langkah mudah dari persiapan acara hingga tamu membawa pulang kenangan.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs flex flex-col justify-between">
+                    <div>
+                        <span class="w-10 h-10 rounded-2xl bg-blue-600 text-white font-black text-base flex items-center justify-center mb-4 shadow-sm shadow-blue-500/30">1</span>
+                        <h4 class="heading-font text-base font-black text-slate-900">Setup di Dashboard</h4>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed font-medium">
+                            Tentukan nama acara, pilih template frame atau upload frame custom dengan Chroma-Key AI.
+                        </p>
+                    </div>
+                    <div class="mt-4 text-[11px] font-bold text-blue-600">1 Menit Persiapan &rarr;</div>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs flex flex-col justify-between">
+                    <div>
+                        <span class="w-10 h-10 rounded-2xl bg-purple-600 text-white font-black text-base flex items-center justify-center mb-4 shadow-sm shadow-purple-500/30">2</span>
+                        <h4 class="heading-font text-base font-black text-slate-900">Tamu Ambil Pose</h4>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed font-medium">
+                            Tamu berdiri di depan kamera. Hitung mundur otomatis dan perekaman Live Motion dimulai.
+                        </p>
+                    </div>
+                    <div class="mt-4 text-[11px] font-bold text-purple-600">Hitung Mundur Otomatis &rarr;</div>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs flex flex-col justify-between">
+                    <div>
+                        <span class="w-10 h-10 rounded-2xl bg-pink-600 text-white font-black text-base flex items-center justify-center mb-4 shadow-sm shadow-pink-500/30">3</span>
+                        <h4 class="heading-font text-base font-black text-slate-900">Pilih Frame & Filter</h4>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed font-medium">
+                            Tamu dapat menukar urutan pose, memilih filter estetik, dan menempelkan stiker lucu.
+                        </p>
+                    </div>
+                    <div class="mt-4 text-[11px] font-bold text-pink-600">Interaktif & Menyenangkan &rarr;</div>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs flex flex-col justify-between">
+                    <div>
+                        <span class="w-10 h-10 rounded-2xl bg-emerald-600 text-white font-black text-base flex items-center justify-center mb-4 shadow-sm shadow-emerald-500/30">4</span>
+                        <h4 class="heading-font text-base font-black text-slate-900">Scan QR & Unduh</h4>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed font-medium">
+                            Scan QR di layar untuk membuka galeri hasil di HP. Foto dan video langsung tersimpan aman!
+                        </p>
+                    </div>
+                    <div class="mt-4 text-[11px] font-bold text-emerald-600">Simpan Langsung ke HP &rarr;</div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 9. FAQ ACCORDION ================= -->
+    <section id="faq" class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider mb-2">
+                    PERTANYAAN UMUM
+                </div>
+                <h2 class="heading-font text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+                    Frequently Asked Questions (FAQ)
+                </h2>
+            </div>
+
+            <div class="flex flex-col gap-4">
+                
+                <details class="group bg-slate-50 p-5 rounded-2xl border border-slate-200 cursor-pointer">
+                    <summary class="font-bold text-sm text-slate-900 flex justify-between items-center list-none">
+                        <span>Apakah software ini membutuhkan koneksi internet?</span>
+                        <i class="ph ph-caret-down text-base text-blue-600 transition group-open:rotate-180"></i>
+                    </summary>
+                    <p class="text-xs text-slate-600 mt-3 leading-relaxed font-medium">
+                        Software Eazy Fotobooth dapat berjalan secara offline untuk pengambilan foto, render photo strip, dan video motion MP4. Koneksi internet hanya dibutuhkan jika Anda mengaktifkan fitur auto-sync Google Drive dan akses galeri online.
+                    </p>
+                </details>
+
+                <details class="group bg-slate-50 p-5 rounded-2xl border border-slate-200 cursor-pointer">
+                    <summary class="font-bold text-sm text-slate-900 flex justify-between items-center list-none">
+                        <span>Kamera apa saja yang didukung?</span>
+                        <i class="ph ph-caret-down text-blue-600 transition group-open:rotate-180"></i>
+                    </summary>
+                    <p class="text-xs text-slate-600 mt-3 leading-relaxed font-medium">
+                        Eazy Fotobooth mendukung Webcam USB (seperti Logitech C920/Brio), kamera bawaan laptop/iPad/Android, hingga kamera DSLR/Mirrorless melalui USB Capture Card (Cam Link).
+                    </p>
+                </details>
+
+                <details class="group bg-slate-50 p-5 rounded-2xl border border-slate-200 cursor-pointer">
+                    <summary class="font-bold text-sm text-slate-900 flex justify-between items-center list-none">
+                        <span>Bagaimana cara memasukkan frame desain kustom?</span>
+                        <i class="ph ph-caret-down text-blue-600 transition group-open:rotate-180"></i>
+                    </summary>
+                    <p class="text-xs text-slate-600 mt-3 leading-relaxed font-medium">
+                        Anda dapat mengunggah file PNG transparan atau JPG dengan area green screen di menu "Studio Frame Custom" pada Dashboard Admin. Sistem AI akan otomatis mendeteksi kotak slot foto untuk Anda.
+                    </p>
+                </details>
+
+                <details class="group bg-slate-50 p-5 rounded-2xl border border-slate-200 cursor-pointer">
+                    <summary class="font-bold text-sm text-slate-900 flex justify-between items-center list-none">
+                        <span>Bagaimana cara kerja backup ke Google Drive?</span>
+                        <i class="ph ph-caret-down text-blue-600 transition group-open:rotate-180"></i>
+                    </summary>
+                    <p class="text-xs text-slate-600 mt-3 leading-relaxed font-medium">
+                        Kami menyediakan script Google Apps Script gratis yang dapat Anda pasang di akun Google Anda sendiri. Script ini akan otomatis membuat folder event baru dan menyimpan foto strip, GIF, dan pose satuan secara instan.
+                    </p>
+                </details>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 10. CALL TO ACTION BANNER ================= -->
+    <section class="py-16 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-white/5 backdrop-blur-3xl"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center text-center">
+            <span class="bg-white/20 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider mb-4">
+                SIAP BIKIN EVENT KAMU LEBIH BERKESAN?
+            </span>
+            <h2 class="heading-font text-3xl sm:text-4xl md:text-5xl font-black max-w-2xl leading-tight">
+                Mulai Sesi Photobooth Sekarang Juga!
+            </h2>
+            <p class="text-xs sm:text-sm text-blue-100 max-w-xl mt-3 leading-relaxed">
+                Jalankan Eazy Fotobooth langsung di browser perangkat Anda tanpa perlu instalasi rumit.
+            </p>
+
+            <div class="flex flex-wrap items-center justify-center gap-3.5 mt-8">
+                <a href="app.html" class="bg-white text-slate-900 hover:bg-slate-100 px-8 py-4 rounded-2xl font-black text-sm shadow-xl transition active:scale-95 flex items-center gap-2">
+                    <i class="ph ph-camera text-blue-600 text-lg"></i>
+                    <span>Buka Layar Booth</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 11. FOOTER ================= -->
+    <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-xs">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center text-lg font-bold">
+                    <i class="ph ph-camera"></i>
+                </div>
+                <div>
+                    <span class="heading-font font-black text-sm text-white tracking-wide block">EAZY FOTOBOOTH</span>
+                    <span class="text-[10px] text-slate-500">Next-Gen Photobooth Software Engine</span>
                 </div>
             </div>
 
-            <!-- Manager Body -->
-            <div class="flex-grow p-4 sm:p-6 overflow-y-auto bg-slate-50/50">
-                <div class="mb-3 flex justify-between items-center">
-                    <span class="text-xs font-black text-slate-800 uppercase tracking-wider">Daftar Frame Aktif (<span id="mgrFrameCountText">0</span>)</span>
-                    <span class="text-[11px] text-slate-500 font-medium">*Frame yang Anda hapus tidak akan muncul di pilihan photobooth.</span>
-                </div>
-                <div id="frameManagerGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5"></div>
+            <div class="flex flex-wrap items-center gap-6 text-slate-400 font-medium">
+                <a href="index.html" class="hover:text-white transition">Profil</a>
+                <a href="app.html" class="hover:text-white transition">Buka Aplikasi</a>
             </div>
 
-            <!-- Manager Footer -->
-            <div class="p-4 px-6 border-t border-slate-200 bg-white flex justify-between items-center">
-                <button type="button" onclick="customFrameModal.classList.remove('hide'); frameManagerModal.classList.add('hide');" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm">
-                    <i class="ph ph-plus-circle text-base"></i> + Upload Frame Baru
-                </button>
-                <button id="btnDoneFrameManager" class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2.5 rounded-xl text-xs font-black transition shadow-sm">
-                    SELESAI & SIMPAN
-                </button>
+            <div class="text-slate-500 text-center md:text-right">
+                &copy; 2026 Eazy Fotobooth. All rights reserved.
             </div>
-
         </div>
-    </div>
+    </footer>
 
-
-
-    <!-- Toast Notification Popup -->
-    <div id="themeToast" class="fixed top-6 right-6 z-[200] bg-white border border-slate-200 text-slate-900 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 transform translate-y-[-150%] transition-transform duration-300 pointer-events-none">
-        <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg shrink-0 border border-emerald-100">
-            <i class="ph ph-check-circle font-bold"></i>
-        </div>
-        <div>
-            <div class="text-xs font-black text-slate-900" id="themeToastTitle">Pengaturan Tersimpan</div>
-            <div class="text-[10px] text-slate-500 font-medium" id="themeToastMessage">Tampilan kustom berhasil diterapkan.</div>
-        </div>
-    </div>
-
-    <!-- Hidden Offscreen Container for Clean Pixel-Perfect Rendering -->
-    <div id="offscreenRenderContainer" style="position: fixed; left: -9999px; top: 0; visibility: visible; z-index: -9999; pointer-events: none;"></div>
-
-    <!-- Modular Script Imports (Separated by Feature) -->
-    <script src="js/config.js"></script>
-    <script src="js/db.js"></script>
-    <script src="js/audio.js"></script>
-    <script src="js/theme.js"></script>
-    <script src="js/camera.js"></script>
-    <script src="js/custom-frame.js"></script>
-    <script src="js/frames.js"></script>
-    <script src="js/builder.js"></script>
-    <script src="js/export-engine.js"></script>
-    <script src="js/app.js"></script>
 </body>
 </html>
