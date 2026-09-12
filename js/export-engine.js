@@ -158,7 +158,7 @@ function prosesHasil() {
     const brandName = cfg.brandName || 'Eazy Fotobooth';
 
     // Construct customer page URL
-    const basePath = window.location.href.split('?')[0].replace(/index\.html$/, '').replace(/\/$/, '');
+    const basePath = window.location.href.split('?')[0].replace(/\/[^\/]*\.html$/, '').replace(/\/$/, '');
     const customerUrl = `${basePath}/customer.html?session=${currentSessionId}`;
 
     // Prepare session data object
@@ -257,6 +257,12 @@ function prosesHasil() {
             if (qrSpinner) qrSpinner.classList.add('hidden');
             if (result && result.success && result.folderUrl) {
                 sessionData.gdriveUrl = result.folderUrl;
+                
+                // PENTING: Update QR code agar mengarah langsung ke Google Drive
+                // Karena Vercel tidak memiliki backend server, HP pelanggan tidak bisa 
+                // melihat foto dari IndexedDB lokal laptop.
+                renderQr(result.folderUrl);
+
                 if (typeof SessionDB !== 'undefined') {
                     SessionDB.saveSession(sessionData);
                 }
