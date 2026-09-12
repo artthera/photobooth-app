@@ -32,7 +32,11 @@ function doPost(e) {
     }
 
     const data = JSON.parse(e.postData.contents);
+    
+    // Konfigurasi Sesi
     const sessionName = data.sessionName || ('Photobooth_' + Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyyMMdd_HHmmss"));
+    const eventName = data.eventName || '';
+    const files = data.files || [];
 
     // 1. Dapatkan atau Buat Folder Induk
     let parentFolder = DriveApp.getRootFolder();
@@ -44,14 +48,23 @@ function doPost(e) {
       }
     }
 
-    // 2. Buat atau Dapatkan Folder Tanggal Hari Ini
-    const dateFolderName = Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyy-MM-dd");
+    // 2. Buat atau Dapatkan Folder Event atau Tanggal Hari Ini
     let dateFolder;
-    const dateFolderIterator = parentFolder.getFoldersByName(dateFolderName);
-    if (dateFolderIterator.hasNext()) {
-      dateFolder = dateFolderIterator.next();
+    if (eventName && eventName.trim() !== '') {
+      const eventFolderIterator = parentFolder.getFoldersByName(eventName.trim());
+      if (eventFolderIterator.hasNext()) {
+        dateFolder = eventFolderIterator.next();
+      } else {
+        dateFolder = parentFolder.createFolder(eventName.trim());
+      }
     } else {
-      dateFolder = parentFolder.createFolder(dateFolderName);
+      const dateFolderName = Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyy-MM-dd");
+      const dateFolderIterator = parentFolder.getFoldersByName(dateFolderName);
+      if (dateFolderIterator.hasNext()) {
+        dateFolder = dateFolderIterator.next();
+      } else {
+        dateFolder = parentFolder.createFolder(dateFolderName);
+      }
     }
 
     // 3. Buat Subfolder Khusus Sesi Ini di dalam Folder Tanggal

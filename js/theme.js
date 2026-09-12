@@ -36,7 +36,8 @@ const ThemeManager = (function() {
         accentColorEnd: "#7c3aed",
 
         gdriveWebhookUrl: "",
-        gdriveAutoUpload: true
+        gdriveAutoUpload: true,
+        gdriveEventName: "",
     };
 
     let currentConfig = { ...defaults };
@@ -359,8 +360,10 @@ const ThemeManager = (function() {
 
         // Google Drive inputs
         setVal('themeGdriveWebhookUrl', cfg.gdriveWebhookUrl || '');
-        const chkGdriveAuto = document.getElementById('themeGdriveAutoUpload');
-        if (chkGdriveAuto) chkGdriveAuto.checked = cfg.gdriveAutoUpload !== false;
+        if (document.getElementById('themeGdriveAutoUpload')) {
+            document.getElementById('themeGdriveAutoUpload').checked = cfg.gdriveAutoUpload !== false;
+        }
+        setVal('themeGdriveEventName', cfg.gdriveEventName || '');
         const statusGdrive = document.getElementById('gdriveTestStatus');
         if (statusGdrive) statusGdrive.classList.add('hidden');
     }
@@ -521,7 +524,7 @@ const ThemeManager = (function() {
                 gdriveTestStatus.classList.remove('hidden');
 
                 try {
-                    const res = await fetch(url, { method: 'GET' });
+                    const res = await fetch(url, { method: 'GET', mode: 'cors' });
                     const data = await res.json();
                     if (data && (data.status === 'online' || data.success !== false)) {
                         gdriveTestStatus.innerHTML = '<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> Koneksi Berhasil! Google Apps Script siap digunakan.</span>';
@@ -529,7 +532,7 @@ const ThemeManager = (function() {
                         gdriveTestStatus.innerHTML = '<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> Terhubung ke Google Apps Script!</span>';
                     }
                 } catch (err) {
-                    gdriveTestStatus.innerHTML = `<span class="text-amber-600 font-bold"><i class="ph ph-info"></i> Endpoint terhubung (atau diarahkan oleh Google). Pastikan \'Who has access\' di-set ke \'Anyone\'.</span>`;
+                    gdriveTestStatus.innerHTML = '<span class="text-red-600 font-bold"><i class="ph ph-warning"></i> Gagal terhubung (CORS / Salah URL). Pastikan pengaturan "Who has access" = "Anyone" saat deploy!</span>';
                 } finally {
                     btnTestGdrive.disabled = false;
                     btnTestGdrive.innerHTML = origBtn;
@@ -572,6 +575,7 @@ const ThemeManager = (function() {
         bindInput('themeResultsTitle', 'resultsTitle');
         bindInput('themeResultsSubtitle', 'resultsSubtitle');
         bindInput('themeGdriveWebhookUrl', 'gdriveWebhookUrl');
+        bindInput('themeGdriveEventName', 'gdriveEventName');
 
         // Background Mode buttons
         document.querySelectorAll('.theme-bg-mode-btn').forEach(btn => {

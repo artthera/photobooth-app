@@ -160,6 +160,7 @@ function prosesHasil() {
     // Construct customer page URL
     const basePath = window.location.href.split('?')[0].replace(/\/[^\/]*\.html$/, '').replace(/\/$/, '');
     const customerUrl = `${basePath}/customer.html?session=${currentSessionId}`;
+    const eventName = (cfg.gdriveEventName || '').trim();
 
     // Prepare session data object
     const sessionData = {
@@ -167,6 +168,7 @@ function prosesHasil() {
         createdAt: Date.now(),
         dateStr: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
         brandName: brandName,
+        eventName: eventName,
         stripJpg: finalStripImageUrl,
         stripPng: finalStripPngUrl,
         rawShots: Array.isArray(frameUntukGif) ? [...frameUntukGif] : [],
