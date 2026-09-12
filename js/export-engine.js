@@ -258,10 +258,21 @@ function prosesHasil() {
             if (result && result.success && result.folderUrl) {
                 sessionData.gdriveUrl = result.folderUrl;
                 
-                // PENTING: Update QR code agar mengarah langsung ke Google Drive
-                // Karena Vercel tidak memiliki backend server, HP pelanggan tidak bisa 
-                // melihat foto dari IndexedDB lokal laptop.
-                renderQr(result.folderUrl);
+                let scriptId = '';
+                const match = webhookUrl.match(/\/macros\/s\/([^\/]+)\/exec/);
+                if (match) scriptId = match[1];
+
+                if (result.folderId && scriptId) {
+                    const onlineCustomerUrl = `${basePath}/customer.html?f=${result.folderId}&s=${scriptId}`;
+                    renderQr(onlineCustomerUrl);
+                    
+                    if (btnSimulate) btnSimulate.href = onlineCustomerUrl;
+                    if (qrContainer) {
+                        qrContainer.onclick = () => window.open(onlineCustomerUrl, '_blank');
+                    }
+                } else {
+                    renderQr(result.folderUrl);
+                }
 
                 if (typeof SessionDB !== 'undefined') {
                     SessionDB.saveSession(sessionData);

@@ -350,7 +350,7 @@
         }
 
         // Lightbox Handler
-        function openLightbox(imgSrc, title, filename) {
+        function openLightbox(imgSrc, title, filename, downloadUrl) {
             const modal = document.getElementById('lightboxModal');
             const img = document.getElementById('lightboxImg');
             const titleEl = document.getElementById('lightboxTitle');
@@ -358,7 +358,7 @@
 
             img.src = imgSrc;
             titleEl.textContent = title || "Pratinjau Foto";
-            lightboxDownloadUrl = imgSrc;
+            lightboxDownloadUrl = downloadUrl || imgSrc;
             lightboxDownloadFilename = filename || `photo_${Date.now()}.jpg`;
 
             modal.classList.remove('hidden');
@@ -386,6 +386,13 @@
         async function initCustomerPage() {
             const urlParams = new URLSearchParams(window.location.search);
             const sessionId = urlParams.get('session');
+            const folderId = urlParams.get('f');
+            const scriptId = urlParams.get('s');
+
+            if (folderId && scriptId) {
+                await initOnlineSession(folderId, scriptId);
+                return;
+            }
 
             let session = null;
 
@@ -426,6 +433,71 @@
             } catch(e) {}
         }
 
+        // Fetch from Google Apps Script directly!
+        async function initOnlineSession(folderId, scriptId) {
+            document.getElementById('brandTitle').textContent = "MENGAMBIL DATA...";
+            document.getElementById('sessionDateBadge').innerHTML = `<i class="ph ph-spinner animate-spin"></i> Menghubungkan ke Google Drive...`;
+            
+            try {
+                const webhookUrl = `https://script.google.com/macros/s/${scriptId}/exec`;
+                const response = await fetch(`${webhookUrl}?folderId=${folderId}`);
+                const data = await response.json();
+                
+                if (data && data.success) {
+                    const session = {
+                        id: folderId,
+                        brandName: "Eazy Fotobooth",
+                        dateStr: new Date().toLocaleDateString('id-ID', { dateStyle: 'full' }),
+                        gdriveUrl: `https://drive.google.com/drive/folders/${folderId}`,
+                        stripJpg: null,
+                        stripPng: null,
+                        gifUrl: null,
+                        liveVideos: [],
+                        rawShots: [],
+                        rawDownloadUrls: [],
+                        stripJpgDownload: null,
+                        stripPngDownload: null,
+                        gifDownload: null,
+                        isOnline: true
+                    };
+
+                    let poses = [];
+                    data.files.forEach(f => {
+                        if (f.name.includes('Foto_Strip.jpg')) {
+                            session.stripJpg = f.url;
+                            session.stripJpgDownload = f.downloadUrl;
+                        } else if (f.name.includes('Foto_Strip_HD.png')) {
+                            session.stripPng = f.url;
+                            session.stripPngDownload = f.downloadUrl;
+                        } else if (f.name.includes('Animasi')) {
+                            session.gifUrl = f.url;
+                            session.gifDownload = f.downloadUrl;
+                        } else if (f.name.includes('Pose_')) {
+                            poses.push(f);
+                        }
+                    });
+
+                    poses.sort((a, b) => a.name.localeCompare(b.name));
+                    session.rawShots = poses.map(p => p.url);
+                    session.rawDownloadUrls = poses.map(p => p.downloadUrl);
+
+                    activeSession = session;
+                    renderSessionUI(session);
+                    
+                    try {
+                        if (typeof confetti === 'function') confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+                    } catch(e) {}
+                } else {
+                    renderEmptyDemoState();
+                    showToast("Gagal mengambil data dari Google Drive", true);
+                }
+            } catch (err) {
+                console.error(err);
+                renderEmptyDemoState();
+                showToast("Terjadi kesalahan koneksi", true);
+            }
+        }
+
         // Render Session Data to DOM
         function renderSessionUI(session) {
             // Brand & Title
@@ -461,14 +533,14 @@
 
             if (session.stripJpg) {
                 stripImg.src = session.stripJpg;
-                stripPreviewBox.onclick = () => openLightbox(session.stripJpg, "Photo Strip Ultra-HD", `photobooth_strip_${session.id}.jpg`);
+                stripPreviewBox.onclick = () => openLightbox(session.stripJpg, "Photo Strip Ultra-HD", `photobooth_strip_${session.id}.jpg`, session.stripJpgDownload);
 
-                btnJpg.onclick = () => triggerDownload(session.stripJpg, `photobooth_strip_${session.id}.jpg`);
+                btnJpg.onclick = () => triggerDownload(session.stripJpgDownload || session.stripJpg, `photobooth_strip_${session.id}.jpg`);
             }
             if (session.stripPng) {
-                btnPng.onclick = () => triggerDownload(session.stripPng, `photobooth_strip_${session.id}.png`);
+                btnPng.onclick = () => triggerDownload(session.stripPngDownload || session.stripPng, `photobooth_strip_${session.id}.png`);
             } else if (session.stripJpg) {
-                btnPng.onclick = () => triggerDownload(session.stripJpg, `photobooth_strip_${session.id}.jpg`);
+                btnPng.onclick = () => triggerDownload(session.stripJpgDownload || session.stripJpg, `photobooth_strip_${session.id}.jpg`);
             }
 
             // Live Motion Video
@@ -494,7 +566,7 @@
             if (session.gifUrl && gifSection && gifImg) {
                 gifImg.src = session.gifUrl;
                 gifSection.classList.remove('hidden');
-                btnGif.onclick = () => triggerDownload(session.gifUrl, `photobooth_animation_${session.id}.gif`);
+                btnGif.onclick = () => triggerDownload(session.gifDownload || session.gifUrl, `photobooth_animation_${session.id}.gif`);
             } else if (gifSection) {
                 gifSection.classList.add('hidden');
             }
@@ -531,10 +603,11 @@
 
                         // Bind lightbox & download
                         const imgBox = card.querySelector('div');
-                        imgBox.onclick = () => openLightbox(shotSrc, `Foto Asli - Pose ${idx + 1}`, `pose_${idx + 1}_${session.id}.jpg`);
+                        const dUrl = session.rawDownloadUrls ? session.rawDownloadUrls[idx] : shotSrc;
+                        imgBox.onclick = () => openLightbox(shotSrc, `Foto Asli - Pose ${idx + 1}`, `pose_${idx + 1}_${session.id}.jpg`, dUrl);
 
                         const btnDown = card.querySelector('.btn-download-raw');
-                        btnDown.onclick = () => triggerDownload(shotSrc, `pose_${idx + 1}_${session.id}.jpg`);
+                        btnDown.onclick = () => triggerDownload(dUrl, `pose_${idx + 1}_${session.id}.jpg`);
 
                         shotsGrid.appendChild(card);
                     });
@@ -553,6 +626,12 @@
             const btnHeaderShare = document.getElementById('btnHeaderShare');
 
             if (btnZip) {
+                if (session.isOnline) {
+                    btnZip.style.display = 'none'; // Sembunyikan tombol ZIP jika online karena batasan CORS Google Drive
+                } else {
+                    btnZip.style.display = 'flex';
+                }
+                
                 btnZip.onclick = async () => {
                     if (typeof JSZip === 'undefined') {
                         showToast("Library JSZip sedang disiapkan...", true);

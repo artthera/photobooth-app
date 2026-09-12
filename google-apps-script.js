@@ -102,10 +102,44 @@ function doPost(e) {
 }
 
 function doGet(e) {
-  return responseJSON({
-    status: 'online',
-    message: 'Google Apps Script Photobooth Endpoint Aktif & Siap Menerima Data!'
-  });
+  const folderId = e.parameter.folderId;
+  
+  if (!folderId) {
+    return responseJSON({
+      status: 'online',
+      message: 'Google Apps Script Photobooth Endpoint Aktif & Siap Menerima Data!'
+    });
+  }
+
+  try {
+    const folder = DriveApp.getFolderById(folderId);
+    const filesIterator = folder.getFiles();
+    const files = [];
+    
+    while (filesIterator.hasNext()) {
+      const file = filesIterator.next();
+      files.push({
+        name: file.getName(),
+        id: file.getId(),
+        url: 'https://drive.google.com/uc?export=view&id=' + file.getId(),
+        downloadUrl: 'https://drive.google.com/uc?export=download&id=' + file.getId(),
+        mimeType: file.getMimeType()
+      });
+    }
+    
+    // Aktifkan akses publik agar API bisa dipanggil secara lintas domain
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      folderName: folder.getName(),
+      files: files
+    })).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return responseJSON({
+      success: false,
+      error: error.toString()
+    });
+  }
 }
 
 /**
