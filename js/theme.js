@@ -61,15 +61,51 @@ const ThemeManager = (function() {
         return currentConfig;
     }
 
-    function saveConfig(cfg) {
+    async function saveConfig(cfg) {
         try {
             currentConfig = { ...cfg };
             activeWorkingConfig = { ...currentConfig };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(currentConfig));
+
+            // Sync to Supabase if logged in
+            if (typeof globalSupabaseClient !== 'undefined' && typeof currentAuthUser !== 'undefined' && currentAuthUser) {
+                try {
+                    await globalSupabaseClient
+                        .from('user_settings')
+                        .upsert({ user_id: currentAuthUser.id, settings_json: cfg });
+                } catch (err) {
+                    console.error("Gagal sinkronisasi pengaturan ke database", err);
+                }
+            }
+
             return true;
         } catch(e) {
             console.error("Save theme config error:", e);
             return false;
+        }
+    }
+
+    async function loadFromCloud() {
+        if (typeof globalSupabaseClient !== 'undefined' && typeof currentAuthUser !== 'undefined' && currentAuthUser) {
+            try {
+                const { data, error } = await globalSupabaseClient
+                    .from('user_settings')
+                    .select('settings_json')
+                    .eq('user_id', currentAuthUser.id)
+                    .single();
+                    
+                if (data && data.settings_json) {
+                    activeWorkingConfig = { ...defaults, ...data.settings_json };
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(activeWorkingConfig));
+                    currentConfig = { ...activeWorkingConfig };
+                    
+                    syncModalInputs(activeWorkingConfig);
+                    applyConfig(currentConfig);
+                    showToast("Cloud Sync", "Pengaturan berhasil dimuat dari database.");
+                }
+            } catch (err) {
+                console.log("Belum ada pengaturan di cloud atau gagal memuat.");
+            }
         }
     }
 
@@ -847,6 +883,7 @@ const ThemeManager = (function() {
 
     return {
         loadConfig,
+        loadFromCloud,
         saveConfig,
         applyConfig,
         initModalUI,

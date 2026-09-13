@@ -14,15 +14,21 @@ async function initAuth() {
         
         if (session && session.user) {
             currentAuthUser = session.user;
+            if (window.ThemeManager && window.ThemeManager.loadFromCloud) {
+                await window.ThemeManager.loadFromCloud();
+            }
             showAdmin();
         } else {
             showLogin();
         }
 
         // Listen for auth changes
-        globalSupabaseClient.auth.onAuthStateChange((event, session) => {
+        globalSupabaseClient.auth.onAuthStateChange(async (event, session) => {
             if (event === 'SIGNED_IN') {
                 currentAuthUser = session.user;
+                if (window.ThemeManager && window.ThemeManager.loadFromCloud) {
+                    await window.ThemeManager.loadFromCloud();
+                }
                 showAdmin();
             } else if (event === 'SIGNED_OUT') {
                 currentAuthUser = null;

@@ -44,8 +44,8 @@ async function fetchAndRenderStats() {
         if (overviewToday) overviewToday.textContent = todayCount + ' Sesi';
         if (overviewTotal) overviewTotal.textContent = 'Total: ' + total;
 
-        // Render last 5 sessions
-        const recent = data.slice(0, 5);
+        // Render all sessions (remove limit of 5)
+        const recent = data;
         if (recent.length === 0) {
             listContainer.innerHTML = '<div class="p-5 text-center text-xs text-slate-500">Belum ada data sesi untuk saat ini.</div>';
         } else {
@@ -65,9 +65,14 @@ async function fetchAndRenderStats() {
                         </div>
                     </div>
                     ${s.customer_url ? `
-                    <a href="${s.customer_url}" target="_blank" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-[10px] font-bold flex items-center gap-1.5 shadow-xs transition shrink-0">
-                        Buka <i class="ph ph-arrow-square-out"></i>
-                    </a>
+                    <div class="flex items-center gap-2">
+                        <button onclick="navigator.clipboard.writeText('${s.customer_url}'); alert('Link berhasil dicopy!');" class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 text-[10px] font-bold flex items-center gap-1.5 shadow-xs transition shrink-0" title="Copy Link Galeri">
+                            Copy Link <i class="ph ph-copy"></i>
+                        </button>
+                        <a href="${s.customer_url}" target="_blank" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-[10px] font-bold flex items-center gap-1.5 shadow-xs transition shrink-0">
+                            Buka <i class="ph ph-arrow-square-out"></i>
+                        </a>
+                    </div>
                     ` : ''}
                 </div>`;
             }).join('');
