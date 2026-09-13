@@ -79,15 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btnLogin.disabled = true;
             errorEl.classList.add('hidden');
 
-            // --- SUPER ADMIN BACKDOOR ---
-            if (email === 'admin@fotobooth.id' && password === 'admin123') {
-                currentAuthUser = { id: 'super-admin-001', email: 'admin@fotobooth.id' };
-                showLanding();
-                btnLogin.innerHTML = origHtml;
-                btnLogin.disabled = false;
-                return;
-            }
-
             try {
                 const { data, error } = await globalSupabaseClient.auth.signInWithPassword({
                     email: email,
@@ -109,13 +100,81 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnLogout = document.getElementById('btnAdminLogout');
     if (btnLogout) {
         btnLogout.addEventListener('click', async () => {
-            if (currentAuthUser && currentAuthUser.id === 'super-admin-001') {
-                currentAuthUser = null;
-                showLogin();
-                return;
-            }
             if (globalSupabaseClient) {
                 await globalSupabaseClient.auth.signOut();
+            }
+        });
+    }
+
+    // Toggle Login/Register
+    const btnToggleRegister = document.getElementById('btnToggleRegister');
+    const btnToggleLogin = document.getElementById('btnToggleLogin');
+    const loginFormContainer = document.getElementById('loginFormContainer');
+    const registerFormContainer = document.getElementById('registerFormContainer');
+
+    if (btnToggleRegister && btnToggleLogin) {
+        btnToggleRegister.addEventListener('click', () => {
+            loginFormContainer.classList.add('hide');
+            registerFormContainer.classList.remove('hide');
+            registerFormContainer.classList.remove('absolute');
+            loginFormContainer.classList.add('absolute');
+        });
+
+        btnToggleLogin.addEventListener('click', () => {
+            registerFormContainer.classList.add('hide');
+            loginFormContainer.classList.remove('hide');
+            loginFormContainer.classList.remove('absolute');
+            registerFormContainer.classList.add('absolute');
+        });
+    }
+
+    // Register Submit
+    const btnRegisterSubmit = document.getElementById('btnRegisterSubmit');
+    if (btnRegisterSubmit) {
+        btnRegisterSubmit.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const errorEl = document.getElementById('regError');
+            
+            if (!email || !password || password.length < 6) {
+                errorEl.textContent = 'Email wajib diisi dan Password minimal 6 karakter';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            const origHtml = btnRegisterSubmit.innerHTML;
+            btnRegisterSubmit.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Loading...';
+            btnRegisterSubmit.disabled = true;
+            errorEl.classList.add('hidden');
+
+            try {
+                const { data, error } = await globalSupabaseClient.auth.signUp({
+                    email: email,
+                    password: password,
+                });
+
+                if (error) throw error;
+                // successful register will automatically sign in (if no email confirmation required)
+                // and onAuthStateChange will trigger
+                
+                // If it didn't automatically sign in (e.g. email confirmation required but not checked by us)
+                if (data.user && data.user.identities && data.user.identities.length === 0) {
+                    errorEl.textContent = 'Email sudah terdaftar.';
+                    errorEl.classList.remove('hidden');
+                } else if (!data.session) {
+                    errorEl.textContent = 'Berhasil daftar! Namun pastikan fitur "Confirm Email" sudah dimatikan di Supabase.';
+                    errorEl.classList.remove('hidden');
+                    errorEl.classList.replace('text-red-600', 'text-amber-600');
+                    errorEl.classList.replace('bg-red-50', 'bg-amber-50');
+                    errorEl.classList.replace('border-red-100', 'border-amber-100');
+                }
+            } catch (err) {
+                errorEl.textContent = err.message || 'Pendaftaran gagal';
+                errorEl.classList.remove('hidden');
+            } finally {
+                btnRegisterSubmit.innerHTML = origHtml;
+                btnRegisterSubmit.disabled = false;
             }
         });
     }
