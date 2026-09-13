@@ -3,8 +3,8 @@ let globalSupabaseClient = null;
 let currentAuthUser = null;
 
 async function initAuth() {
-    const sUrl = (activeWorkingConfig.supabaseUrl || 'https://mnwvelmekcddrpdlokhx.supabase.co').trim();
-    const sKey = (activeWorkingConfig.supabaseKey || 'sb_publishable_cNLRLQ2Pu41v80JQDg3QTA_pcmQ6pvM').trim();
+    const sUrl = 'https://mnwvelmekcddrpdlokhx.supabase.co';
+    const sKey = 'sb_publishable_cNLRLQ2Pu41v80JQDg3QTA_pcmQ6pvM';
     
     if (sUrl && sKey && typeof supabase !== 'undefined') {
         globalSupabaseClient = supabase.createClient(sUrl, sKey);
