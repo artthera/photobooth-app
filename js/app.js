@@ -46,6 +46,7 @@ function bindAppNavigation() {
     const stateAdmin = document.getElementById('state-admin');
     const stateLanding = document.getElementById('state-landing');
     const stateInstructions = document.getElementById('state-instructions');
+    const stateFrameSelection = document.getElementById('state-frame-selection');
     const stateCamera = document.getElementById('state-camera');
     const stateBuilder = document.getElementById('state-builder');
     const stateResults = document.getElementById('state-results');
@@ -55,6 +56,7 @@ function bindAppNavigation() {
     
     const btnLanding = document.getElementById('btnLanding');
     const btnStartCapture = document.getElementById('btnStartCapture');
+    const btnLanjutKamera = document.getElementById('btnLanjutKamera');
     const btnMulaiFoto = document.getElementById('btnMulaiFoto');
     const btnContinue = document.getElementById('btnContinue');
     const btnFlipCamera = document.getElementById('btnFlipCamera');
@@ -66,9 +68,6 @@ function bindAppNavigation() {
     const settingFilter = document.getElementById('settingFilter');
     const video = document.getElementById('kamera');
 
-    const tabFrameBtn = document.getElementById('tabFrameBtn');
-    const tabFilterBtn = document.getElementById('tabFilterBtn');
-    const frameList = document.getElementById('frameList');
     const filterList = document.getElementById('filterList');
 
     const mainAppHeader = document.getElementById('mainAppHeader');
@@ -103,7 +102,7 @@ function bindAppNavigation() {
             exitClicks++;
             if (exitClicks >= 3) {
                 // Exit Kiosk Mode -> return to admin
-                [stateLanding, stateInstructions, stateCamera, stateBuilder, stateResults].forEach(el => {
+                [stateLanding, stateInstructions, stateFrameSelection, stateCamera, stateBuilder, stateResults].forEach(el => {
                     if (el) el.classList.add('hide');
                 });
                 if (mainAppHeader) mainAppHeader.classList.add('hide');
@@ -132,13 +131,30 @@ function bindAppNavigation() {
         });
     }
 
-    // 2. Instructions -> Camera UI
-    if (btnStartCapture && stateInstructions && stateCamera) {
+    // 2. Instructions -> Frame Selection
+    if (btnStartCapture && stateInstructions && stateFrameSelection) {
         btnStartCapture.addEventListener('click', () => {
             stateInstructions.style.opacity = '0';
             setTimeout(() => { 
                 stateInstructions.classList.add('hide'); 
                 if (mainAppHeader) mainAppHeader.classList.add('hide');
+                stateFrameSelection.classList.remove('hide'); 
+                stateFrameSelection.style.opacity = '1';
+                if (typeof renderFramesListUI === 'function') renderFramesListUI();
+            }, 300); 
+        });
+    }
+
+    // 2.5. Frame Selection -> Camera UI
+    if (btnLanjutKamera && stateFrameSelection && stateCamera) {
+        btnLanjutKamera.addEventListener('click', () => {
+            if (typeof currentSelectedFrame === 'undefined' || !currentSelectedFrame) {
+                alert("Pilih frame terlebih dahulu.");
+                return;
+            }
+            stateFrameSelection.style.opacity = '0';
+            setTimeout(() => { 
+                stateFrameSelection.classList.add('hide');
                 stateCamera.classList.remove('hide'); 
                 stateCamera.style.opacity = '1';
                 activateCameraView();
@@ -166,7 +182,7 @@ function bindAppNavigation() {
     if (btnMulaiFoto) {
         btnMulaiFoto.addEventListener('click', () => {
             waktuTimer = parseInt(document.getElementById('settingTimer').value);
-            totalFoto = parseInt(document.getElementById('settingSnaps').value);
+            totalFoto = (typeof currentSelectedFrame !== 'undefined' && currentSelectedFrame) ? currentSelectedFrame.slotCount : 4;
             if (settingsBar) settingsBar.classList.add('hide'); 
             if (photoCounter) photoCounter.classList.remove('hide');
             if (thumbnailContainer) {
@@ -194,26 +210,7 @@ function bindAppNavigation() {
         });
     }
 
-    // 7. Tabs in Frame Builder (Frames vs Filters)
-    if (tabFrameBtn && tabFilterBtn && frameList && filterList) {
-        tabFrameBtn.onclick = () => {
-            tabFrameBtn.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs font-black text-white bg-blue-600 shadow-md transition flex items-center justify-center gap-2';
-            tabFilterBtn.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition flex items-center justify-center gap-2';
-            frameList.classList.remove('hide'); 
-            const categoryWrapper = document.getElementById('frameCategoryPills');
-            if (categoryWrapper && categoryWrapper.parentElement) categoryWrapper.parentElement.classList.remove('hide');
-            filterList.classList.add('hide');
-        };
 
-        tabFilterBtn.onclick = () => {
-            tabFilterBtn.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs font-black text-white bg-blue-600 shadow-md transition flex items-center justify-center gap-2';
-            tabFrameBtn.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition flex items-center justify-center gap-2';
-            filterList.classList.remove('hide'); 
-            const categoryWrapper = document.getElementById('frameCategoryPills');
-            if (categoryWrapper && categoryWrapper.parentElement) categoryWrapper.parentElement.classList.add('hide');
-            frameList.classList.add('hide');
-        };
-    }
 
     // 8. Camera Live Filter Select
     if (settingFilter && video) {
@@ -229,6 +226,7 @@ function restartPhotoSession() {
     const stateAdmin = document.getElementById('state-admin');
     const stateLanding = document.getElementById('state-landing');
     const stateInstructions = document.getElementById('state-instructions');
+    const stateFrameSelection = document.getElementById('state-frame-selection');
     const stateCamera = document.getElementById('state-camera');
     const stateBuilder = document.getElementById('state-builder');
     const stateResults = document.getElementById('state-results');
@@ -248,6 +246,7 @@ function restartPhotoSession() {
     liveVideoBlobs = [];
     retakeIndex = -1;
     activeSelectedPhotoIdx = null;
+    currentFilter = 'none';
 
     if (thumbnailContainer) {
         thumbnailContainer.innerHTML = '';
@@ -265,6 +264,7 @@ function restartPhotoSession() {
     if (stateResults) stateResults.classList.add('hide');
     if (stateBuilder) stateBuilder.classList.add('hide');
     if (stateCamera) stateCamera.classList.add('hide');
+    if (stateFrameSelection) stateFrameSelection.classList.add('hide');
     if (stateInstructions) stateInstructions.classList.add('hide');
 
     // Show landing & header

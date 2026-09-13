@@ -48,34 +48,14 @@ function setupBuilder() {
         photoList.appendChild(card);
     });
 
-    // Populate Frames List
-    if (typeof renderFramesListUI === 'function') renderFramesListUI();
-
-    // Select default matching frame or first available frame
-    if (frames.length > 0) {
-        const defaultFrame = frames.find(f => f.slotCount === totalFoto) || frames[0];
-        selectFrame(defaultFrame);
+    // Re-apply the selected frame to populate slots
+    if (typeof currentSelectedFrame !== 'undefined' && currentSelectedFrame) {
+        selectFrame(currentSelectedFrame);
+    } else if (frames.length > 0) {
+        selectFrame(frames[0]);
     }
 
-    // Populate Filter list
-    const filterList = document.getElementById('filterList');
-    if (filterList) {
-        filterList.innerHTML = '';
-        const previewSrc = frameUntukGif[0] || '';
-        Object.keys(filters).forEach(key => {
-            const f = filters[key];
-            const btn = document.createElement('div');
-            btn.className = `cursor-pointer border-2 rounded-2xl p-2.5 text-center bg-white transition-all hover:scale-[1.02] filter-btn shadow-xs ${currentFilter === key ? 'border-blue-600 ring-2 ring-blue-500/30' : 'border-slate-200 hover:border-slate-300'}`;
-            btn.innerHTML = `
-                <div class="w-full h-16 bg-slate-100 rounded-xl mb-2 overflow-hidden flex items-center justify-center border border-slate-200">
-                    <img src="${previewSrc}" class="w-full h-full object-cover" style="filter: ${f.css}">
-                </div>
-                <div class="text-[11px] font-bold text-slate-800">${f.name}</div>
-            `;
-            btn.onclick = () => applyGlobalFilter(key, btn);
-            filterList.appendChild(btn);
-        });
-    }
+    // Filter list removed as it's now in the camera UI
 }
 
 // ================= SELECT & POPULATE FRAME =================

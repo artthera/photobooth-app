@@ -141,6 +141,78 @@ function activateCameraView() {
     if (globalBgOverlay) globalBgOverlay.style.opacity = '0';
 
     initCameraStream();
+    renderCameraFilterTray();
+}
+
+function renderCameraFilterTray() {
+    const tray = document.getElementById('cameraFilterTray');
+    if (!tray) return;
+    const video = document.getElementById('kamera');
+    
+    // We must wait for video to have a frame
+    const attemptRender = () => {
+        if (!video.videoWidth) {
+            setTimeout(attemptRender, 100);
+            return;
+        }
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = 150;
+        canvas.height = 150;
+        const ctx = canvas.getContext('2d');
+        const size = Math.min(video.videoWidth, video.videoHeight);
+        const sx = (video.videoWidth - size) / 2;
+        const sy = (video.videoHeight - size) / 2;
+        
+        ctx.save();
+        if (typeof currentFacingMode !== 'undefined' && currentFacingMode === 'user') {
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+        }
+        ctx.drawImage(video, sx, sy, size, size, 0, 0, canvas.width, canvas.height);
+        ctx.restore();
+        
+        const previewDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+        
+        tray.innerHTML = '';
+        Object.keys(filters).forEach(key => {
+            const f = filters[key];
+            const btn = document.createElement('div');
+            // active styling
+            const isActive = typeof currentFilter !== 'undefined' && currentFilter === key;
+            btn.className = `cursor-pointer rounded-xl overflow-hidden shrink-0 transition-all border-[3px] relative filter-preview-btn ${isActive ? 'border-blue-500 scale-105 shadow-xl opacity-100' : 'border-white/40 scale-100 opacity-60 hover:opacity-100'}`;
+            btn.style.width = '72px';
+            btn.style.height = '92px';
+            
+            btn.innerHTML = `
+                <img src="${previewDataUrl}" class="w-full h-full object-cover" style="filter: ${f.css}; pointer-events: none;">
+                <div class="absolute bottom-0 left-0 w-full bg-black/60 backdrop-blur-[2px] text-white text-[9px] font-bold text-center py-1.5 truncate px-1 pointer-events-none">
+                    ${f.name}
+                </div>
+            `;
+            
+            btn.onclick = () => {
+                currentFilter = key;
+                video.style.filter = f.css;
+                // update UI
+                tray.querySelectorAll('.filter-preview-btn').forEach(b => {
+                    b.classList.remove('border-blue-500', 'scale-105', 'shadow-xl', 'opacity-100');
+                    b.classList.add('border-white/40', 'scale-100', 'opacity-60');
+                });
+                btn.classList.add('border-blue-500', 'scale-105', 'shadow-xl', 'opacity-100');
+                btn.classList.remove('border-white/40', 'scale-100', 'opacity-60');
+            };
+            
+            tray.appendChild(btn);
+        });
+        
+        // Ensure default filter is applied immediately
+        if (typeof currentFilter !== 'undefined') {
+            video.style.filter = filters[currentFilter].css;
+        }
+    };
+    
+    attemptRender();
 }
 
 function deactivateCameraView() {

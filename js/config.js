@@ -28,7 +28,8 @@ const filters = {
     'night-vision': { name: 'Night Vision', css: 'sepia(100%) hue-rotate(70deg) saturate(300%) contrast(150%) brightness(90%)', canvasFilter: 'sepia(100%) hue-rotate(70deg) saturate(300%) contrast(150%) brightness(90%)' },
     'pop-art': { name: 'Pop Art', css: 'saturate(300%) contrast(160%) hue-rotate(45deg)', canvasFilter: 'saturate(300%) contrast(160%) hue-rotate(45deg)' },
     'faded': { name: 'Faded Film', css: 'contrast(80%) brightness(120%) saturate(70%) sepia(30%)', canvasFilter: 'contrast(80%) brightness(120%) saturate(70%) sepia(30%)' },
-    'duotone': { name: 'Duotone Red', css: 'sepia(100%) hue-rotate(320deg) saturate(300%) contrast(120%)', canvasFilter: 'sepia(100%) hue-rotate(320deg) saturate(300%) contrast(120%)' }
+    'duotone': { name: 'Duotone Red', css: 'sepia(100%) hue-rotate(320deg) saturate(300%) contrast(120%)', canvasFilter: 'sepia(100%) hue-rotate(320deg) saturate(300%) contrast(120%)' },
+    'fisheye': { name: 'Fisheye Lens', css: 'url(#fisheye-filter) saturate(1.2) contrast(1.1)', canvasFilter: 'url(#fisheye-filter) saturate(1.2) contrast(1.1)' }
 };
 
 // ================= TEMPLATE FRAME BAWAAN (BUILT-IN) =================
