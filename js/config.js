@@ -10,26 +10,17 @@ const tinggiFoto = 675;
 // ================= DAFTAR FILTER FOTO (CSS & Canvas Filter) =================
 const filters = {
     'none': { name: 'Normal', css: 'none', canvasFilter: 'none' },
-    'bw': { name: 'B & W', css: 'grayscale(100%) contrast(120%)', canvasFilter: 'grayscale(100%) contrast(120%)' },
-    'sepia': { name: 'Sepia', css: 'sepia(100%)', canvasFilter: 'sepia(100%)' },
-    'vintage': { name: 'Vintage TV', css: 'sepia(35%) contrast(135%) saturate(120%)', canvasFilter: 'sepia(35%) contrast(135%) saturate(120%)' },
-    'retro': { name: 'Retro Pop', css: 'contrast(120%) saturate(145%) hue-rotate(-15deg)', canvasFilter: 'contrast(120%) saturate(145%) hue-rotate(-15deg)' },
-    'blur': { name: 'Soft Focus', css: 'blur(2px) contrast(110%)', canvasFilter: 'blur(2px) contrast(110%)' },
-    'cool': { name: 'Cool Tone', css: 'hue-rotate(180deg) saturate(120%)', canvasFilter: 'hue-rotate(180deg) saturate(120%)' },
-    'warm': { name: 'Warm Tone', css: 'sepia(50%) saturate(150%)', canvasFilter: 'sepia(50%) saturate(150%)' },
-    'invert': { name: 'Invert', css: 'invert(100%)', canvasFilter: 'invert(100%)' },
-    'high-contrast': { name: 'High Contrast', css: 'contrast(200%)', canvasFilter: 'contrast(200%)' },
-    'bright': { name: 'Brighten', css: 'brightness(130%) saturate(120%)', canvasFilter: 'brightness(130%) saturate(120%)' },
-    'moody': { name: 'Moody', css: 'brightness(80%) contrast(120%) saturate(80%)', canvasFilter: 'brightness(80%) contrast(120%) saturate(80%)' },
-    'cyanotype': { name: 'Cyanotype', css: 'grayscale(100%) sepia(100%) hue-rotate(180deg) saturate(200%)', canvasFilter: 'grayscale(100%) sepia(100%) hue-rotate(180deg) saturate(200%)' },
-    'chrome': { name: 'Chrome', css: 'grayscale(70%) contrast(180%) brightness(130%)', canvasFilter: 'grayscale(70%) contrast(180%) brightness(130%)' },
-    'crt': { name: 'Old TV (CRT)', css: 'sepia(60%) contrast(150%) brightness(90%) hue-rotate(-15deg) saturate(200%) blur(1px)', canvasFilter: 'sepia(60%) contrast(150%) brightness(90%) hue-rotate(-15deg) saturate(200%) blur(1px)' },
+    'bw': { name: 'Classic B&W', css: 'grayscale(100%) contrast(120%)', canvasFilter: 'grayscale(100%) contrast(120%)' },
+    'vintage': { name: 'Vintage Film', css: 'sepia(40%) contrast(135%) saturate(120%)', canvasFilter: 'sepia(40%) contrast(135%) saturate(120%)' },
+    'fisheye': { name: 'Fisheye Lens', css: 'url(#fisheye-filter) saturate(1.2) contrast(1.1)', canvasFilter: 'url(#fisheye-filter) saturate(1.2) contrast(1.1)' },
+    'glitch': { name: 'VHS Glitch', css: 'url(#glitch-filter) contrast(1.1) saturate(1.5)', canvasFilter: 'url(#glitch-filter) contrast(1.1) saturate(1.5)' },
+    'neon': { name: 'Neon Glow', css: 'url(#neon-edge)', canvasFilter: 'url(#neon-edge)' },
+    'liquid': { name: 'Liquid Melt', css: 'url(#liquid-filter) saturate(1.5)', canvasFilter: 'url(#liquid-filter) saturate(1.5)' },
+    'thermal': { name: 'Thermal Cam', css: 'url(#thermal-filter)', canvasFilter: 'url(#thermal-filter)' },
+    'night-vision': { name: 'Night Vision', css: 'url(#noise-filter) sepia(100%) hue-rotate(70deg) saturate(300%) contrast(150%) brightness(110%)', canvasFilter: 'url(#noise-filter) sepia(100%) hue-rotate(70deg) saturate(300%) contrast(150%) brightness(110%)' },
+    'posterize': { name: 'Comic Style', css: 'url(#posterize-filter) saturate(200%) contrast(120%)', canvasFilter: 'url(#posterize-filter) saturate(200%) contrast(120%)' },
     'cyberpunk': { name: 'Cyberpunk', css: 'saturate(250%) hue-rotate(30deg) contrast(150%)', canvasFilter: 'saturate(250%) hue-rotate(30deg) contrast(150%)' },
-    'night-vision': { name: 'Night Vision', css: 'sepia(100%) hue-rotate(70deg) saturate(300%) contrast(150%) brightness(90%)', canvasFilter: 'sepia(100%) hue-rotate(70deg) saturate(300%) contrast(150%) brightness(90%)' },
-    'pop-art': { name: 'Pop Art', css: 'saturate(300%) contrast(160%) hue-rotate(45deg)', canvasFilter: 'saturate(300%) contrast(160%) hue-rotate(45deg)' },
-    'faded': { name: 'Faded Film', css: 'contrast(80%) brightness(120%) saturate(70%) sepia(30%)', canvasFilter: 'contrast(80%) brightness(120%) saturate(70%) sepia(30%)' },
-    'duotone': { name: 'Duotone Red', css: 'sepia(100%) hue-rotate(320deg) saturate(300%) contrast(120%)', canvasFilter: 'sepia(100%) hue-rotate(320deg) saturate(300%) contrast(120%)' },
-    'fisheye': { name: 'Fisheye Lens', css: 'url(#fisheye-filter) saturate(1.2) contrast(1.1)', canvasFilter: 'url(#fisheye-filter) saturate(1.2) contrast(1.1)' }
+    'dreamy': { name: 'Dreamy Blur', css: 'blur(3px) brightness(120%) saturate(80%) contrast(110%)', canvasFilter: 'blur(3px) brightness(120%) saturate(80%) contrast(110%)' }
 };
 
 // ================= TEMPLATE FRAME BAWAAN (BUILT-IN) =================
