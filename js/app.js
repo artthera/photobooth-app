@@ -181,21 +181,26 @@ function bindAppNavigation() {
     // 5. Start Photo Session
     if (btnMulaiFoto) {
         btnMulaiFoto.addEventListener('click', () => {
-            waktuTimer = parseInt(document.getElementById('settingTimer').value);
-            totalFoto = (typeof currentSelectedFrame !== 'undefined' && currentSelectedFrame) ? currentSelectedFrame.slotCount : 4;
-            if (settingsBar) settingsBar.classList.add('hide'); 
-            if (photoCounter) photoCounter.classList.remove('hide');
-            if (thumbnailContainer) {
-                thumbnailContainer.innerHTML = ''; 
-                thumbnailContainer.classList.add('capturing'); 
+            try {
+                waktuTimer = parseInt(document.getElementById('settingTimer').value);
+                totalFoto = (typeof currentSelectedFrame !== 'undefined' && currentSelectedFrame) ? currentSelectedFrame.slotCount : 4;
+                if (settingsBar) settingsBar.classList.add('hide'); 
+                if (photoCounter) photoCounter.classList.remove('hide');
+                if (thumbnailContainer) {
+                    thumbnailContainer.innerHTML = ''; 
+                    thumbnailContainer.classList.add('capturing'); 
+                }
+                jepretanKe = 0; 
+                frameUntukGif = []; 
+                liveVideos = [];
+                liveVideoBlobs = [];
+                retakeIndex = -1; 
+                if (btnContinue) btnContinue.classList.add('hide');
+                mulaiCountdown();
+            } catch (err) {
+                alert("Error saat mulai foto: " + err.message);
+                console.error(err);
             }
-            jepretanKe = 0; 
-            frameUntukGif = []; 
-            liveVideos = [];
-            liveVideoBlobs = [];
-            retakeIndex = -1; 
-            if (btnContinue) btnContinue.classList.add('hide');
-            mulaiCountdown();
         });
     }
 

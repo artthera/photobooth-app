@@ -4,19 +4,19 @@
  */
 
 // Global State
-let jepretanKe = 0;
-let totalFoto = 4;
-let waktuTimer = 3;
+var jepretanKe = 0;
+var totalFoto = 4;
+var waktuTimer = 3;
 
-let frameUntukGif = [];      // Array of still image Base64 data URLs
-let liveVideos = [];         // Array of recorded video blob URLs for each shot
-let liveVideoBlobs = [];     // Array of raw Blob objects for ZIP export
-let streamActive = null;
-let currentFacingMode = 'user';
-let retakeIndex = -1;
-let activeSelectedPhotoIdx = null;
-let currentFilter = 'none';
-let currentSelectedFrame = null;
+var frameUntukGif = [];
+var liveVideos = [];
+var liveVideoBlobs = [];
+var streamActive = null;
+var currentFacingMode = 'user';
+var retakeIndex = -1;
+var activeSelectedPhotoIdx = null;
+var currentFilter = 'none';
+var currentSelectedFrame = null;
 
 // ================= CAMERA STREAM CONTROLLER =================
 async function initCameraStream(facingMode = currentFacingMode, forceNew = false) {
