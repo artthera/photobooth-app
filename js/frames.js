@@ -178,6 +178,11 @@ function renderFramesListUI() {
         return;
     }
 
+    // Auto-select first frame if none is selected
+    if (!currentSelectedFrame || !filteredList.find(f => f.id === currentSelectedFrame.id)) {
+        currentSelectedFrame = filteredList[0];
+    }
+
     filteredList.forEach((frame) => {
         const isSelected = currentSelectedFrame && currentSelectedFrame.id === frame.id;
         const card = document.createElement('div');

@@ -414,7 +414,11 @@ function mulaiCountdown() {
     if (countdownOverlay) countdownOverlay.classList.remove('hide');
     if (liveRecBadge) liveRecBadge.classList.remove('hide');
 
-    startLiveRecording();
+    try {
+        startLiveRecording();
+    } catch (err) {
+        console.warn("Live recording failed or not supported:", err);
+    }
 
     let waktu = waktuTimer; 
     if (teksCountdown) teksCountdown.innerText = waktu;
