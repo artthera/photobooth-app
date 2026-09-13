@@ -37,6 +37,12 @@ async function fetchAndRenderStats() {
         // Render counts
         statTotal.textContent = total;
         statToday.textContent = todayCount;
+        
+        // Also update overview cards if they exist
+        const overviewToday = document.getElementById('overviewTodayCount');
+        const overviewTotal = document.getElementById('overviewTotalCount');
+        if (overviewToday) overviewToday.textContent = todayCount + ' Sesi';
+        if (overviewTotal) overviewTotal.textContent = 'Total: ' + total;
 
         // Render last 5 sessions
         const recent = data.slice(0, 5);
