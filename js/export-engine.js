@@ -248,53 +248,53 @@ function prosesHasil() {
         };
     }
 
-    const webhookUrl = (cfg.gdriveWebhookUrl || '').trim();
-    const autoUpload = cfg.gdriveAutoUpload !== false;
+    const fbConfig = (cfg.firebaseConfigJson || '').trim();
+    const autoUpload = cfg.firebaseAutoUpload !== false;
 
-    if (webhookUrl && autoUpload) {
+    if (fbConfig && autoUpload) {
         if (qrSpinner) qrSpinner.classList.remove('hidden');
-        if (qrDesc) qrDesc.innerHTML = '<span class="text-emerald-600 font-bold flex items-center gap-1"><i class="ph ph-cloud-arrow-up animate-pulse text-sm"></i> Menyimpan ke Google Drive...</span>';
+        if (qrDesc) qrDesc.innerHTML = '<span class="text-orange-600 font-bold flex items-center gap-1"><i class="ph ph-cloud-arrow-up animate-pulse text-sm"></i> Mengunggah ke Firebase...</span>';
 
-        uploadToGoogleDrive(webhookUrl).then(result => {
+        uploadToFirebase(sessionData, fbConfig, eventName).then(manifestUrl => {
             if (qrSpinner) qrSpinner.classList.add('hidden');
-            if (result && result.success && result.folderUrl) {
-                sessionData.gdriveUrl = result.folderUrl;
+            if (manifestUrl) {
+                const encodedUrl = encodeURIComponent(manifestUrl);
+                const onlineCustomerUrl = `${basePath}/customer.html?data=${encodedUrl}`;
+                renderQr(onlineCustomerUrl);
                 
-                let scriptId = '';
-                const match = webhookUrl.match(/\/macros\/s\/([^\/]+)\/exec/);
-                if (match) scriptId = match[1];
-
-                if (result.folderId && scriptId) {
-                    const onlineCustomerUrl = `${basePath}/customer.html?f=${result.folderId}&s=${scriptId}`;
-                    renderQr(onlineCustomerUrl);
-                    
-                    if (btnSimulate) btnSimulate.href = onlineCustomerUrl;
-                    if (qrContainer) {
-                        qrContainer.onclick = () => window.open(onlineCustomerUrl, '_blank');
-                    }
-                } else {
-                    renderQr(result.folderUrl);
-                }
-
                 if (typeof SessionDB !== 'undefined') {
+                    sessionData.firebaseUrl = manifestUrl;
                     SessionDB.saveSession(sessionData);
                 }
-                if (gdriveBadge) gdriveBadge.classList.remove('hidden');
+                if (gdriveBadge) {
+                    gdriveBadge.classList.remove('hidden');
+                    gdriveBadge.innerHTML = '<i class="ph ph-check-circle"></i> Tersimpan di Cloud';
+                    gdriveBadge.classList.replace('bg-emerald-100', 'bg-orange-100');
+                    gdriveBadge.classList.replace('text-emerald-700', 'text-orange-700');
+                }
                 if (btnOpenGdrive) {
-                    btnOpenGdrive.href = result.folderUrl;
+                    btnOpenGdrive.href = manifestUrl;
                     btnOpenGdrive.classList.remove('hidden');
                     btnOpenGdrive.classList.add('flex');
+                    btnOpenGdrive.innerHTML = '<i class="ph ph-file-json"></i> Buka File Data JSON';
                 }
                 if (btnSetupGdrive) btnSetupGdrive.classList.add('hidden');
-                if (qrDesc) qrDesc.innerHTML = '<span class="text-emerald-600 font-semibold flex items-center gap-1"><i class="ph ph-check-circle"></i> Tersimpan di Google Drive!</span> Scan QR ini di HP untuk membuka galeri hasil & unduh ke Drive.';
+                
+                if (btnSimulate) btnSimulate.href = onlineCustomerUrl;
+                if (qrContainer) {
+                    qrContainer.onclick = () => window.open(onlineCustomerUrl, '_blank');
+                }
+
+                if (qrDesc) qrDesc.innerHTML = '<span class="text-orange-600 font-semibold flex items-center gap-1"><i class="ph ph-check-circle"></i> Tersimpan Cepat di Firebase!</span> Scan QR ini di HP untuk membuka galeri instan.';
             } else {
-                console.warn("Google Drive upload response:", result);
+                renderQr(customerUrl);
                 if (qrDesc) qrDesc.innerHTML = '<span class="text-slate-600">Scan QR di atas untuk membuka galeri hasil di HP pelanggan.</span>';
             }
         }).catch(err => {
             if (qrSpinner) qrSpinner.classList.add('hidden');
-            console.error("Google Drive upload error:", err);
-            if (qrDesc) qrDesc.innerHTML = '<span class="text-slate-600">Scan QR di atas untuk membuka galeri hasil di HP pelanggan.</span>';
+            console.error("Firebase upload error:", err);
+            renderQr(customerUrl);
+            if (qrDesc) qrDesc.innerHTML = `<span class="text-red-600 text-[10px]">Error Upload: ${err.message}</span>`;
         });
     } else {
         if (gdriveBadge) gdriveBadge.classList.add('hidden');
@@ -307,14 +307,32 @@ function prosesHasil() {
     }
 }
 
-// ================= GOOGLE DRIVE UPLOADER HELPER =================
-async function uploadToGoogleDrive(webhookUrl) {
+// ================= FIREBASE UPLOADER HELPER =================
+async function uploadToFirebase(sessionData, configStr, eventName) {
     try {
+        let config;
+        try {
+            const sanitizedStr = configStr.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":').replace(/'/g, '"');
+            config = JSON.parse(sanitizedStr);
+        } catch (e) {
+            throw new Error("Format Firebase Config tidak valid");
+        }
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(config);
+        } else if (firebase.apps[0].options.projectId !== config.projectId) {
+            await firebase.app().delete();
+            firebase.initializeApp(config);
+        }
+
+        const storage = firebase.storage();
+        const sessionId = sessionData.id;
+        const folderPath = `events/${eventName || 'Default'}/${sessionId}`;
+        
         let gifBase64 = null;
         if (finalAnimFrames && finalAnimFrames.length > 0) {
             const animSpeedEl = document.getElementById('animSpeed');
             const defaultInterval = animSpeedEl ? (parseInt(animSpeedEl.value) / 1000) : 0.65;
-
             gifBase64 = await new Promise(resolve => {
                 gifshot.createGIF({
                     images: finalAnimFrames,
@@ -329,25 +347,56 @@ async function uploadToGoogleDrive(webhookUrl) {
             });
         }
 
-        const payload = {
-            sessionName: 'Photobooth_' + new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19),
-            stripJpgBase64: finalStripImageUrl || null,
-            stripPngBase64: finalStripPngUrl || null,
-            gifBase64: gifBase64 || null,
-            rawShots: frameUntukGif || []
+        const uploadTasks = [];
+        const resultFiles = {};
+
+        const uploadBase64 = async (b64, filename) => {
+            if (!b64) return null;
+            const res = await fetch(b64);
+            const blob = await res.blob();
+            const fileRef = storage.ref().child(`${folderPath}/${filename}`);
+            await fileRef.put(blob);
+            const url = await fileRef.getDownloadURL();
+            return url;
         };
 
-        const res = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(payload)
-        });
+        if (sessionData.stripJpg) {
+            uploadTasks.push(uploadBase64(sessionData.stripJpg, 'Foto_Strip.jpg').then(url => resultFiles.stripJpg = url));
+        }
+        if (sessionData.stripPng) {
+            uploadTasks.push(uploadBase64(sessionData.stripPng, 'Foto_Strip_HD.png').then(url => resultFiles.stripPng = url));
+        }
+        if (gifBase64) {
+            uploadTasks.push(uploadBase64(gifBase64, 'Animasi_Photobooth.gif').then(url => resultFiles.gifUrl = url));
+        }
+        
+        resultFiles.rawShots = [];
+        if (sessionData.rawShots && sessionData.rawShots.length > 0) {
+            const rawTasks = sessionData.rawShots.map((b64, i) => 
+                uploadBase64(b64, `Pose_${i + 1}.jpg`).then(url => resultFiles.rawShots[i] = url)
+            );
+            uploadTasks.push(...rawTasks);
+        }
 
-        const data = await res.json();
-        return data;
+        await Promise.all(uploadTasks);
+
+        const manifest = {
+            success: true,
+            brandName: sessionData.brandName,
+            eventName: sessionData.eventName,
+            dateStr: sessionData.dateStr,
+            files: resultFiles
+        };
+
+        const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+        const manifestRef = storage.ref().child(`${folderPath}/session.json`);
+        await manifestRef.put(manifestBlob);
+        const manifestUrl = await manifestRef.getDownloadURL();
+
+        return manifestUrl;
     } catch (err) {
-        console.error("uploadToGoogleDrive error:", err);
-        return { success: false, error: err.message };
+        console.error("uploadToFirebase error:", err);
+        throw err;
     }
 }
 

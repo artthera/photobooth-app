@@ -14,6 +14,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
+    <!-- Firebase SDK (Compat Version for simple integration) -->
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-storage-compat.js"></script>
+    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -109,7 +113,7 @@
                             <i class="ph ph-palette text-base"></i> <span>Background & Font</span>
                         </button>
                         <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionGdrive">
-                            <i class="ph ph-google-drive-logo text-emerald-600 text-base"></i> <span>Google Drive Cloud</span>
+                            <i class="ph ph-firebase-logo text-orange-500 text-base"></i> <span>Firebase Storage</span>
                         </button>
                         <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionPresets">
                             <i class="ph ph-floppy-disk text-base"></i> <span>Backup & Preset</span>
@@ -181,13 +185,13 @@
                             </div>
 
                             <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs flex flex-col justify-between gap-3">
-                                <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
-                                    <i class="ph ph-google-drive-logo"></i>
+                                <div class="w-10 h-10 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center text-xl">
+                                    <i class="ph ph-firebase-logo"></i>
                                 </div>
                                 <div>
                                     <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Cloud Storage</div>
                                     <div class="text-lg sm:text-xl font-black text-slate-900 mt-0.5" id="dashGdriveStatusText">Tersambung</div>
-                                    <div class="text-[10px] text-emerald-600 font-bold mt-0.5">Sisa 12.4 GB Free</div>
+                                    <div class="text-[10px] text-emerald-600 font-bold mt-0.5">Firebase Siap</div>
                                 </div>
                             </div>
                         </div>
@@ -570,71 +574,62 @@
                         <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-5">
                             <div class="flex items-center justify-between border-b border-slate-200 pb-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl">
-                                        <i class="ph ph-google-drive-logo"></i>
+                                    <div class="w-10 h-10 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center text-2xl">
+                                        <i class="ph ph-firebase-logo"></i>
                                     </div>
                                     <div>
-                                        <h3 class="text-lg font-black text-slate-900">Integrasi Google Drive Cloud</h3>
-                                        <p class="text-xs text-slate-500 font-medium mt-0.5">Upload otomatis foto strip, video, & GIF ke Google Drive per sesi foto.</p>
+                                        <h3 class="text-lg font-black text-slate-900">Integrasi Firebase Storage</h3>
+                                        <p class="text-xs text-slate-500 font-medium mt-0.5">Upload instan (real-time) foto & video ke Google Firebase.</p>
                                     </div>
                                 </div>
-                                <span class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full font-bold">100% GRATIS</span>
+                                <span class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full font-bold"><i class="ph ph-lightning"></i> SUPER CEPAT</span>
                             </div>
 
                             <div>
                                 <label class="text-xs font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
-                                    <i class="ph ph-link text-blue-600"></i> URL Web App Google Apps Script
+                                    <i class="ph ph-code text-blue-600"></i> Firebase Config (JSON)
                                 </label>
-                                <div class="flex gap-2">
-                                    <input type="url" id="themeGdriveWebhookUrl" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-emerald-500 transition font-mono" />
-                                    <button type="button" id="btnTestGdriveWebhook" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 shadow-xs">
+                                <div class="flex flex-col sm:flex-row gap-2">
+                                    <textarea id="themeFirebaseConfig" rows="4" placeholder='{ "apiKey": "AIza...", "authDomain": "...", "projectId": "...", "storageBucket": "..." }' class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-orange-500 transition font-mono"></textarea>
+                                    <button type="button" id="btnTestFirebase" class="bg-orange-500 hover:bg-orange-400 text-white px-5 py-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shrink-0 shadow-xs h-fit self-start sm:self-auto">
                                         <i class="ph ph-plugs-connected"></i> Test Koneksi
                                     </button>
                                 </div>
-                                <div id="gdriveTestStatus" class="text-[11px] mt-2 hidden font-medium"></div>
+                                <div id="firebaseTestStatus" class="text-[11px] mt-2 hidden font-medium"></div>
                             </div>
 
                             <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
                                 <div>
                                     <div class="text-xs font-bold text-slate-900">Auto-Upload Setelah Selesai Sesi</div>
-                                    <div class="text-[10px] text-slate-500 font-medium">QR Code di layar otomatis mengarahkan ke link folder Google Drive sesi tersebut.</div>
+                                    <div class="text-[10px] text-slate-500 font-medium">QR Code di layar otomatis mengarahkan ke link galeri dari Firebase.</div>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="themeGdriveAutoUpload" class="sr-only peer" checked>
-                                    <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    <input type="checkbox" id="themeFirebaseAutoUpload" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                                 </label>
                             </div>
 
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200 gap-3">
                                 <div>
                                     <div class="text-xs font-bold text-slate-900">Nama Acara (Event Folder)</div>
-                                    <div class="text-[10px] text-slate-500 font-medium">Kosongkan jika ingin menggunakan folder tanggal hari ini.</div>
+                                    <div class="text-[10px] text-slate-500 font-medium">Kosongkan jika ingin menggunakan folder Default.</div>
                                 </div>
                                 <div class="w-full sm:w-1/2">
-                                    <input type="text" id="themeGdriveEventName" placeholder="Cth: Wedding Budi & Ayu" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:border-emerald-500 transition" />
+                                    <input type="text" id="themeFirebaseEventName" placeholder="Cth: Wedding Budi & Ayu" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:border-orange-500 transition" />
                                 </div>
                             </div>
 
                             <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 text-xs flex flex-col gap-2.5">
                                 <div class="font-black text-slate-800 flex items-center gap-1.5 text-xs">
-                                    <i class="ph ph-info text-blue-600"></i> Cara Memasang Script Google Drive:
+                                    <i class="ph ph-info text-blue-600"></i> Cara Memasang Firebase Storage:
                                 </div>
                                 <ol class="list-decimal list-inside text-slate-600 text-[11px] space-y-1.5 leading-relaxed font-medium">
-                                    <li>Buka <a href="https://script.google.com/" target="_blank" class="text-blue-600 underline hover:text-blue-500 font-bold">script.google.com</a> lalu login dengan akun Google Anda.</li>
-                                    <li>Klik tombol <b>New project</b> (Proyek baru).</li>
-                                    <li>Hapus semua kode bawaan, lalu <b>Copy semua kode di bawah ini</b> dan Paste ke editor tersebut.</li>
-                                    <li>Klik tombol <b>Deploy</b> (Terapkan) di pojok kanan atas &gt; pilih <b>New deployment</b>.</li>
-                                    <li>Klik ikon roda gigi ⚙️, pilih <b>Web app</b>.</li>
-                                    <li>PENTING: Set <b>Execute as: Me</b> dan <b>Who has access: Anyone</b> (Siapa saja).</li>
-                                    <li>Klik <b>Deploy</b>, lalu <b>Authorize access</b> (Izinkan akses) jika diminta oleh Google.</li>
-                                    <li>Salin <b>Web app URL</b> yang muncul, lalu tempel di kolom "URL Web App" di atas!</li>
+                                    <li>Buka <a href="https://console.firebase.google.com/" target="_blank" class="text-blue-600 underline hover:text-blue-500 font-bold">console.firebase.google.com</a> dan buat Project baru (Gratis).</li>
+                                    <li>Di menu sebelah kiri, buka <b>Build > Storage</b> dan klik <b>Get Started</b>.</li>
+                                    <li>PENTING: Di bagian Aturan (Rules), ubah menjadi: <code>allow read, write: if true;</code> agar photobooth bisa mengunggah.</li>
+                                    <li>Kembali ke beranda proyek (Project Overview), klik ikon web <b>&lt;/&gt;</b> untuk menambahkan aplikasi web.</li>
+                                    <li>Salin isi teks dalam blok <code>firebaseConfig = { ... }</code> lalu <i>paste</i> (tempel) ke kolom JSON di atas. (Pastikan menggunakan format JSON yang valid atau salin persis objeknya).</li>
                                 </ol>
-                                <div class="mt-2 relative">
-                                    <div class="absolute top-2 right-2 flex gap-2">
-                                        <button type="button" onclick="const ta=document.getElementById('gasCode');ta.select();document.execCommand('copy');this.innerHTML='Copied!';setTimeout(()=>this.innerHTML='Copy Code',2000)" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold transition">Copy Code</button>
-                                    </div>
-                                    <textarea id="gasCode" class="w-full h-48 bg-slate-900 text-emerald-400 font-mono text-[10px] p-4 rounded-xl border border-slate-700 outline-none resize-y" readonly>/**
- * ==============================================================================
  * GOOGLE APPS SCRIPT - PHOTOBOOTH GOOGLE DRIVE AUTO UPLOADER
  * ==============================================================================
  */

@@ -35,9 +35,9 @@ const ThemeManager = (function() {
         accentColor: "#2563eb",
         accentColorEnd: "#7c3aed",
 
-        gdriveWebhookUrl: "",
-        gdriveAutoUpload: true,
-        gdriveEventName: "",
+        firebaseConfigJson: "",
+        firebaseAutoUpload: true,
+        firebaseEventName: "",
     };
 
     let currentConfig = { ...defaults };
@@ -358,14 +358,14 @@ const ThemeManager = (function() {
             }
         });
 
-        // Google Drive inputs
-        setVal('themeGdriveWebhookUrl', cfg.gdriveWebhookUrl || '');
-        if (document.getElementById('themeGdriveAutoUpload')) {
-            document.getElementById('themeGdriveAutoUpload').checked = cfg.gdriveAutoUpload !== false;
+        // Firebase Storage inputs
+        setVal('themeFirebaseConfig', cfg.firebaseConfigJson || '');
+        if (document.getElementById('themeFirebaseAutoUpload')) {
+            document.getElementById('themeFirebaseAutoUpload').checked = cfg.firebaseAutoUpload !== false;
         }
-        setVal('themeGdriveEventName', cfg.gdriveEventName || '');
-        const statusGdrive = document.getElementById('gdriveTestStatus');
-        if (statusGdrive) statusGdrive.classList.add('hidden');
+        setVal('themeFirebaseEventName', cfg.firebaseEventName || '');
+        const statusFirebase = document.getElementById('firebaseTestStatus');
+        if (statusFirebase) statusFirebase.classList.add('hidden');
     }
 
     function initModalUI() {
@@ -505,46 +505,66 @@ const ThemeManager = (function() {
             });
         }
 
-        // Google Drive Test Connection Button
-        const btnTestGdrive = document.getElementById('btnTestGdriveWebhook');
-        const gdriveTestStatus = document.getElementById('gdriveTestStatus');
-        if (btnTestGdrive && gdriveTestStatus) {
-            btnTestGdrive.addEventListener('click', async () => {
-                const url = (document.getElementById('themeGdriveWebhookUrl').value || '').trim();
-                if (!url) {
-                    gdriveTestStatus.innerHTML = '<span class="text-amber-600 font-bold"><i class="ph ph-warning"></i> Harap masukkan URL Web App Google Apps Script terlebih dahulu!</span>';
-                    gdriveTestStatus.classList.remove('hidden');
+        // Firebase Test Connection Button
+        const btnTestFirebase = document.getElementById('btnTestFirebase');
+        const firebaseTestStatus = document.getElementById('firebaseTestStatus');
+        if (btnTestFirebase && firebaseTestStatus) {
+            btnTestFirebase.addEventListener('click', async () => {
+                const configStr = (document.getElementById('themeFirebaseConfig').value || '').trim();
+                if (!configStr) {
+                    firebaseTestStatus.innerHTML = '<span class="text-orange-600 font-bold"><i class="ph ph-warning"></i> Harap masukkan JSON Firebase Config terlebih dahulu!</span>';
+                    firebaseTestStatus.classList.remove('hidden');
                     return;
                 }
 
-                btnTestGdrive.disabled = true;
-                const origBtn = btnTestGdrive.innerHTML;
-                btnTestGdrive.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Mengetes...';
-                gdriveTestStatus.innerHTML = '<span class="text-blue-600 font-bold"><i class="ph ph-spinner animate-spin"></i> Menghubungi Google Apps Script...</span>';
-                gdriveTestStatus.classList.remove('hidden');
+                let config;
+                try {
+                    // Coba perbaiki format jika user copy-paste object JS (bukan JSON)
+                    const sanitizedStr = configStr.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":').replace(/'/g, '"');
+                    config = JSON.parse(sanitizedStr);
+                } catch (e) {
+                    firebaseTestStatus.innerHTML = '<span class="text-red-600 font-bold"><i class="ph ph-warning"></i> Format JSON tidak valid! Pastikan sesuai standar JSON.</span>';
+                    firebaseTestStatus.classList.remove('hidden');
+                    return;
+                }
+
+                btnTestFirebase.disabled = true;
+                const origBtn = btnTestFirebase.innerHTML;
+                btnTestFirebase.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Mengetes...';
+                firebaseTestStatus.innerHTML = '<span class="text-blue-600 font-bold"><i class="ph ph-spinner animate-spin"></i> Menghubungi Firebase...</span>';
+                firebaseTestStatus.classList.remove('hidden');
 
                 try {
-                    const res = await fetch(url, { method: 'GET', mode: 'cors' });
-                    const data = await res.json();
-                    if (data && (data.status === 'online' || data.success !== false)) {
-                        gdriveTestStatus.innerHTML = '<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> Koneksi Berhasil! Google Apps Script siap digunakan.</span>';
-                    } else {
-                        gdriveTestStatus.innerHTML = '<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> Terhubung ke Google Apps Script!</span>';
+                    if (!firebase.apps.length) {
+                        firebase.initializeApp(config);
+                    } else if (firebase.apps[0].options.projectId !== config.projectId) {
+                        firebase.app().delete().then(() => firebase.initializeApp(config));
                     }
+                    
+                    const storage = firebase.storage();
+                    // Kita anggap sukses jika inisialisasi berhasil, atau coba list file
+                    await storage.ref().list({ maxResults: 1 });
+                    firebaseTestStatus.innerHTML = '<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> Koneksi Berhasil! Firebase Storage siap digunakan.</span>';
                 } catch (err) {
-                    gdriveTestStatus.innerHTML = '<span class="text-red-600 font-bold"><i class="ph ph-warning"></i> Gagal terhubung (CORS / Salah URL). Pastikan pengaturan "Who has access" = "Anyone" saat deploy!</span>';
+                    if (err.code && err.code.includes('unauthorized')) {
+                         firebaseTestStatus.innerHTML = '<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> Inisialisasi Berhasil! Namun perhatikan Rules Firebase Storage Anda.</span>';
+                    } else {
+                         console.error(err);
+                         firebaseTestStatus.innerHTML = '<span class="text-red-600 font-bold"><i class="ph ph-warning"></i> Gagal terhubung: ' + err.message + '</span>';
+                    }
                 } finally {
-                    btnTestGdrive.disabled = false;
-                    btnTestGdrive.innerHTML = origBtn;
+                    btnTestFirebase.disabled = false;
+                    btnTestFirebase.innerHTML = origBtn;
                 }
             });
         }
 
         // Google Drive Auto-upload checkbox
-        const chkGdriveAuto = document.getElementById('themeGdriveAutoUpload');
-        if (chkGdriveAuto) {
-            chkGdriveAuto.addEventListener('change', (e) => {
-                activeWorkingConfig.gdriveAutoUpload = e.target.checked;
+        const cbFirebaseAuto = document.getElementById('themeFirebaseAutoUpload');
+        if (cbFirebaseAuto) {
+            cbFirebaseAuto.addEventListener('change', (e) => {
+                activeWorkingConfig.firebaseAutoUpload = e.target.checked;
+                applyConfig(activeWorkingConfig);
             });
         }
 
@@ -574,8 +594,8 @@ const ThemeManager = (function() {
         bindInput('themeResultsBadge', 'resultsBadge');
         bindInput('themeResultsTitle', 'resultsTitle');
         bindInput('themeResultsSubtitle', 'resultsSubtitle');
-        bindInput('themeGdriveWebhookUrl', 'gdriveWebhookUrl');
-        bindInput('themeGdriveEventName', 'gdriveEventName');
+        bindInput('themeFirebaseConfig', 'firebaseConfigJson');
+        bindInput('themeFirebaseEventName', 'firebaseEventName');
 
         // Background Mode buttons
         document.querySelectorAll('.theme-bg-mode-btn').forEach(btn => {

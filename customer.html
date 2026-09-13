@@ -386,11 +386,10 @@
         async function initCustomerPage() {
             const urlParams = new URLSearchParams(window.location.search);
             const sessionId = urlParams.get('session');
-            const folderId = urlParams.get('f');
-            const scriptId = urlParams.get('s');
+            const dataUrl = urlParams.get('data');
 
-            if (folderId && scriptId) {
-                await initOnlineSession(folderId, scriptId);
+            if (dataUrl) {
+                await initOnlineSession(decodeURIComponent(dataUrl));
                 return;
             }
 
@@ -433,53 +432,32 @@
             } catch(e) {}
         }
 
-        // Fetch from Google Apps Script directly!
-        async function initOnlineSession(folderId, scriptId) {
+        // Fetch session data directly from Firebase Storage JSON manifest
+        async function initOnlineSession(manifestUrl) {
             document.getElementById('brandTitle').textContent = "MENGAMBIL DATA...";
-            document.getElementById('sessionDateBadge').innerHTML = `<i class="ph ph-spinner animate-spin"></i> Menghubungkan ke Google Drive...`;
+            document.getElementById('sessionDateBadge').innerHTML = `<i class="ph ph-spinner animate-spin"></i> Menghubungkan ke Server...`;
             
             try {
-                const webhookUrl = `https://script.google.com/macros/s/${scriptId}/exec`;
-                const response = await fetch(`${webhookUrl}?folderId=${folderId}`);
+                const response = await fetch(manifestUrl);
                 const data = await response.json();
                 
                 if (data && data.success) {
                     const session = {
-                        id: folderId,
-                        brandName: "Eazy Fotobooth",
-                        dateStr: new Date().toLocaleDateString('id-ID', { dateStyle: 'full' }),
-                        gdriveUrl: `https://drive.google.com/drive/folders/${folderId}`,
-                        stripJpg: null,
-                        stripPng: null,
-                        gifUrl: null,
+                        id: 'online_' + Date.now(),
+                        brandName: data.brandName || "Eazy Fotobooth",
+                        dateStr: data.dateStr || new Date().toLocaleDateString('id-ID', { dateStyle: 'full' }),
+                        gdriveUrl: null, // Firebase tidak ada folder GDrive
+                        stripJpg: data.files.stripJpg,
+                        stripPng: data.files.stripPng,
+                        gifUrl: data.files.gifUrl,
                         liveVideos: [],
-                        rawShots: [],
-                        rawDownloadUrls: [],
-                        stripJpgDownload: null,
-                        stripPngDownload: null,
-                        gifDownload: null,
-                        isOnline: true
+                        rawShots: data.files.rawShots || [],
+                        rawDownloadUrls: data.files.rawShots || [],
+                        stripJpgDownload: data.files.stripJpg,
+                        stripPngDownload: data.files.stripPng,
+                        gifDownload: data.files.gifUrl,
+                        isOnline: true // Menyembunyikan tombol ZIP karena file online harus ditarik manual via Blob untuk di-ZIP
                     };
-
-                    let poses = [];
-                    data.files.forEach(f => {
-                        if (f.name.includes('Foto_Strip.jpg')) {
-                            session.stripJpg = f.url;
-                            session.stripJpgDownload = f.downloadUrl;
-                        } else if (f.name.includes('Foto_Strip_HD.png')) {
-                            session.stripPng = f.url;
-                            session.stripPngDownload = f.downloadUrl;
-                        } else if (f.name.includes('Animasi')) {
-                            session.gifUrl = f.url;
-                            session.gifDownload = f.downloadUrl;
-                        } else if (f.name.includes('Pose_')) {
-                            poses.push(f);
-                        }
-                    });
-
-                    poses.sort((a, b) => a.name.localeCompare(b.name));
-                    session.rawShots = poses.map(p => p.url);
-                    session.rawDownloadUrls = poses.map(p => p.downloadUrl);
 
                     activeSession = session;
                     renderSessionUI(session);
@@ -489,12 +467,12 @@
                     } catch(e) {}
                 } else {
                     renderEmptyDemoState();
-                    showToast("Gagal mengambil data dari Google Drive", true);
+                    showToast("Gagal mengambil data dari Server", true);
                 }
             } catch (err) {
                 console.error(err);
                 renderEmptyDemoState();
-                showToast("Terjadi kesalahan koneksi", true);
+                showToast("Terjadi kesalahan koneksi jaringan", true);
             }
         }
 
