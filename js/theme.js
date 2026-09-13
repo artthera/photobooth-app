@@ -448,8 +448,7 @@ const ThemeManager = (function() {
                 const stateAdmin = document.getElementById('state-admin');
                 if (stateAdmin) stateAdmin.classList.remove('hide');
                 syncModalInputs(currentConfig);
-                switchDashSection('dashSectionGdrive');
-                switchTab('themeTabBtnGdrive');
+                switchDashSection('dashSectionCloudinary');
             });
         }
 
