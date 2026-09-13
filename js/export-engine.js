@@ -248,14 +248,15 @@ function prosesHasil() {
         };
     }
 
-    const fbConfig = (cfg.firebaseConfigJson || '').trim();
-    const autoUpload = cfg.firebaseAutoUpload !== false;
+    const cName = (cfg.cloudinaryName || '').trim();
+    const cPreset = (cfg.cloudinaryPreset || '').trim();
+    const autoUpload = cfg.cloudinaryAutoUpload !== false;
 
-    if (fbConfig && autoUpload) {
+    if (cName && cPreset && autoUpload) {
         if (qrSpinner) qrSpinner.classList.remove('hidden');
-        if (qrDesc) qrDesc.innerHTML = '<span class="text-orange-600 font-bold flex items-center gap-1"><i class="ph ph-cloud-arrow-up animate-pulse text-sm"></i> Mengunggah ke Firebase...</span>';
+        if (qrDesc) qrDesc.innerHTML = '<span class="text-blue-600 font-bold flex items-center gap-1"><i class="ph ph-cloud-arrow-up animate-pulse text-sm"></i> Mengunggah ke Cloudinary...</span>';
 
-        uploadToFirebase(sessionData, fbConfig, eventName).then(manifestUrl => {
+        uploadToCloudinary(sessionData, cName, cPreset, eventName).then(manifestUrl => {
             if (qrSpinner) qrSpinner.classList.add('hidden');
             if (manifestUrl) {
                 const encodedUrl = encodeURIComponent(manifestUrl);
@@ -263,14 +264,14 @@ function prosesHasil() {
                 renderQr(onlineCustomerUrl);
                 
                 if (typeof SessionDB !== 'undefined') {
-                    sessionData.firebaseUrl = manifestUrl;
+                    sessionData.firebaseUrl = manifestUrl; // keep same key for backward compatibility
                     SessionDB.saveSession(sessionData);
                 }
                 if (gdriveBadge) {
                     gdriveBadge.classList.remove('hidden');
                     gdriveBadge.innerHTML = '<i class="ph ph-check-circle"></i> Tersimpan di Cloud';
-                    gdriveBadge.classList.replace('bg-emerald-100', 'bg-orange-100');
-                    gdriveBadge.classList.replace('text-emerald-700', 'text-orange-700');
+                    gdriveBadge.classList.replace('bg-emerald-100', 'bg-blue-100');
+                    gdriveBadge.classList.replace('text-emerald-700', 'text-blue-700');
                 }
                 if (btnOpenGdrive) {
                     btnOpenGdrive.href = manifestUrl;
@@ -285,14 +286,14 @@ function prosesHasil() {
                     qrContainer.onclick = () => window.open(onlineCustomerUrl, '_blank');
                 }
 
-                if (qrDesc) qrDesc.innerHTML = '<span class="text-orange-600 font-semibold flex items-center gap-1"><i class="ph ph-check-circle"></i> Tersimpan Cepat di Firebase!</span> Scan QR ini di HP untuk membuka galeri instan.';
+                if (qrDesc) qrDesc.innerHTML = '<span class="text-blue-600 font-semibold flex items-center gap-1"><i class="ph ph-check-circle"></i> Tersimpan Cepat di Cloudinary!</span> Scan QR ini di HP untuk membuka galeri instan.';
             } else {
                 renderQr(customerUrl);
                 if (qrDesc) qrDesc.innerHTML = '<span class="text-slate-600">Scan QR di atas untuk membuka galeri hasil di HP pelanggan.</span>';
             }
         }).catch(err => {
             if (qrSpinner) qrSpinner.classList.add('hidden');
-            console.error("Firebase upload error:", err);
+            console.error("Cloudinary upload error:", err);
             renderQr(customerUrl);
             if (qrDesc) qrDesc.innerHTML = `<span class="text-red-600 text-[10px]">Error Upload: ${err.message}</span>`;
         });
@@ -307,27 +308,11 @@ function prosesHasil() {
     }
 }
 
-// ================= FIREBASE UPLOADER HELPER =================
-async function uploadToFirebase(sessionData, configStr, eventName) {
+// ================= CLOUDINARY UPLOADER HELPER =================
+async function uploadToCloudinary(sessionData, cloudName, uploadPreset, eventName) {
     try {
-        let config;
-        try {
-            const sanitizedStr = configStr.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":').replace(/'/g, '"');
-            config = JSON.parse(sanitizedStr);
-        } catch (e) {
-            throw new Error("Format Firebase Config tidak valid");
-        }
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(config);
-        } else if (firebase.apps[0].options.projectId !== config.projectId) {
-            await firebase.app().delete();
-            firebase.initializeApp(config);
-        }
-
-        const storage = firebase.storage();
         const sessionId = sessionData.id;
-        const folderPath = `events/${eventName || 'Default'}/${sessionId}`;
+        const baseFolder = eventName ? `${eventName.replace(/[^a-zA-Z0-9_-]/g, '_')}/${sessionId}` : sessionId;
         
         let gifBase64 = null;
         if (finalAnimFrames && finalAnimFrames.length > 0) {
@@ -350,30 +335,40 @@ async function uploadToFirebase(sessionData, configStr, eventName) {
         const uploadTasks = [];
         const resultFiles = {};
 
-        const uploadBase64 = async (b64, filename) => {
+        const uploadBase64ToCloudinary = async (b64, filename, resourceType = 'image') => {
             if (!b64) return null;
             const res = await fetch(b64);
             const blob = await res.blob();
-            const fileRef = storage.ref().child(`${folderPath}/${filename}`);
-            await fileRef.put(blob);
-            const url = await fileRef.getDownloadURL();
-            return url;
+            
+            const formData = new FormData();
+            formData.append('file', blob);
+            formData.append('upload_preset', uploadPreset);
+            formData.append('public_id', `${baseFolder}/${filename}`);
+            
+            const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
+            const uploadRes = await fetch(uploadUrl, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await uploadRes.json();
+            if (data.error) throw new Error(data.error.message);
+            return data.secure_url;
         };
 
         if (sessionData.stripJpg) {
-            uploadTasks.push(uploadBase64(sessionData.stripJpg, 'Foto_Strip.jpg').then(url => resultFiles.stripJpg = url));
+            uploadTasks.push(uploadBase64ToCloudinary(sessionData.stripJpg, 'Foto_Strip').then(url => resultFiles.stripJpg = url));
         }
         if (sessionData.stripPng) {
-            uploadTasks.push(uploadBase64(sessionData.stripPng, 'Foto_Strip_HD.png').then(url => resultFiles.stripPng = url));
+            uploadTasks.push(uploadBase64ToCloudinary(sessionData.stripPng, 'Foto_Strip_HD').then(url => resultFiles.stripPng = url));
         }
         if (gifBase64) {
-            uploadTasks.push(uploadBase64(gifBase64, 'Animasi_Photobooth.gif').then(url => resultFiles.gifUrl = url));
+            uploadTasks.push(uploadBase64ToCloudinary(gifBase64, 'Animasi_Photobooth').then(url => resultFiles.gifUrl = url));
         }
         
         resultFiles.rawShots = [];
         if (sessionData.rawShots && sessionData.rawShots.length > 0) {
             const rawTasks = sessionData.rawShots.map((b64, i) => 
-                uploadBase64(b64, `Pose_${i + 1}.jpg`).then(url => resultFiles.rawShots[i] = url)
+                uploadBase64ToCloudinary(b64, `Pose_${i + 1}`).then(url => resultFiles.rawShots[i] = url)
             );
             uploadTasks.push(...rawTasks);
         }
@@ -389,13 +384,21 @@ async function uploadToFirebase(sessionData, configStr, eventName) {
         };
 
         const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-        const manifestRef = storage.ref().child(`${folderPath}/session.json`);
-        await manifestRef.put(manifestBlob);
-        const manifestUrl = await manifestRef.getDownloadURL();
+        const formData = new FormData();
+        formData.append('file', manifestBlob);
+        formData.append('upload_preset', uploadPreset);
+        formData.append('public_id', `${baseFolder}/session.json`);
+        
+        const manifestRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, {
+            method: 'POST',
+            body: formData
+        });
+        const manifestData = await manifestRes.json();
+        if (manifestData.error) throw new Error(manifestData.error.message);
 
-        return manifestUrl;
+        return manifestData.secure_url;
     } catch (err) {
-        console.error("uploadToFirebase error:", err);
+        console.error("uploadToCloudinary error:", err);
         throw err;
     }
 }

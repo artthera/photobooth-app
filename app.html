@@ -12,13 +12,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
-    <!-- Firebase SDK (Compat Version for simple integration) -->
-    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-storage-compat.js"></script>
-    
-    <!-- Fonts -->
+    <!-- QRCode Generator -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Inter:wght@400;600;800;900&family=Montserrat:wght@400;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Poppins:wght@400;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -112,8 +109,8 @@
                         <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionVisual">
                             <i class="ph ph-palette text-base"></i> <span>Background & Font</span>
                         </button>
-                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionGdrive">
-                            <i class="ph ph-firebase-logo text-orange-500 text-base"></i> <span>Firebase Storage</span>
+                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionCloudinary">
+                            <i class="ph ph-cloud-arrow-up text-blue-500 text-base"></i> <span>Cloudinary Storage</span>
                         </button>
                         <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionPresets">
                             <i class="ph ph-floppy-disk text-base"></i> <span>Backup & Preset</span>
@@ -185,13 +182,12 @@
                             </div>
 
                             <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs flex flex-col justify-between gap-3">
-                                <div class="w-10 h-10 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center text-xl">
-                                    <i class="ph ph-firebase-logo"></i>
+                                <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center text-xl">
+                                    <i class="ph ph-cloud-check"></i>
                                 </div>
                                 <div>
                                     <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Cloud Storage</div>
-                                    <div class="text-lg sm:text-xl font-black text-slate-900 mt-0.5" id="dashGdriveStatusText">Tersambung</div>
-                                    <div class="text-[10px] text-emerald-600 font-bold mt-0.5">Firebase Siap</div>
+                                    <div class="text-[10px] text-blue-600 font-bold mt-0.5">Cloudinary Siap</div>
                                 </div>
                             </div>
                         </div>
@@ -569,73 +565,82 @@
                         </div>
                     </section>
 
-                    <!-- ================= SECTION 6: GOOGLE DRIVE CLOUD ================= -->
-                    <section id="dashSectionGdrive" class="dash-section hide flex flex-col gap-5">
+                    <!-- ================= SECTION 6: CLOUDINARY STORAGE ================= -->
+                    <div id="dashSectionCloudinary" class="dash-section hidden flex-col gap-6">
+                        <div>
+                            <h2 class="text-xl font-black text-slate-900 tracking-tight">Cloudinary Storage</h2>
+                            <p class="text-xs text-slate-500 font-medium mt-1">Konfigurasi penyimpanan super cepat (gratis) untuk foto & video hasil fotobooth.</p>
+                        </div>
+
+                        <!-- Cloudinary Integration -->
                         <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-5">
                             <div class="flex items-center justify-between border-b border-slate-200 pb-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center text-2xl">
-                                        <i class="ph ph-firebase-logo"></i>
+                                    <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center text-2xl">
+                                        <i class="ph ph-cloud-arrow-up"></i>
                                     </div>
                                     <div>
-                                        <h3 class="text-lg font-black text-slate-900">Integrasi Firebase Storage</h3>
-                                        <p class="text-xs text-slate-500 font-medium mt-0.5">Upload instan (real-time) foto & video ke Google Firebase.</p>
+                                        <h3 class="text-lg font-black text-slate-900">Integrasi Cloudinary CDN</h3>
+                                        <p class="text-xs text-slate-500 font-medium mt-0.5">Upload instan (real-time) foto & video langsung ke Cloudinary.</p>
                                     </div>
                                 </div>
-                                <span class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full font-bold"><i class="ph ph-lightning"></i> SUPER CEPAT</span>
+                                <span class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full font-bold"><i class="ph ph-lightning"></i> TANPA KARTU KREDIT</span>
                             </div>
 
-                            <div>
-                                <label class="text-xs font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
-                                    <i class="ph ph-code text-blue-600"></i> Firebase Config (JSON)
-                                </label>
-                                <div class="flex flex-col sm:flex-row gap-2">
-                                    <textarea id="themeFirebaseConfig" rows="4" placeholder='{ "apiKey": "AIza...", "authDomain": "...", "projectId": "...", "storageBucket": "..." }' class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-orange-500 transition font-mono"></textarea>
-                                    <button type="button" id="btnTestFirebase" class="bg-orange-500 hover:bg-orange-400 text-white px-5 py-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shrink-0 shadow-xs h-fit self-start sm:self-auto">
-                                        <i class="ph ph-plugs-connected"></i> Test Koneksi
-                                    </button>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-xs font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
+                                        <i class="ph ph-identification-card text-blue-600"></i> Cloud Name
+                                    </label>
+                                    <input type="text" id="themeCloudinaryName" placeholder="Contoh: dgxjxxxxx" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 transition font-mono" />
                                 </div>
-                                <div id="firebaseTestStatus" class="text-[11px] mt-2 hidden font-medium"></div>
+                                <div>
+                                    <label class="text-xs font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
+                                        <i class="ph ph-key text-blue-600"></i> Upload Preset (Unsigned)
+                                    </label>
+                                    <div class="flex flex-col sm:flex-row gap-2">
+                                        <input type="text" id="themeCloudinaryPreset" placeholder="Contoh: pb_preset" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 transition font-mono" />
+                                        <button type="button" id="btnTestCloudinary" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shrink-0 shadow-xs h-fit self-start sm:self-auto">
+                                            <i class="ph ph-plugs-connected"></i> Test
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
+                            <div id="cloudinaryTestStatus" class="text-[11px] font-medium hidden"></div>
 
                             <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
                                 <div>
                                     <div class="text-xs font-bold text-slate-900">Auto-Upload Setelah Selesai Sesi</div>
-                                    <div class="text-[10px] text-slate-500 font-medium">QR Code di layar otomatis mengarahkan ke link galeri dari Firebase.</div>
+                                    <div class="text-[10px] text-slate-500 font-medium">QR Code otomatis mengarahkan ke link galeri instan.</div>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="themeFirebaseAutoUpload" class="sr-only peer" checked>
-                                    <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                                    <input type="checkbox" id="themeCloudinaryAutoUpload" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                                 </label>
                             </div>
 
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200 gap-3">
                                 <div>
-                                    <div class="text-xs font-bold text-slate-900">Nama Acara (Event Folder)</div>
-                                    <div class="text-[10px] text-slate-500 font-medium">Kosongkan jika ingin menggunakan folder Default.</div>
+                                    <div class="text-xs font-bold text-slate-900">Nama Acara (Event Tag)</div>
+                                    <div class="text-[10px] text-slate-500 font-medium">Opsional: Tag foto agar mudah dicari di dashboard Cloudinary Anda.</div>
                                 </div>
                                 <div class="w-full sm:w-1/2">
-                                    <input type="text" id="themeFirebaseEventName" placeholder="Cth: Wedding Budi & Ayu" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:border-orange-500 transition" />
+                                    <input type="text" id="themeCloudinaryEventName" placeholder="Cth: Wedding Budi & Ayu" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 transition" />
                                 </div>
                             </div>
 
                             <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 text-xs flex flex-col gap-2.5">
                                 <div class="font-black text-slate-800 flex items-center gap-1.5 text-xs">
-                                    <i class="ph ph-info text-blue-600"></i> Cara Memasang Firebase Storage:
+                                    <i class="ph ph-info text-blue-600"></i> Cara Mendapatkan Kredensial Cloudinary (Gratis):
                                 </div>
                                 <ol class="list-decimal list-inside text-slate-600 text-[11px] space-y-1.5 leading-relaxed font-medium">
-                                    <li>Buka <a href="https://console.firebase.google.com/" target="_blank" class="text-blue-600 underline hover:text-blue-500 font-bold">console.firebase.google.com</a> dan buat Project baru (Gratis).</li>
-                                    <li>Di menu sebelah kiri, buka <b>Build > Storage</b> dan klik <b>Get Started</b>.</li>
-                                    <li>PENTING: Di bagian Aturan (Rules), ubah menjadi: <code>allow read, write: if true;</code> agar photobooth bisa mengunggah.</li>
-                                    <li>Kembali ke beranda proyek (Project Overview), klik ikon web <b>&lt;/&gt;</b> untuk menambahkan aplikasi web.</li>
-                                    <li>Salin isi teks dalam blok <code>firebaseConfig = { ... }</code> lalu <i>paste</i> (tempel) ke kolom JSON di atas. (Pastikan menggunakan format JSON yang valid atau salin persis objeknya).</li>
+                                    <li>Daftar akun gratis di <a href="https://cloudinary.com/" target="_blank" class="text-blue-600 underline hover:text-blue-500 font-bold">cloudinary.com</a>.</li>
+                                    <li>Di halaman utama (Dashboard), Anda akan langsung melihat <b>Cloud Name</b>. Salin dan tempel di atas.</li>
+                                    <li>Pergi ke menu <b>Settings</b> (ikon gerigi) > <b>Upload</b>.</li>
+                                    <li>Scroll ke bawah, cari bagian <b>Upload presets</b>, lalu klik <b>Add upload preset</b>.</li>
+                                    <li>PENTING: Di kolom <b>Signing Mode</b>, ubah dari Signed menjadi <b>Unsigned</b>. Klik Save.</li>
+                                    <li>Salin nama dari Upload preset tersebut (contoh: <code>p6xyz8ab</code>) dan tempel di kolom "Upload Preset" di atas.</li>
                                 </ol>
- * GOOGLE APPS SCRIPT - PHOTOBOOTH GOOGLE DRIVE AUTO UPLOADER
- * ==============================================================================
- */
-
-const PARENT_FOLDER_ID = ''; // Biarkan kosong untuk simpan di Drive Utama
-
 function doPost(e) {
   try {
     if (!e || !e.postData || !e.postData.contents) return responseJSON({ success: false, message: 'No data' });

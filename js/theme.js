@@ -35,9 +35,10 @@ const ThemeManager = (function() {
         accentColor: "#2563eb",
         accentColorEnd: "#7c3aed",
 
-        firebaseConfigJson: "",
-        firebaseAutoUpload: true,
-        firebaseEventName: "",
+        cloudinaryName: "",
+        cloudinaryPreset: "",
+        cloudinaryAutoUpload: true,
+        cloudinaryEventName: "",
     };
 
     let currentConfig = { ...defaults };
@@ -358,14 +359,15 @@ const ThemeManager = (function() {
             }
         });
 
-        // Firebase Storage inputs
-        setVal('themeFirebaseConfig', cfg.firebaseConfigJson || '');
-        if (document.getElementById('themeFirebaseAutoUpload')) {
-            document.getElementById('themeFirebaseAutoUpload').checked = cfg.firebaseAutoUpload !== false;
+        // Cloudinary Storage inputs
+        setVal('themeCloudinaryName', cfg.cloudinaryName || '');
+        setVal('themeCloudinaryPreset', cfg.cloudinaryPreset || '');
+        if (document.getElementById('themeCloudinaryAutoUpload')) {
+            document.getElementById('themeCloudinaryAutoUpload').checked = cfg.cloudinaryAutoUpload !== false;
         }
-        setVal('themeFirebaseEventName', cfg.firebaseEventName || '');
-        const statusFirebase = document.getElementById('firebaseTestStatus');
-        if (statusFirebase) statusFirebase.classList.add('hidden');
+        setVal('themeCloudinaryEventName', cfg.cloudinaryEventName || '');
+        const statusCloudinary = document.getElementById('cloudinaryTestStatus');
+        if (statusCloudinary) statusCloudinary.classList.add('hidden');
     }
 
     function initModalUI() {
@@ -505,65 +507,61 @@ const ThemeManager = (function() {
             });
         }
 
-        // Firebase Test Connection Button
-        const btnTestFirebase = document.getElementById('btnTestFirebase');
-        const firebaseTestStatus = document.getElementById('firebaseTestStatus');
-        if (btnTestFirebase && firebaseTestStatus) {
-            btnTestFirebase.addEventListener('click', async () => {
-                const configStr = (document.getElementById('themeFirebaseConfig').value || '').trim();
-                if (!configStr) {
-                    firebaseTestStatus.innerHTML = '<span class="text-orange-600 font-bold"><i class="ph ph-warning"></i> Harap masukkan JSON Firebase Config terlebih dahulu!</span>';
-                    firebaseTestStatus.classList.remove('hidden');
+        // Cloudinary Test Connection Button
+        const btnTestCloudinary = document.getElementById('btnTestCloudinary');
+        const cloudinaryTestStatus = document.getElementById('cloudinaryTestStatus');
+        if (btnTestCloudinary && cloudinaryTestStatus) {
+            btnTestCloudinary.addEventListener('click', async () => {
+                const cName = (document.getElementById('themeCloudinaryName').value || '').trim();
+                const cPreset = (document.getElementById('themeCloudinaryPreset').value || '').trim();
+                
+                if (!cName || !cPreset) {
+                    cloudinaryTestStatus.innerHTML = '<span class="text-amber-600 font-bold"><i class="ph ph-warning"></i> Harap masukkan Cloud Name dan Upload Preset terlebih dahulu!</span>';
+                    cloudinaryTestStatus.classList.remove('hidden');
                     return;
                 }
 
-                let config;
-                try {
-                    // Coba perbaiki format jika user copy-paste object JS (bukan JSON)
-                    const sanitizedStr = configStr.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":').replace(/'/g, '"');
-                    config = JSON.parse(sanitizedStr);
-                } catch (e) {
-                    firebaseTestStatus.innerHTML = '<span class="text-red-600 font-bold"><i class="ph ph-warning"></i> Format JSON tidak valid! Pastikan sesuai standar JSON.</span>';
-                    firebaseTestStatus.classList.remove('hidden');
-                    return;
-                }
-
-                btnTestFirebase.disabled = true;
-                const origBtn = btnTestFirebase.innerHTML;
-                btnTestFirebase.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Mengetes...';
-                firebaseTestStatus.innerHTML = '<span class="text-blue-600 font-bold"><i class="ph ph-spinner animate-spin"></i> Menghubungi Firebase...</span>';
-                firebaseTestStatus.classList.remove('hidden');
+                btnTestCloudinary.disabled = true;
+                const origBtn = btnTestCloudinary.innerHTML;
+                btnTestCloudinary.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Test...';
+                cloudinaryTestStatus.innerHTML = '<span class="text-blue-600 font-bold"><i class="ph ph-spinner animate-spin"></i> Menghubungi Cloudinary...</span>';
+                cloudinaryTestStatus.classList.remove('hidden');
 
                 try {
-                    if (!firebase.apps.length) {
-                        firebase.initializeApp(config);
-                    } else if (firebase.apps[0].options.projectId !== config.projectId) {
-                        firebase.app().delete().then(() => firebase.initializeApp(config));
-                    }
+                    // Coba upload file teks kosong sebagai pengujian
+                    const formData = new FormData();
+                    formData.append('file', new Blob(['test'], { type: 'text/plain' }));
+                    formData.append('upload_preset', cPreset);
+
+                    const res = await fetch(`https://api.cloudinary.com/v1_1/${cName}/raw/upload`, {
+                        method: 'POST',
+                        body: formData
+                    });
                     
-                    const storage = firebase.storage();
-                    // Kita anggap sukses jika inisialisasi berhasil, atau coba list file
-                    await storage.ref().list({ maxResults: 1 });
-                    firebaseTestStatus.innerHTML = '<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> Koneksi Berhasil! Firebase Storage siap digunakan.</span>';
-                } catch (err) {
-                    if (err.code && err.code.includes('unauthorized')) {
-                         firebaseTestStatus.innerHTML = '<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> Inisialisasi Berhasil! Namun perhatikan Rules Firebase Storage Anda.</span>';
+                    const data = await res.json();
+                    
+                    if (data.secure_url) {
+                        cloudinaryTestStatus.innerHTML = '<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> Koneksi Berhasil! Cloudinary siap digunakan.</span>';
+                    } else if (data.error) {
+                        cloudinaryTestStatus.innerHTML = `<span class="text-red-600 font-bold"><i class="ph ph-warning"></i> Gagal: ${data.error.message}</span>`;
                     } else {
-                         console.error(err);
-                         firebaseTestStatus.innerHTML = '<span class="text-red-600 font-bold"><i class="ph ph-warning"></i> Gagal terhubung: ' + err.message + '</span>';
+                        cloudinaryTestStatus.innerHTML = '<span class="text-red-600 font-bold"><i class="ph ph-warning"></i> Gagal terhubung ke Cloudinary.</span>';
                     }
+                } catch (err) {
+                    console.error(err);
+                    cloudinaryTestStatus.innerHTML = '<span class="text-red-600 font-bold"><i class="ph ph-warning"></i> Gagal terhubung: ' + err.message + '</span>';
                 } finally {
-                    btnTestFirebase.disabled = false;
-                    btnTestFirebase.innerHTML = origBtn;
+                    btnTestCloudinary.disabled = false;
+                    btnTestCloudinary.innerHTML = origBtn;
                 }
             });
         }
 
-        // Google Drive Auto-upload checkbox
-        const cbFirebaseAuto = document.getElementById('themeFirebaseAutoUpload');
-        if (cbFirebaseAuto) {
-            cbFirebaseAuto.addEventListener('change', (e) => {
-                activeWorkingConfig.firebaseAutoUpload = e.target.checked;
+        // Cloudinary Auto-upload checkbox
+        const cbCloudinaryAuto = document.getElementById('themeCloudinaryAutoUpload');
+        if (cbCloudinaryAuto) {
+            cbCloudinaryAuto.addEventListener('change', (e) => {
+                activeWorkingConfig.cloudinaryAutoUpload = e.target.checked;
                 applyConfig(activeWorkingConfig);
             });
         }
@@ -594,8 +592,9 @@ const ThemeManager = (function() {
         bindInput('themeResultsBadge', 'resultsBadge');
         bindInput('themeResultsTitle', 'resultsTitle');
         bindInput('themeResultsSubtitle', 'resultsSubtitle');
-        bindInput('themeFirebaseConfig', 'firebaseConfigJson');
-        bindInput('themeFirebaseEventName', 'firebaseEventName');
+        bindInput('themeCloudinaryName', 'cloudinaryName');
+        bindInput('themeCloudinaryPreset', 'cloudinaryPreset');
+        bindInput('themeCloudinaryEventName', 'cloudinaryEventName');
 
         // Background Mode buttons
         document.querySelectorAll('.theme-bg-mode-btn').forEach(btn => {
