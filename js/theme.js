@@ -23,7 +23,7 @@ const ThemeManager = (function() {
         resultsTitle: "YOUR PHOTOBOOTH MOMENTS",
         resultsSubtitle: "Semua foto, video live motion, dan animasi GIF berhasil dibuat dengan kualitas tinggi!",
         
-        bgMode: "gradient", // 'camera' | 'gradient' | 'color' | 'image'
+        bgMode: "camera", // 'camera' | 'image'
         bgGradient: "linear-gradient(135deg, #f8fafc 0%, #eef2f6 50%, #ffffff 100%)",
         bgColor: "#ffffff",
         bgImageData: null,
@@ -179,7 +179,8 @@ const ThemeManager = (function() {
         const isCurrentlyInCamera = stateCamera && !stateCamera.classList.contains('hide');
 
         if (cameraContainer) {
-            cameraContainer.style.display = (isCurrentlyInCamera || cfg.bgMode === 'camera') ? 'block' : 'none';
+            const showOverlay = (cfg.bgMode === 'image' && cfg.bgCameraBehind === true);
+            cameraContainer.style.display = (isCurrentlyInCamera || cfg.bgMode === 'camera' || showOverlay) ? 'block' : 'none';
         }
 
         if (customBgImageLayer) {
@@ -319,13 +320,14 @@ const ThemeManager = (function() {
         });
 
         // Toggle sub options panels
-        const gradOptions = document.getElementById('themeGradientOptions');
-        const colorOptions = document.getElementById('themeColorOptions');
         const imageOptions = document.getElementById('themeImageOptions');
-
-        if (gradOptions) gradOptions.classList.toggle('hide', cfg.bgMode !== 'gradient');
-        if (colorOptions) colorOptions.classList.toggle('hide', cfg.bgMode !== 'color');
+        
         if (imageOptions) imageOptions.classList.toggle('hide', cfg.bgMode !== 'image');
+
+        const elCameraBehind = document.getElementById('themeBgCameraBehind');
+        if (elCameraBehind) {
+            elCameraBehind.checked = cfg.bgCameraBehind === true;
+        }
 
         // Gradient card highlights
         document.querySelectorAll('.theme-grad-card').forEach(card => {
@@ -746,12 +748,20 @@ const ThemeManager = (function() {
             });
         }
 
+        const checkboxCameraBehind = document.getElementById('themeBgCameraBehind');
+        if (checkboxCameraBehind) {
+            checkboxCameraBehind.addEventListener('change', (e) => {
+                activeWorkingConfig.bgCameraBehind = e.target.checked;
+                applyConfig(activeWorkingConfig);
+            });
+        }
+
         // Remove background image button
         const btnRemoveBg = document.getElementById('btnRemoveBgImage');
         if (btnRemoveBg) {
             btnRemoveBg.addEventListener('click', () => {
                 activeWorkingConfig.bgImageData = null;
-                if (activeWorkingConfig.bgMode === 'image') activeWorkingConfig.bgMode = 'gradient';
+                if (activeWorkingConfig.bgMode === 'image') activeWorkingConfig.bgMode = 'camera';
                 syncModalInputs(activeWorkingConfig);
                 applyConfig(activeWorkingConfig);
             });

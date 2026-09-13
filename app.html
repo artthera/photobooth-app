@@ -507,75 +507,47 @@
                                 <label class="text-xs font-black text-slate-800 uppercase tracking-wider block mb-3 flex items-center gap-1.5">
                                     <i class="ph ph-monitor text-blue-600"></i> Mode Latar Belakang (Background)
                                 </label>
-                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <div class="grid grid-cols-2 gap-3 max-w-sm">
                                     <button type="button" class="theme-bg-mode-btn p-3.5 rounded-2xl border flex flex-col items-center gap-2 transition text-center" data-mode="camera">
                                         <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl"><i class="ph ph-camera"></i></div>
-                                        <div><div class="text-xs font-bold text-slate-800">Live Kamera</div><div class="text-[10px] text-slate-500">Mirror kamera</div></div>
-                                    </button>
-                                    <button type="button" class="theme-bg-mode-btn p-3.5 rounded-2xl border flex flex-col items-center gap-2 transition text-center" data-mode="gradient">
-                                        <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl"><i class="ph ph-sparkle"></i></div>
-                                        <div><div class="text-xs font-bold text-slate-800">Gradient Estetik</div><div class="text-[10px] text-slate-500">Gradasi modern</div></div>
-                                    </button>
-                                    <button type="button" class="theme-bg-mode-btn p-3.5 rounded-2xl border flex flex-col items-center gap-2 transition text-center" data-mode="color">
-                                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl"><i class="ph ph-paint-bucket"></i></div>
-                                        <div><div class="text-xs font-bold text-slate-800">Warna Solid</div><div class="text-[10px] text-slate-500">1 warna solid</div></div>
+                                        <div><div class="text-xs font-bold text-slate-800">Live Kamera</div><div class="text-[10px] text-slate-500">Hanya mirror kamera</div></div>
                                     </button>
                                     <button type="button" class="theme-bg-mode-btn p-3.5 rounded-2xl border flex flex-col items-center gap-2 transition text-center" data-mode="image">
                                         <div class="w-10 h-10 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center text-xl"><i class="ph ph-image"></i></div>
-                                        <div><div class="text-xs font-bold text-slate-800">Upload Foto</div><div class="text-[10px] text-slate-500">Wallpaper custom</div></div>
+                                        <div><div class="text-xs font-bold text-slate-800">Custom Media</div><div class="text-[10px] text-slate-500">GIF / PNG Overlay</div></div>
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- Preset Gradasi -->
-                            <div id="themeGradientOptions" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col gap-3">
-                                <span class="text-xs font-black text-slate-800 flex items-center gap-1.5"><i class="ph ph-palette text-blue-600"></i> Pilihan Preset Gradasi</span>
-                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #f8fafc 0%, #eef2f6 50%, #ffffff 100%)" style="background: linear-gradient(135deg, #f8fafc 0%, #eef2f6 50%, #ffffff 100%);"><span class="text-[11px] font-bold text-slate-800">Clean Pearl White</span></button>
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #fdf4ff 0%, #fae8ff 50%, #f0fdf4 100%)" style="background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 50%, #f0fdf4 100%);"><span class="text-[11px] font-bold text-slate-800">Pastel Blossom</span></button>
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #f8fafc 100%)" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #f8fafc 100%);"><span class="text-[11px] font-bold text-slate-800">Sky Breeze</span></button>
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #fef3c7 0%, #fef9c3 50%, #fffbeb 100%)" style="background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 50%, #fffbeb 100%);"><span class="text-[11px] font-bold text-slate-800">Warm Vanilla</span></button>
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #f0fdf4 100%)" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #f0fdf4 100%);"><span class="text-[11px] font-bold text-slate-800">Fresh Mint</span></button>
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #e0e7ff 100%)" style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #e0e7ff 100%);"><span class="text-[11px] font-bold text-slate-800">Lavender Milk</span></button>
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #fff1f2 0%, #ffe4e6 50%, #fdf2f8 100%)" style="background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 50%, #fdf2f8 100%);"><span class="text-[11px] font-bold text-slate-800">Rose Petal</span></button>
-                                    <button type="button" class="theme-grad-card h-16 rounded-xl p-2.5 flex flex-col justify-end text-left border transition relative shadow-xs" data-gradient="linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%)" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);"><span class="text-[11px] font-bold text-white">Cyber Dark</span></button>
-                                </div>
-                            </div>
 
-                            <!-- Solid Color Options -->
-                            <div id="themeColorOptions" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between hide">
-                                <div>
-                                    <span class="text-xs font-bold text-slate-800 block mb-0.5">Warna Latar Belakang Solid</span>
-                                    <span class="text-[11px] text-slate-500">Pilih 1 warna solid untuk latar beranda</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <span id="themeBgColorHex" class="text-xs font-mono text-slate-800 bg-white px-3 py-1.5 rounded-lg border border-slate-200">#ffffff</span>
-                                    <input type="color" id="themeBgColorInput" value="#ffffff" class="w-10 h-10 rounded-xl cursor-pointer bg-transparent border-0" />
-                                </div>
-                            </div>
 
                             <!-- Upload Image Wallpaper Options -->
                             <div id="themeImageOptions" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col gap-3 hide">
-                                <div class="flex items-center justify-between">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                     <div>
-                                        <span class="text-xs font-bold text-slate-800 block mb-0.5">Upload Wallpaper / Gambar Custom</span>
-                                        <span class="text-[11px] text-slate-500">Format PNG, JPG, JPEG, GIF atau WebP</span>
+                                        <span class="text-xs font-bold text-slate-800 block mb-0.5">Upload Background / Overlay Custom</span>
+                                        <span class="text-[11px] text-slate-500">Mendukung file transparan (PNG) & Animasi (GIF)</span>
                                     </div>
                                     <input type="file" id="themeBgFileInput" accept="image/*" class="hidden" />
-                                    <button type="button" onclick="document.getElementById('themeBgFileInput').click()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-xs">
+                                    <button type="button" onclick="document.getElementById('themeBgFileInput').click()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs">
                                         <i class="ph ph-folder-open text-base"></i> Pilih File
                                     </button>
                                 </div>
+                                
+                                <label class="flex items-center gap-2 mt-1 cursor-pointer border-t border-slate-200 pt-3">
+                                    <input type="checkbox" id="themeBgCameraBehind" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                                    <span class="text-[11px] font-bold text-slate-700">Tampilkan Live Kamera sebagai Background (di belakang gambar ini)</span>
+                                </label>
 
-                                <div id="themeBgImagePreviewWrapper" class="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-200 hide">
+                                <div id="themeBgImagePreviewWrapper" class="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-white rounded-xl border border-slate-200 hide gap-3">
                                     <div class="flex items-center gap-3">
                                         <img id="themeBgImageThumbnail" src="" class="w-14 h-10 object-cover rounded-lg border border-slate-200 shadow-xs" alt="Wallpaper Preview" />
                                         <div>
-                                            <div class="text-xs font-bold text-slate-800" id="themeBgImageName">custom_wallpaper.jpg</div>
+                                            <div class="text-xs font-bold text-slate-800 max-w-[200px] truncate" id="themeBgImageName">custom_wallpaper.jpg</div>
                                             <div class="text-[10px] text-emerald-600 font-bold">Gambar aktif digunakan</div>
                                         </div>
                                     </div>
-                                    <button type="button" id="btnRemoveBgImage" class="text-xs text-red-600 hover:text-red-700 px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 transition flex items-center gap-1 font-bold">
+                                    <button type="button" id="btnRemoveBgImage" class="text-xs text-red-600 hover:text-red-700 px-3 py-2 rounded-lg bg-red-50 hover:bg-red-100 transition flex items-center justify-center gap-1 font-bold">
                                         <i class="ph ph-trash"></i> Hapus
                                     </button>
                                 </div>
