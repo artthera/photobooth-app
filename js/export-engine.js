@@ -422,7 +422,8 @@ async function logToSupabase(sUrl, sKey, sessionId, eventName, manifestUrl, cust
             session_id: sessionId,
             event_name: eventName,
             manifest_url: manifestUrl,
-            customer_url: customerUrl
+            customer_url: customerUrl,
+            user_id: typeof currentAuthUser !== 'undefined' && currentAuthUser ? currentAuthUser.id : null
         };
         
         const { error } = await client.from('sessions').insert([payload]);
