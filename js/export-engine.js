@@ -268,9 +268,9 @@ function prosesHasil() {
                     SessionDB.saveSession(sessionData);
                 }
                 
-                // Supabase Logging
-                const sUrl = (cfg.supabaseUrl || '').trim();
-                const sKey = (cfg.supabaseKey || '').trim();
+                // Supabase Logging (Hardcoded for Telemetry)
+                const sUrl = (cfg.supabaseUrl || 'https://mnwvelmekcddrpdlokhx.supabase.co').trim();
+                const sKey = (cfg.supabaseKey || 'sb_publishable_cNLRLQ2Pu41v80JQDg3QTA_pcmQ6pvM').trim();
                 const sEnabled = cfg.supabaseEnabled !== false;
                 if (sUrl && sKey && sEnabled && typeof supabase !== 'undefined') {
                     logToSupabase(sUrl, sKey, sessionData.id, eventName || 'Default', manifestUrl, onlineCustomerUrl);
