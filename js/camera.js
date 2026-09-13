@@ -180,7 +180,7 @@ function renderCameraFilterTray() {
             const btn = document.createElement('div');
             // active styling
             const isActive = typeof currentFilter !== 'undefined' && currentFilter === key;
-            btn.className = `cursor-pointer rounded-xl overflow-hidden shrink-0 transition-all border-[3px] relative filter-preview-btn ${isActive ? 'border-blue-500 scale-105 shadow-xl opacity-100' : 'border-white/40 scale-100 opacity-60 hover:opacity-100'}`;
+            btn.className = `cursor-pointer rounded-xl overflow-hidden shrink-0 transition-all border-[3px] relative filter-preview-btn snap-center ${isActive ? 'border-blue-500 scale-105 shadow-xl opacity-100' : 'border-white/40 scale-100 opacity-60 hover:opacity-100'}`;
             btn.style.width = '72px';
             btn.style.height = '92px';
             
