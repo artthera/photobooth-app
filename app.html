@@ -120,6 +120,17 @@
                         <label class="text-xs font-bold text-slate-700 block mb-1.5">Password</label>
                         <input type="password" id="regPassword" placeholder="Minimal 6 karakter" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-emerald-500 transition" />
                     </div>
+                    <div class="pt-2 border-t border-slate-100">
+                        <label class="text-xs font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
+                            <i class="ph ph-cloud-arrow-up text-emerald-600"></i> Cloudinary Cloud Name
+                        </label>
+                        <input type="text" id="regCloudName" placeholder="Contoh: dgxjxxxxx" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-emerald-500 transition font-mono mb-3" />
+                        
+                        <label class="text-xs font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
+                            <i class="ph ph-key text-emerald-600"></i> Cloudinary Upload Preset
+                        </label>
+                        <input type="text" id="regCloudPreset" placeholder="Contoh: pb_preset (Unsigned)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-emerald-500 transition font-mono" />
+                    </div>
                     <div id="regError" class="hidden text-[11px] font-bold text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2 text-center"></div>
                 </div>
 
@@ -188,15 +199,6 @@
                         </button>
                         <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionStats">
                             <i class="ph ph-chart-bar text-amber-500 text-base"></i> <span>Dashboard Statistik</span>
-                        </button>
-                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionCloudinary">
-                            <i class="ph ph-cloud-arrow-up text-blue-500 text-base"></i> <span>Cloudinary Storage</span>
-                        </button>
-                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionSupabase">
-                            <i class="ph ph-database text-emerald-500 text-base"></i> <span>Supabase Monitoring</span>
-                        </button>
-                        <button type="button" class="dash-nav-btn px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2.5 shrink-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="dashSectionPresets">
-                            <i class="ph ph-floppy-disk text-base"></i> <span>Backup & Preset</span>
                         </button>
                     </div>
 
@@ -658,127 +660,6 @@
                         </div>
                     </section>
 
-                    <!-- ================= SECTION 6: CLOUDINARY STORAGE ================= -->
-                    <div id="dashSectionCloudinary" class="dash-section hide flex-col gap-6">
-                        <div>
-                            <h2 class="text-xl font-black text-slate-900 tracking-tight">Cloudinary Storage</h2>
-                            <p class="text-xs text-slate-500 font-medium mt-1">Konfigurasi penyimpanan super cepat (gratis) untuk foto & video hasil fotobooth.</p>
-                        </div>
-
-                        <!-- Cloudinary Integration -->
-                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-5">
-                            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center text-2xl">
-                                        <i class="ph ph-cloud-arrow-up"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-lg font-black text-slate-900">Integrasi Cloudinary CDN</h3>
-                                        <p class="text-xs text-slate-500 font-medium mt-0.5">Upload instan (real-time) foto & video langsung ke Cloudinary.</p>
-                                    </div>
-                                </div>
-                                <span class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full font-bold"><i class="ph ph-lightning"></i> TANPA KARTU KREDIT</span>
-                            </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="text-xs font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
-                                        <i class="ph ph-identification-card text-blue-600"></i> Cloud Name
-                                    </label>
-                                    <input type="text" id="themeCloudinaryName" placeholder="Contoh: dgxjxxxxx" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 transition font-mono" />
-                                </div>
-                                <div>
-                                    <label class="text-xs font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
-                                        <i class="ph ph-key text-blue-600"></i> Upload Preset (Unsigned)
-                                    </label>
-                                    <div class="flex flex-col sm:flex-row gap-2">
-                                        <input type="text" id="themeCloudinaryPreset" placeholder="Contoh: pb_preset" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 transition font-mono" />
-                                        <button type="button" id="btnTestCloudinary" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shrink-0 shadow-xs h-fit self-start sm:self-auto">
-                                            <i class="ph ph-plugs-connected"></i> Test
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="cloudinaryTestStatus" class="text-[11px] font-medium hidden"></div>
-
-                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
-                                <div>
-                                    <div class="text-xs font-bold text-slate-900">Auto-Upload Setelah Selesai Sesi</div>
-                                    <div class="text-[10px] text-slate-500 font-medium">QR Code otomatis mengarahkan ke link galeri instan.</div>
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="themeCloudinaryAutoUpload" class="sr-only peer" checked>
-                                    <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                </label>
-                            </div>
-
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200 gap-3">
-                                <div>
-                                    <div class="text-xs font-bold text-slate-900">Nama Acara (Event Tag)</div>
-                                    <div class="text-[10px] text-slate-500 font-medium">Opsional: Tag foto agar mudah dicari di dashboard Cloudinary Anda.</div>
-                                </div>
-                                <div class="w-full sm:w-1/2">
-                                    <input type="text" id="themeCloudinaryEventName" placeholder="Cth: Wedding Budi & Ayu" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 transition" />
-                                </div>
-                            </div>
-
-                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 text-xs flex flex-col gap-2.5">
-                                <div class="font-black text-slate-800 flex items-center gap-1.5 text-xs">
-                                    <i class="ph ph-info text-blue-600"></i> Cara Mendapatkan Kredensial Cloudinary (Gratis):
-                                </div>
-                                <ol class="list-decimal list-inside text-slate-600 text-[11px] space-y-1.5 leading-relaxed font-medium">
-                                    <li>Daftar akun gratis di <a href="https://cloudinary.com/" target="_blank" class="text-blue-600 underline hover:text-blue-500 font-bold">cloudinary.com</a>.</li>
-                                    <li>Di halaman utama (Dashboard), Anda akan langsung melihat <b>Cloud Name</b>. Salin dan tempel di atas.</li>
-                                    <li>Pergi ke menu <b>Settings</b> (ikon gerigi) > <b>Upload</b>.</li>
-                                    <li>Scroll ke bawah, cari bagian <b>Upload presets</b>, lalu klik <b>Add upload preset</b>.</li>
-                                    <li>PENTING: Di kolom <b>Signing Mode</b>, ubah dari Signed menjadi <b>Unsigned</b>. Klik Save.</li>
-                                    <li>Salin nama dari Upload preset tersebut (contoh: <code>p6xyz8ab</code>) dan tempel di kolom "Upload Preset" di atas.</li>
-                                </ol>
-function doPost(e) {
-  try {
-    if (!e || !e.postData || !e.postData.contents) return responseJSON({ success: false, message: 'No data' });
-    const data = JSON.parse(e.postData.contents);
-    const sessionName = data.sessionName || ('Photobooth_' + Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyyMMdd_HHmmss"));
-
-    let parentFolder = DriveApp.getRootFolder();
-    if (PARENT_FOLDER_ID && PARENT_FOLDER_ID.trim() !== '') {
-      try { parentFolder = DriveApp.getFolderById(PARENT_FOLDER_ID.trim()); } catch (err) {}
-    }
-
-    const dateFolderName = Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyy-MM-dd");
-    let dateFolder;
-    const dateFolderIterator = parentFolder.getFoldersByName(dateFolderName);
-    if (dateFolderIterator.hasNext()) { dateFolder = dateFolderIterator.next(); } 
-    else { dateFolder = parentFolder.createFolder(dateFolderName); }
-
-    const sessionFolder = dateFolder.createFolder(sessionName);
-    sessionFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-
-    if (data.stripJpgBase64) saveBase64File(sessionFolder, data.stripJpgBase64, 'Foto_Strip.jpg', 'image/jpeg');
-    if (data.stripPngBase64) saveBase64File(sessionFolder, data.stripPngBase64, 'Foto_Strip_HD.png', 'image/png');
-    if (data.gifBase64) saveBase64File(sessionFolder, data.gifBase64, 'Animasi_Photobooth.gif', 'image/gif');
-    if (data.rawShots && Array.isArray(data.rawShots)) {
-      data.rawShots.forEach((shotBase64, i) => saveBase64File(sessionFolder, shotBase64, 'Pose_' + (i + 1) + '.jpg', 'image/jpeg'));
-    }
-
-    return responseJSON({ success: true, folderUrl: sessionFolder.getUrl(), folderId: sessionFolder.getId(), sessionName: sessionName });
-  } catch (error) { return responseJSON({ success: false, error: error.toString() }); }
-}
-
-function doGet(e) { return responseJSON({ status: 'online', message: 'Script Aktif!' }); }
-function saveBase64File(folder, base64Data, fileName, mimeType) {
-  try {
-    let cleanBase64 = base64Data.indexOf('base64,') > -1 ? base64Data.split('base64,')[1] : base64Data;
-    return folder.createFile(Utilities.newBlob(Utilities.base64Decode(cleanBase64), mimeType, fileName));
-  } catch (e) { return null; }
-}
-function responseJSON(obj) { return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON); }
-</textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
                     <!-- ================= SECTION 6.5: DASHBOARD STATISTIK (NEW) ================= -->
                     <div id="dashSectionStats" class="dash-section hide flex-col gap-6">
                         <div class="flex items-center justify-between">
@@ -818,111 +699,6 @@ function responseJSON(obj) { return ContentService.createTextOutput(JSON.stringi
                             </div>
                         </div>
                     </div>
-
-                    <!-- ================= SECTION 7: SUPABASE MONITORING ================= -->
-                    <div id="dashSectionSupabase" class="dash-section hide flex-col gap-6">
-                        <div>
-                            <h2 class="text-xl font-black text-slate-900 tracking-tight">Supabase Monitoring</h2>
-                            <p class="text-xs text-slate-500 font-medium mt-1">Rekam riwayat sesi photobooth ke database Supabase untuk dipantau secara real-time.</p>
-                        </div>
-
-                        <!-- Supabase Integration -->
-                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-5">
-                            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-2xl">
-                                        <i class="ph ph-database"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-lg font-black text-slate-900">Database Log Otomatis</h3>
-                                        <p class="text-xs text-slate-500 font-medium mt-0.5">Mengirim link hasil foto & data pengunjung ke tabel Supabase.</p>
-                                    </div>
-                                </div>
-                                <span class="text-[10px] bg-slate-100 text-slate-600 border border-slate-200 px-3 py-1 rounded-full font-bold">OPSIONAL</span>
-                            </div>
-
-                            <div class="grid grid-cols-1 gap-4">
-                                <div>
-                                    <label class="text-xs font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
-                                        <i class="ph ph-link text-emerald-600"></i> Project URL
-                                    </label>
-                                    <input type="text" id="themeSupabaseUrl" placeholder="Contoh: https://xyz.supabase.co" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-emerald-500 transition font-mono" />
-                                </div>
-                                <div>
-                                    <label class="text-xs font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
-                                        <i class="ph ph-key text-emerald-600"></i> API Key (anon / public)
-                                    </label>
-                                    <div class="flex flex-col sm:flex-row gap-2">
-                                        <input type="text" id="themeSupabaseKey" placeholder="Contoh: eyJhbGciOiJIUzI1NiIsInR..." class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-emerald-500 transition font-mono" />
-                                        <button type="button" id="btnTestSupabase" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shrink-0 shadow-xs h-fit self-start sm:self-auto">
-                                            <i class="ph ph-plugs-connected"></i> Test
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="supabaseTestStatus" class="text-[11px] font-medium hidden"></div>
-
-                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200 mt-2">
-                                <div>
-                                    <div class="text-xs font-bold text-slate-900">Aktifkan Supabase Log</div>
-                                    <div class="text-[10px] text-slate-500 font-medium">Jika diaktifkan, data sesi (URL, Event, Tanggal) akan ditulis ke tabel `sessions`.</div>
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="themeSupabaseEnabled" class="sr-only peer" checked>
-                                    <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ================= SECTION 8: BACKUP & PRESETS ================= -->
-                    <section id="dashSectionPresets" class="dash-section hide flex flex-col gap-5">
-                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col gap-5">
-                            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
-                                <div>
-                                    <h3 class="text-lg font-black text-slate-900">Backup & Restore Preset Tema</h3>
-                                    <p class="text-xs text-slate-500 font-medium mt-0.5">Ekspor konfigurasi tema acara ke file .json atau pulihkan tema tersimpan.</p>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between gap-4">
-                                    <div>
-                                        <h4 class="text-xs font-black text-slate-800 flex items-center gap-1.5">
-                                            <i class="ph ph-download text-blue-600 text-base"></i> Export Preset (.json)
-                                        </h4>
-                                        <p class="text-[11px] text-slate-500 mt-1 font-medium">Simpan seluruh pengaturan teks, warna, font, dan Google Drive ke file lokal komputer.</p>
-                                    </div>
-                                    <button type="button" id="btnExportThemePreset" class="bg-white hover:bg-slate-100 text-slate-800 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 border border-slate-200 shadow-xs">
-                                        <i class="ph ph-floppy-disk text-blue-600"></i> Download Preset (.json)
-                                    </button>
-                                </div>
-
-                                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between gap-4">
-                                    <div>
-                                        <h4 class="text-xs font-black text-slate-800 flex items-center gap-1.5">
-                                            <i class="ph ph-upload text-blue-600 text-base"></i> Restore Preset (.json)
-                                        </h4>
-                                        <p class="text-[11px] text-slate-500 mt-1 font-medium">Muat preset tema yang pernah Anda simpan sebelumnya ke photobooth.</p>
-                                    </div>
-                                    <input type="file" id="importThemeFileInput" accept=".json" class="hidden" />
-                                    <button type="button" id="btnImportThemeTrigger" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs">
-                                        <i class="ph ph-folder-open"></i> Buka File Preset (.json)
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="p-5 rounded-2xl bg-red-50/50 border border-red-100 flex items-center justify-between">
-                                <div>
-                                    <h4 class="text-xs font-black text-red-900">Reset ke Pengaturan Default</h4>
-                                    <p class="text-[11px] text-red-700 font-medium">Kembalikan seluruh teks, warna, dan tema ke tampilan cerah bawaan Eazy Fotobooth.</p>
-                                </div>
-                                <button type="button" id="btnResetThemeDefaults" class="bg-white hover:bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-bold transition border border-red-200 shadow-xs">
-                                    Reset Default
-                                </button>
-                            </div>
-                        </div>
-                    </section>
 
                 </main>
             </div>

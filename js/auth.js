@@ -141,10 +141,12 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPassword').value;
+            const cloudName = document.getElementById('regCloudName') ? document.getElementById('regCloudName').value : '';
+            const cloudPreset = document.getElementById('regCloudPreset') ? document.getElementById('regCloudPreset').value : '';
             const errorEl = document.getElementById('regError');
             
-            if (!email || !password || password.length < 6) {
-                errorEl.textContent = 'Email wajib diisi dan Password minimal 6 karakter';
+            if (!email || !password || !cloudName || !cloudPreset) {
+                errorEl.textContent = 'Harap isi semua kolom termasuk data Cloudinary.';
                 errorEl.classList.remove('hidden');
                 return;
             }
@@ -161,6 +163,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (error) throw error;
+                
+                // If successful, user is signed in. Save cloudinary settings.
+                if (window.ThemeManager) {
+                    // Get current config, update cloudinary, and save
+                    const currentCfg = window.ThemeManager.getConfig();
+                    currentCfg.cloudinaryName = cloudName;
+                    currentCfg.cloudinaryPreset = cloudPreset;
+                    currentCfg.cloudinaryAutoUpload = true; // Force enable
+                    await window.ThemeManager.saveConfig(currentCfg);
+                }
+
                 // successful register will automatically sign in (if no email confirmation required)
                 // and onAuthStateChange will trigger
                 
