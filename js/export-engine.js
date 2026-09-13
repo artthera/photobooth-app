@@ -267,6 +267,15 @@ function prosesHasil() {
                     sessionData.firebaseUrl = manifestUrl; // keep same key for backward compatibility
                     SessionDB.saveSession(sessionData);
                 }
+                
+                // Supabase Logging
+                const sUrl = (cfg.supabaseUrl || '').trim();
+                const sKey = (cfg.supabaseKey || '').trim();
+                const sEnabled = cfg.supabaseEnabled !== false;
+                if (sUrl && sKey && sEnabled && typeof supabase !== 'undefined') {
+                    logToSupabase(sUrl, sKey, sessionData.id, eventName || 'Default', manifestUrl, onlineCustomerUrl);
+                }
+
                 if (gdriveBadge) {
                     gdriveBadge.classList.remove('hidden');
                     gdriveBadge.innerHTML = '<i class="ph ph-check-circle"></i> Tersimpan di Cloud';
@@ -400,6 +409,30 @@ async function uploadToCloudinary(sessionData, cloudName, uploadPreset, eventNam
     } catch (err) {
         console.error("uploadToCloudinary error:", err);
         throw err;
+    }
+}
+
+// ================= SUPABASE LOGGER =================
+async function logToSupabase(sUrl, sKey, sessionId, eventName, manifestUrl, customerUrl) {
+    try {
+        const { createClient } = supabase;
+        const client = createClient(sUrl, sKey);
+        
+        const payload = {
+            session_id: sessionId,
+            event_name: eventName,
+            manifest_url: manifestUrl,
+            customer_url: customerUrl
+        };
+        
+        const { error } = await client.from('sessions').insert([payload]);
+        if (error) {
+            console.error("Supabase insert error:", error);
+        } else {
+            console.log("Successfully logged session to Supabase:", sessionId);
+        }
+    } catch (err) {
+        console.error("Supabase logger exception:", err);
     }
 }
 

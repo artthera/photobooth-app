@@ -368,6 +368,15 @@ const ThemeManager = (function() {
         setVal('themeCloudinaryEventName', cfg.cloudinaryEventName || '');
         const statusCloudinary = document.getElementById('cloudinaryTestStatus');
         if (statusCloudinary) statusCloudinary.classList.add('hidden');
+
+        // Supabase Storage inputs
+        setVal('themeSupabaseUrl', cfg.supabaseUrl || '');
+        setVal('themeSupabaseKey', cfg.supabaseKey || '');
+        if (document.getElementById('themeSupabaseEnabled')) {
+            document.getElementById('themeSupabaseEnabled').checked = cfg.supabaseEnabled !== false;
+        }
+        const statusSupabase = document.getElementById('supabaseTestStatus');
+        if (statusSupabase) statusSupabase.classList.add('hidden');
     }
 
     function initModalUI() {
@@ -508,50 +517,106 @@ const ThemeManager = (function() {
 
         // Cloudinary Test Connection Button
         const btnTestCloudinary = document.getElementById('btnTestCloudinary');
-        const cloudinaryTestStatus = document.getElementById('cloudinaryTestStatus');
-        if (btnTestCloudinary && cloudinaryTestStatus) {
+        if (btnTestCloudinary) {
             btnTestCloudinary.addEventListener('click', async () => {
-                const cName = (document.getElementById('themeCloudinaryName').value || '').trim();
-                const cPreset = (document.getElementById('themeCloudinaryPreset').value || '').trim();
+                const cName = document.getElementById('themeCloudinaryName').value.trim();
+                const cPreset = document.getElementById('themeCloudinaryPreset').value.trim();
+                const statusEl = document.getElementById('cloudinaryTestStatus');
                 
                 if (!cName || !cPreset) {
-                    cloudinaryTestStatus.innerHTML = '<span class="text-amber-600 font-bold"><i class="ph ph-warning"></i> Harap masukkan Cloud Name dan Upload Preset terlebih dahulu!</span>';
-                    cloudinaryTestStatus.classList.remove('hidden');
+                    statusEl.textContent = 'Harap isi Cloud Name dan Upload Preset terlebih dahulu!';
+                    statusEl.className = 'text-[11px] font-bold text-red-600 mt-2 block';
                     return;
                 }
 
+                const originalHtml = btnTestCloudinary.innerHTML;
+                btnTestCloudinary.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Testing...';
                 btnTestCloudinary.disabled = true;
-                const origBtn = btnTestCloudinary.innerHTML;
-                btnTestCloudinary.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Test...';
-                cloudinaryTestStatus.innerHTML = '<span class="text-blue-600 font-bold"><i class="ph ph-spinner animate-spin"></i> Menghubungi Cloudinary...</span>';
-                cloudinaryTestStatus.classList.remove('hidden');
+                statusEl.textContent = 'Mengetes koneksi upload ke Cloudinary...';
+                statusEl.className = 'text-[11px] font-medium text-slate-500 mt-2 block';
 
                 try {
-                    // Coba upload file teks kosong sebagai pengujian
+                    // Create a dummy JSON file to test the raw upload
+                    const dummyPayload = { test: true, timestamp: Date.now() };
+                    const blob = new Blob([JSON.stringify(dummyPayload)], { type: 'application/json' });
                     const formData = new FormData();
-                    formData.append('file', new Blob(['test'], { type: 'text/plain' }));
+                    formData.append('file', blob);
                     formData.append('upload_preset', cPreset);
+                    formData.append('public_id', `test_connection_${Date.now()}`);
 
                     const res = await fetch(`https://api.cloudinary.com/v1_1/${cName}/raw/upload`, {
                         method: 'POST',
                         body: formData
                     });
-                    
+
                     const data = await res.json();
                     
                     if (data.secure_url) {
-                        cloudinaryTestStatus.innerHTML = '<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> Koneksi Berhasil! Cloudinary siap digunakan.</span>';
+                        statusEl.innerHTML = '<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> Koneksi Berhasil! Cloudinary siap digunakan.</span>';
                     } else if (data.error) {
-                        cloudinaryTestStatus.innerHTML = `<span class="text-red-600 font-bold"><i class="ph ph-warning"></i> Gagal: ${data.error.message}</span>`;
+                        statusEl.innerHTML = `<span class="text-red-600 font-bold"><i class="ph ph-warning"></i> Gagal: ${data.error.message}</span>`;
                     } else {
-                        cloudinaryTestStatus.innerHTML = '<span class="text-red-600 font-bold"><i class="ph ph-warning"></i> Gagal terhubung ke Cloudinary.</span>';
+                        statusEl.innerHTML = '<span class="text-red-600 font-bold"><i class="ph ph-warning"></i> Gagal terhubung ke Cloudinary.</span>';
                     }
                 } catch (err) {
                     console.error(err);
-                    cloudinaryTestStatus.innerHTML = '<span class="text-red-600 font-bold"><i class="ph ph-warning"></i> Gagal terhubung: ' + err.message + '</span>';
+                    statusEl.innerHTML = '<span class="text-red-600 font-bold"><i class="ph ph-warning"></i> Gagal terhubung: ' + err.message + '</span>';
                 } finally {
                     btnTestCloudinary.disabled = false;
-                    btnTestCloudinary.innerHTML = origBtn;
+                    btnTestCloudinary.innerHTML = originalHtml;
+                }
+            });
+        }
+
+        // Supabase Test Connection Button
+        const btnTestSupabase = document.getElementById('btnTestSupabase');
+        if (btnTestSupabase) {
+            btnTestSupabase.addEventListener('click', async () => {
+                const sUrl = document.getElementById('themeSupabaseUrl').value.trim();
+                const sKey = document.getElementById('themeSupabaseKey').value.trim();
+                const statusEl = document.getElementById('supabaseTestStatus');
+                
+                if (!sUrl || !sKey) {
+                    statusEl.textContent = 'Harap isi URL dan Key Supabase terlebih dahulu!';
+                    statusEl.className = 'text-[11px] font-bold text-red-600 mt-2 block';
+                    statusEl.classList.remove('hidden');
+                    return;
+                }
+
+                if (typeof supabase === 'undefined') {
+                    statusEl.textContent = 'Supabase SDK belum termuat. Periksa koneksi internet Anda.';
+                    statusEl.className = 'text-[11px] font-bold text-red-600 mt-2 block';
+                    statusEl.classList.remove('hidden');
+                    return;
+                }
+
+                const originalHtml = btnTestSupabase.innerHTML;
+                btnTestSupabase.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Testing...';
+                btnTestSupabase.disabled = true;
+                statusEl.textContent = 'Menghubungkan ke Supabase...';
+                statusEl.className = 'text-[11px] font-medium text-slate-500 mt-2 block';
+                statusEl.classList.remove('hidden');
+
+                try {
+                    const { createClient } = supabase;
+                    const client = createClient(sUrl, sKey);
+                    
+                    // Simple select query to test connection
+                    const { data, error } = await client.from('sessions').select('*').limit(1);
+
+                    if (error) {
+                        throw new Error(error.message);
+                    }
+
+                    statusEl.innerHTML = `<i class="ph ph-check-circle"></i> Koneksi Berhasil! Tabel 'sessions' ditemukan.`;
+                    statusEl.className = 'text-[11px] font-bold text-emerald-600 mt-2 flex items-center gap-1 block';
+                    
+                } catch (err) {
+                    statusEl.textContent = `Error: ${err.message} (Pastikan tabel 'sessions' sudah dibuat)`;
+                    statusEl.className = 'text-[11px] font-bold text-red-600 mt-2 block';
+                } finally {
+                    btnTestSupabase.innerHTML = originalHtml;
+                    btnTestSupabase.disabled = false;
                 }
             });
         }
