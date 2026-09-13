@@ -14,7 +14,7 @@ async function initAuth() {
         
         if (session && session.user) {
             currentAuthUser = session.user;
-            showLanding();
+            showAdmin();
         } else {
             showLogin();
         }
@@ -23,15 +23,15 @@ async function initAuth() {
         globalSupabaseClient.auth.onAuthStateChange((event, session) => {
             if (event === 'SIGNED_IN') {
                 currentAuthUser = session.user;
-                showLanding();
+                showAdmin();
             } else if (event === 'SIGNED_OUT') {
                 currentAuthUser = null;
                 showLogin();
             }
         });
     } else {
-        // Fallback if Supabase is disabled/missing, just show landing
-        showLanding();
+        // Fallback if Supabase is disabled/missing, just show admin
+        showAdmin();
     }
 }
 
@@ -44,12 +44,12 @@ function showLogin() {
     if (el) el.classList.remove('hide');
 }
 
-function showLanding() {
-    ['state-login', 'state-instructions', 'state-camera', 'state-builder', 'state-results', 'state-admin'].forEach(id => {
+function showAdmin() {
+    ['state-login', 'state-instructions', 'state-camera', 'state-builder', 'state-results', 'state-landing'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hide');
     });
-    const el = document.getElementById('state-landing');
+    const el = document.getElementById('state-admin');
     if (el) el.classList.remove('hide');
 }
 
