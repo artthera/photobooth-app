@@ -180,13 +180,13 @@ function renderCameraFilterTray() {
             const btn = document.createElement('div');
             // active styling
             const isActive = typeof currentFilter !== 'undefined' && currentFilter === key;
-            btn.className = `cursor-pointer rounded-xl overflow-hidden shrink-0 transition-all border-[3px] relative filter-preview-btn snap-center ${isActive ? 'border-blue-500 scale-105 shadow-xl opacity-100' : 'border-white/40 scale-100 opacity-60 hover:opacity-100'}`;
+            btn.className = `cursor-pointer shrink-0 transition-all border-2 relative filter-preview-btn snap-center bg-black ${isActive ? 'border-white scale-100 opacity-100 shadow-[4px_4px_0_rgba(255,255,255,1)]' : 'border-gray-600 scale-100 opacity-50 hover:opacity-100'}`;
             btn.style.width = '72px';
             btn.style.height = '92px';
             
             btn.innerHTML = `
-                <img src="${previewDataUrl}" class="w-full h-full object-cover" style="filter: ${f.css}; pointer-events: none;">
-                <div class="absolute bottom-0 left-0 w-full bg-black/60 backdrop-blur-[2px] text-white text-[9px] font-bold text-center py-1.5 truncate px-1 pointer-events-none">
+                <img src="${previewDataUrl}" class="w-full h-full object-cover opacity-90" style="filter: ${f.css}; pointer-events: none;">
+                <div class="absolute bottom-0 left-0 w-full bg-black text-white text-[8px] font-black uppercase tracking-widest text-center py-2 border-t-2 border-white truncate px-1 pointer-events-none">
                     ${f.name}
                 </div>
             `;
@@ -196,11 +196,11 @@ function renderCameraFilterTray() {
                 video.style.filter = f.css;
                 // update UI
                 tray.querySelectorAll('.filter-preview-btn').forEach(b => {
-                    b.classList.remove('border-blue-500', 'scale-105', 'shadow-xl', 'opacity-100');
-                    b.classList.add('border-white/40', 'scale-100', 'opacity-60');
+                    b.classList.remove('border-white', 'shadow-[4px_4px_0_rgba(255,255,255,1)]', 'opacity-100');
+                    b.classList.add('border-gray-600', 'opacity-50');
                 });
-                btn.classList.add('border-blue-500', 'scale-105', 'shadow-xl', 'opacity-100');
-                btn.classList.remove('border-white/40', 'scale-100', 'opacity-60');
+                btn.classList.add('border-white', 'shadow-[4px_4px_0_rgba(255,255,255,1)]', 'opacity-100');
+                btn.classList.remove('border-gray-600', 'opacity-50');
             };
             
             tray.appendChild(btn);
