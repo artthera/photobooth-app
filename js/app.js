@@ -182,8 +182,7 @@ function bindAppNavigation() {
     if (btnMulaiFoto) {
         btnMulaiFoto.addEventListener('click', () => {
             try {
-                const timerEl = document.getElementById('settingTimer');
-                waktuTimer = timerEl ? parseInt(timerEl.value) : 3;
+                waktuTimer = parseInt(document.getElementById('settingTimer').value);
                 totalFoto = (typeof currentSelectedFrame !== 'undefined' && currentSelectedFrame) ? currentSelectedFrame.slotCount : 4;
                 if (settingsBar) settingsBar.classList.add('hide'); 
                 if (photoCounter) photoCounter.classList.remove('hide');

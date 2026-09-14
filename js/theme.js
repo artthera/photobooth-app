@@ -23,17 +23,17 @@ const ThemeManager = (function() {
         resultsTitle: "YOUR PHOTOBOOTH MOMENTS",
         resultsSubtitle: "Semua foto, video live motion, dan animasi GIF berhasil dibuat dengan kualitas tinggi!",
         
-        bgMode: "color", // 'camera' | 'image' | 'color'
-        bgGradient: "",
+        bgMode: "camera", // 'camera' | 'image'
+        bgGradient: "linear-gradient(135deg, #f8fafc 0%, #eef2f6 50%, #ffffff 100%)",
         bgColor: "#ffffff",
         bgImageData: null,
         bgImageName: "custom_wallpaper.jpg",
-        bgOverlayOpacity: 0,
+        bgOverlayOpacity: 5,
         bgBlur: 0,
         
-        fontFamily: "'Playfair Display', serif", // Serif for titles
-        accentColor: "#000000", // Solid black
-        accentColorEnd: "#000000",
+        fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+        accentColor: "#2563eb",
+        accentColorEnd: "#7c3aed",
 
         cloudinaryName: "",
         cloudinaryPreset: "",

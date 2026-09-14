@@ -28,7 +28,7 @@
 <body class="min-h-screen min-h-[100dvh] h-[100dvh] flex flex-col select-none bg-slate-50 text-slate-900 overflow-hidden">
 
     <!-- SVG Filters -->
-    <svg style="display: none;">
+    <svg width="0" height="0" style="position:absolute; width:0; height:0; pointer-events:none;">
         <defs>
             <!-- 1. Fisheye Lens -->
             <filter id="fisheye-filter" x="-20%" y="-20%" width="140%" height="140%">
@@ -89,24 +89,16 @@
     <!-- Flash Screen Effect -->
     <div id="flashOverlay" class="flash-overlay"></div>
 
-    <!-- Top App Navigation Header (Static Brutalist Style) -->
-    <div class="w-full bg-[#f3f4f6] text-[9px] sm:text-[10px] text-gray-500 text-center py-2 uppercase tracking-[0.2em] z-50 relative border-b border-gray-200">
-        COMING SOON - MEMORY SURVIVAL KIT
-    </div>
-    <header class="w-full bg-white flex justify-between items-center z-50 relative px-4 sm:px-8 py-4 sm:py-5 border-b border-gray-200">
-        <div class="w-1/4 flex items-center">
-            <h1 id="brandHeaderTitle" class="text-2xl sm:text-3xl font-black tracking-tight text-black" style="font-family: 'Playfair Display', serif;">GENIC</h1>
+    <!-- Top App Navigation Header (Shown during Photobooth session) -->
+    <header id="mainAppHeader" class="p-3 sm:p-4 flex justify-between items-center z-[100] absolute w-full top-0 pointer-events-none hide">
+        <div class="flex items-center gap-2.5 bg-white/90 backdrop-blur-md px-3.5 sm:px-4 py-2 rounded-full border border-slate-200/80 pointer-events-auto shadow-sm">
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-600 animate-ping"></span>
+            <div id="brandHeaderTitle" class="text-xs font-black tracking-widest text-slate-800 uppercase">EAZY FOTOBOOTH</div>
         </div>
-        <nav class="hidden md:flex items-center justify-center gap-8 text-[10px] sm:text-xs text-black font-semibold tracking-widest uppercase flex-1">
-            <span class="cursor-pointer hover:text-gray-500 transition-colors">SHOP</span>
-            <span class="cursor-pointer hover:text-gray-500 transition-colors">EVENTS</span>
-            <span class="cursor-pointer hover:text-gray-500 transition-colors">TOOLS</span>
-            <span class="cursor-pointer hover:text-gray-500 transition-colors">CONTACT</span>
-            <span class="cursor-pointer hover:text-gray-500 transition-colors">ARCHIVE</span>
-        </nav>
-        <div class="w-1/4 flex items-center justify-end gap-5">
-            <i class="ph ph-user text-xl sm:text-2xl cursor-pointer hover:text-gray-500 transition-colors"></i>
-            <i class="ph ph-tote text-xl sm:text-2xl cursor-pointer hover:text-gray-500 transition-colors"></i>
+        <div class="flex items-center gap-2 pointer-events-auto">
+            <div id="brandHeaderBadge" class="bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-full border border-slate-200/80 text-[11px] font-bold text-slate-700 hidden sm:flex items-center gap-1.5 shadow-sm">
+                <i class="ph ph-sparkle text-amber-500"></i> HD PHOTO & LIVE MOTION
+            </div>
         </div>
     </header>
 
@@ -114,7 +106,7 @@
     <div id="btnHiddenAdminExit" class="fixed bottom-0 right-0 w-24 h-24 z-[9999] cursor-default" title="Secret Admin Exit"></div>
 
     <!-- Main Dynamic Application Container -->
-    <main class="flex-grow flex items-center justify-center relative overflow-hidden w-full bg-slate-50">
+    <main class="flex-grow flex items-center justify-center relative overflow-hidden h-[100dvh] w-full bg-slate-50">
         
         <!-- Background Layers -->
         <!-- Layer 1: Live Mirror Camera Feed Background -->
@@ -762,104 +754,143 @@
         </div>
 
         <!-- ================= STATE 0: HOME PAGE (EAZY FOTOBOOTH) ================= -->
-        <div id="state-landing" class="absolute inset-0 z-10 flex flex-col items-center justify-center w-full h-full transition-opacity duration-500 bg-white/50 hide px-4 py-8">
+        <div id="state-landing" class="absolute inset-0 z-10 flex flex-col items-center justify-center w-full h-full transition-opacity duration-500 bg-white/30 backdrop-blur-xs hide px-4 py-8">
             <div class="max-w-3xl w-full flex flex-col items-center text-center my-auto">
                 
                 <!-- Event Badge -->
-                <div id="landingBadgeContainer" class="inline-flex items-center gap-2 bg-transparent px-5 py-2 text-[10px] font-bold tracking-widest text-black mb-6 border border-black uppercase">
+                <div id="landingBadgeContainer" class="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md px-5 py-2 rounded-full text-xs font-black tracking-widest text-blue-600 mb-4 border border-blue-200/80 shadow-sm transition hover:scale-105">
+                    <i id="landingBadgeIcon" class="ph ph-sparkle text-base text-amber-500"></i>
                     <span id="landingBadgeText">KOREAN STYLE PHOTOBOOTH</span>
                 </div>
 
                 <!-- Main Headline -->
-                <h1 id="landingMainTitle" class="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black text-black mb-4 tracking-tighter text-center leading-none" style="font-family: 'Playfair Display', serif;">
+                <h1 id="landingMainTitle" class="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black text-slate-900 drop-shadow-sm mb-3.5 tracking-tight text-center px-2 leading-none">
                     EAZY FOTOBOOTH
                 </h1>
 
                 <!-- Subtitle / Event Message -->
-                <p id="landingSubtitle" class="text-black text-xs sm:text-sm max-w-lg text-center mb-10 font-normal leading-relaxed uppercase tracking-wider">
+                <p id="landingSubtitle" class="text-slate-600 text-xs sm:text-sm md:text-base max-w-xl text-center mb-8 px-4 font-semibold leading-relaxed">
                     Abadikan setiap pose secara otomatis dengan 3 format hasil: Photo Strip, Motion Video, dan Looping GIF
                 </p>
 
+                <!-- Interactive Feature Highlights Pills (Tablet & Kiosk Friendly) -->
+                <div class="flex flex-wrap justify-center items-center gap-2.5 sm:gap-3 mb-9 max-w-2xl px-2">
+                    <div class="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200 shadow-xs text-xs font-bold text-slate-800">
+                        <span class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm"><i class="ph ph-camera"></i></span>
+                        <span>Photo Strip HD</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200 shadow-xs text-xs font-bold text-slate-800">
+                        <span class="w-6 h-6 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center text-sm"><i class="ph ph-video-camera"></i></span>
+                        <span>Live Motion MP4</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200 shadow-xs text-xs font-bold text-slate-800">
+                        <span class="w-6 h-6 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-sm"><i class="ph ph-file-gif"></i></span>
+                        <span>Looping GIF</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200 shadow-xs text-xs font-bold text-slate-800">
+                        <span class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm"><i class="ph ph-qr-code"></i></span>
+                        <span>Instant QR Cloud</span>
+                    </div>
+                </div>
+
                 <!-- Grand Start CTA Button -->
-                <button id="btnLanding" class="bg-black hover:bg-white hover:text-black text-white border border-black px-12 sm:px-16 py-4 font-bold text-sm tracking-[0.2em] uppercase transition-all duration-300 flex items-center justify-center gap-4 group">
+                <button id="btnLanding" class="btn-pulse bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-10 sm:px-14 md:px-18 py-4 sm:py-5 rounded-full font-black text-lg sm:text-xl md:text-2xl transition-all duration-300 flex items-center justify-center gap-3.5 shadow-[0_15px_35px_-5px_rgba(37,99,235,0.45)] active:scale-95">
                     <span id="btnLandingText">TAP TO START</span> 
-                    <i class="ph ph-arrow-right text-lg transition-transform group-hover:translate-x-1.5"></i>
                 </button>
+
+                <!-- Footer Status & Touch Hint -->
+                <div class="mt-8 flex items-center gap-2 text-slate-600 font-bold text-[11px] bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full border border-slate-200/80 shadow-xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span>
+                    <span>EAZY FOTOBOOTH &bull; Sentuh layar untuk mulai berfoto</span>
+                </div>
+
             </div>
         </div>
 
         <!-- ================= STATE 1: INSTRUCTIONS ================= -->
-        <div id="state-instructions" class="absolute inset-0 z-10 flex flex-col items-center justify-center w-full h-full bg-white hide transition-opacity duration-500 p-4">
-            <div class="max-w-4xl w-full flex flex-col items-center text-center border border-black p-8 sm:p-12">
-                <div id="guideBadge" class="inline-flex items-center gap-1.5 bg-transparent border border-black px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] mb-6 text-black">
+        <div id="state-instructions" class="absolute inset-0 z-10 flex flex-col items-center justify-center w-full h-full bg-slate-50/95 backdrop-blur-xl hide transition-opacity duration-500 p-4">
+            <div class="max-w-4xl w-full flex flex-col items-center text-center">
+                <div id="guideBadge" class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-3 shadow-xs">
                     Panduan Singkat
                 </div>
-                <h2 id="guideTitle" class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-black tracking-tight" style="font-family: 'Playfair Display', serif;">CARA KERJA EAZY FOTOBOOTH</h2>
-                <p id="guideSubtitle" class="text-gray-600 text-xs sm:text-sm mb-12 max-w-md font-medium uppercase tracking-wider">3 langkah mudah untuk menghasilkan momen terbaik Anda</p>
+                <h2 id="guideTitle" class="text-3xl sm:text-4xl md:text-5xl font-black mb-2 text-slate-900 tracking-wide">CARA KERJA EAZY FOTOBOOTH</h2>
+                <p id="guideSubtitle" class="text-slate-500 text-xs sm:text-sm mb-8 max-w-md font-medium">3 langkah mudah untuk menghasilkan momen terbaik Anda</p>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl text-left mb-12 w-full px-2">
-                    <div class="bg-white p-6 border border-black relative hover:bg-gray-50 transition-colors group">
-                        <span class="absolute top-4 right-4 text-xs font-black text-gray-300 group-hover:text-black transition-colors">01</span>
-                        <h3 class="font-bold text-sm mb-2 text-black uppercase tracking-wider">LIVE REC COUNT</h3>
-                        <p class="text-xs text-gray-500 leading-relaxed font-normal">Saat hitung mundur berjalan, kamera merekam klip live motion dari gerakanmu.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl text-left mb-10 w-full px-2">
+                    <div class="bg-white p-5 rounded-3xl border border-slate-200/90 relative shadow-lg">
+                        <span class="absolute top-3 right-4 text-2xl font-black text-slate-200">01</span>
+                        <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
+                            <i class="ph ph-video-camera text-2xl font-bold"></i>
+                        </div>
+                        <h3 class="font-black text-sm sm:text-base mb-1 text-slate-800">LIVE REC COUNT</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed font-medium">Saat hitung mundur berjalan, kamera merekam klip live motion dari gerakanmu.</p>
                     </div>
                     
-                    <div class="bg-white p-6 border border-black relative hover:bg-gray-50 transition-colors group">
-                        <span class="absolute top-4 right-4 text-xs font-black text-gray-300 group-hover:text-black transition-colors">02</span>
-                        <h3 class="font-bold text-sm mb-2 text-black uppercase tracking-wider">STILL SNAP AT 0</h3>
-                        <p class="text-xs text-gray-500 leading-relaxed font-normal">Di akhir hitung mundur (flash), foto still diambil sebagai hasil pose.</p>
+                    <div class="bg-white p-5 rounded-3xl border border-slate-200/90 relative shadow-lg">
+                        <span class="absolute top-3 right-4 text-2xl font-black text-slate-200">02</span>
+                        <div class="w-10 h-10 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center mb-3">
+                            <i class="ph ph-camera text-2xl font-bold"></i>
+                        </div>
+                        <h3 class="font-black text-sm sm:text-base mb-1 text-slate-800">STILL SNAP AT 0</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed font-medium">Di akhir hitung mundur (flash), foto still beresolusi tinggi diambil sebagai hasil pose.</p>
                     </div>
                     
-                    <div class="bg-white p-6 border border-black relative hover:bg-gray-50 transition-colors group">
-                        <span class="absolute top-4 right-4 text-xs font-black text-gray-300 group-hover:text-black transition-colors">03</span>
-                        <h3 class="font-bold text-sm mb-2 text-black uppercase tracking-wider">FRAME STUDIO</h3>
-                        <p class="text-xs text-gray-500 leading-relaxed font-normal">Gunakan template, kelola frame event, atau upload frame sendiri.</p>
+                    <div class="bg-white p-5 rounded-3xl border border-slate-200/90 relative shadow-lg">
+                        <span class="absolute top-3 right-4 text-2xl font-black text-slate-200">03</span>
+                        <div class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3">
+                            <i class="ph ph-frame-corners text-2xl font-bold"></i>
+                        </div>
+                        <h3 class="font-black text-sm sm:text-base mb-1 text-slate-800">FRAME STUDIO</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed font-medium">Gunakan template estetik, <b>Kelola Frame Event</b>, atau <b>Upload Frame Sendiri</b>!</p>
                     </div>
                     
-                    <div class="bg-white p-6 border border-black relative hover:bg-gray-50 transition-colors group">
-                        <span class="absolute top-4 right-4 text-xs font-black text-gray-300 group-hover:text-black transition-colors">04</span>
-                        <h3 class="font-bold text-sm mb-2 text-black uppercase tracking-wider">3 FORMAT OUTPUT</h3>
-                        <p class="text-xs text-gray-500 leading-relaxed font-normal">Download Photo Strip (JPG), Motion Strip (MP4), dan GIF.</p>
+                    <div class="bg-white p-5 rounded-3xl border border-slate-200/90 relative shadow-lg">
+                        <span class="absolute top-3 right-4 text-2xl font-black text-slate-200">04</span>
+                        <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
+                            <i class="ph ph-download-simple text-2xl font-bold"></i>
+                        </div>
+                        <h3 class="font-black text-sm sm:text-base mb-1 text-slate-800">3 FORMAT OUTPUT</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed font-medium">Download <b>Photo Strip (JPG)</b>, <b>Motion Strip (MP4)</b>, dan <b>GIF</b>!</p>
                     </div>
                 </div>
 
-                <button id="btnStartCapture" class="bg-black hover:bg-white hover:text-black text-white border border-black px-12 md:px-16 py-4 font-bold text-sm tracking-[0.2em] uppercase transition-all flex items-center justify-center gap-4">
-                    <span id="btnStartCaptureText">MENGERTI, AYO MULAI</span>
+                <button id="btnStartCapture" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-10 md:px-14 py-4 rounded-full font-black text-base md:text-lg transition flex items-center gap-2 shadow-[0_10px_30px_-5px_rgba(37,99,235,0.4)] active:scale-95">
+                    <span id="btnStartCaptureText">MENGERTI, AYO MULAI</span> <i class="ph ph-arrow-right font-bold text-xl"></i>
                 </button>
             </div>
         </div>
 
         <!-- ================= STATE 1.5: FRAME SELECTION ================= -->
-        <div id="state-frame-selection" class="absolute inset-0 z-10 flex flex-col items-center justify-center w-full h-full bg-white hide transition-opacity duration-500 p-4">
+        <div id="state-frame-selection" class="absolute inset-0 z-10 flex flex-col items-center justify-center w-full h-full bg-slate-50/95 backdrop-blur-xl hide transition-opacity duration-500 p-4">
             <div class="max-w-5xl w-full flex flex-col h-full py-8">
-                <div class="text-center mb-8 shrink-0">
-                    <div class="inline-flex items-center gap-1.5 bg-transparent border border-black px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] mb-6 text-black">
+                <div class="text-center mb-6 shrink-0">
+                    <div class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-3 shadow-xs">
                         Langkah 1
                     </div>
-                    <h2 class="text-3xl sm:text-4xl font-black mb-4 text-black tracking-tight" style="font-family: 'Playfair Display', serif;">PILIH FRAME FAVORITMU</h2>
-                    <p class="text-gray-600 text-xs sm:text-sm max-w-md mx-auto font-medium uppercase tracking-wider">Pilih frame yang kamu suka, jumlah foto akan disesuaikan otomatis.</p>
+                    <h2 class="text-3xl sm:text-4xl font-black mb-2 text-slate-900 tracking-wide">PILIH FRAME FAVORITMU</h2>
+                    <p class="text-slate-500 text-xs sm:text-sm max-w-md mx-auto font-medium">Pilih frame yang kamu suka, jumlah foto akan disesuaikan otomatis.</p>
                 </div>
                 
-                <div class="flex flex-col flex-grow bg-white border border-black overflow-hidden flex flex-col">
+                <div class="flex flex-col flex-grow bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden flex flex-col">
                     <!-- Top Action Bar -->
-                    <div class="p-4 bg-white border-b border-black flex flex-col gap-3 shrink-0">
+                    <div class="p-4 bg-slate-50 border-b border-slate-200 flex flex-col gap-3 shrink-0">
                         <!-- Category Filter Pills -->
-                        <div id="frameCategoryPills" class="flex items-center justify-center gap-4 overflow-x-auto pb-1 pt-0.5 scrollbar-none text-xs uppercase tracking-wider">
-                            <button class="cat-pill active px-6 py-2 font-bold bg-black text-white border border-black transition shrink-0" data-cat="all">Semua</button>
-                            <button class="cat-pill px-6 py-2 font-bold bg-white text-black border border-black hover:bg-gray-100 transition shrink-0" data-cat="4">4 Cuts</button>
-                            <button class="cat-pill px-6 py-2 font-bold bg-white text-black border border-black hover:bg-gray-100 transition shrink-0" data-cat="3">3 Cuts</button>
-                            <button class="cat-pill px-6 py-2 font-bold bg-white text-black border border-black hover:bg-gray-100 transition shrink-0" data-cat="5">5 Cuts</button>
-                            <button class="cat-pill px-6 py-2 font-bold bg-white text-black border border-black hover:bg-gray-100 transition shrink-0" data-cat="custom">Custom</button>
+                        <div id="frameCategoryPills" class="flex items-center justify-center gap-2 overflow-x-auto pb-1 pt-0.5 scrollbar-none text-xs">
+                            <button class="cat-pill active px-4 py-1.5 rounded-full font-bold bg-blue-600 text-white transition shrink-0" data-cat="all">Semua</button>
+                            <button class="cat-pill px-4 py-1.5 rounded-full font-bold bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition shrink-0 shadow-sm" data-cat="4">4 Cuts</button>
+                            <button class="cat-pill px-4 py-1.5 rounded-full font-bold bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition shrink-0 shadow-sm" data-cat="3">3 Cuts</button>
+                            <button class="cat-pill px-4 py-1.5 rounded-full font-bold bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition shrink-0 shadow-sm" data-cat="5">5 Cuts</button>
+                            <button class="cat-pill px-4 py-1.5 rounded-full font-bold bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition shrink-0 shadow-sm" data-cat="custom">Custom</button>
                         </div>
                     </div>
 
                     <!-- Template Frame List Area -->
-                    <div id="frameList" class="p-6 overflow-y-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-grow bg-white content-start"></div>
+                    <div id="frameList" class="p-5 overflow-y-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 flex-grow bg-slate-50/30 content-start"></div>
                 </div>
 
-                <div class="mt-8 text-center shrink-0">
-                    <button id="btnLanjutKamera" class="bg-black hover:bg-white hover:text-black text-white border border-black px-12 md:px-16 py-4 font-bold text-sm tracking-[0.2em] uppercase transition-all inline-flex items-center justify-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed">
-                        <span id="btnLanjutKameraText">LANJUT KE KAMERA</span>
+                <div class="mt-6 text-center shrink-0">
+                    <button id="btnLanjutKamera" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-10 md:px-14 py-4 rounded-full font-black text-base md:text-lg transition inline-flex items-center justify-center gap-2 shadow-[0_10px_30px_-5px_rgba(37,99,235,0.4)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span id="btnLanjutKameraText">LANJUT KE KAMERA</span> <i class="ph ph-camera text-xl font-bold"></i>
                     </button>
                 </div>
             </div>
@@ -869,154 +900,154 @@
         <div id="state-camera" class="absolute inset-0 z-10 w-full h-full hide transition-opacity duration-500 pointer-events-none">
             
             <!-- Live Recording Indicator Overlay -->
-            <div id="liveRecBadge" class="absolute top-5 left-5 bg-white text-black font-bold text-xs px-4 py-2 border border-black flex items-center gap-2.5 tracking-widest uppercase z-30 hide">
-                <span class="w-2.5 h-2.5 bg-red-600 live-dot rounded-none"></span>
+            <div id="liveRecBadge" class="absolute top-5 left-5 bg-red-600 text-white font-black text-xs px-4 py-2 rounded-full flex items-center gap-2.5 tracking-wider shadow-xl z-30 hide border border-red-400">
+                <span class="w-2.5 h-2.5 rounded-full bg-white live-dot"></span>
                 <span>REC LIVE MOTION</span>
             </div>
 
             <!-- Flip / Switch Camera Button -->
-            <button id="btnFlipCamera" title="Ganti Kamera (Depan / Belakang)" class="absolute top-5 right-5 bg-white hover:bg-gray-100 text-black p-3 border border-black z-30 pointer-events-auto transition active:scale-95 flex items-center justify-center">
-                <i class="ph ph-camera-rotate text-xl"></i>
+            <button id="btnFlipCamera" title="Ganti Kamera (Depan / Belakang)" class="absolute top-5 right-5 bg-white/95 hover:bg-white text-slate-800 p-2.5 rounded-full shadow-lg border border-slate-200 z-30 pointer-events-auto transition active:scale-90 flex items-center justify-center">
+                <i class="ph ph-camera-rotate text-xl text-blue-600"></i>
             </button>
 
             <!-- Camera Error & Permission Recovery Overlay -->
-            <div id="cameraErrorOverlay" class="absolute inset-0 z-40 bg-white flex flex-col items-center justify-center p-6 text-center text-black hide pointer-events-auto border-8 border-red-600">
-                <div class="w-16 h-16 bg-white border border-red-600 text-red-600 flex items-center justify-center text-3xl mb-6">
+            <div id="cameraErrorOverlay" class="absolute inset-0 z-40 bg-slate-900/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center text-white hide pointer-events-auto">
+                <div class="w-16 h-16 rounded-3xl bg-red-500/20 border border-red-500/40 text-red-400 flex items-center justify-center text-3xl mb-4">
                     <i class="ph ph-camera-slash"></i>
                 </div>
-                <h3 class="text-2xl font-black mb-4 uppercase tracking-widest">Kamera Tidak Dapat Diakses</h3>
-                <p id="cameraErrorMessage" class="text-gray-600 text-xs sm:text-sm max-w-md mb-8 leading-relaxed uppercase">
+                <h3 class="text-xl font-black mb-2">Kamera Tidak Dapat Diakses</h3>
+                <p id="cameraErrorMessage" class="text-slate-300 text-xs sm:text-sm max-w-md mb-6 leading-relaxed">
                     Pastikan Anda mengizinkan akses kamera di browser dan tidak ada aplikasi lain yang sedang menggunakan kamera.
                 </p>
-                <button id="btnRetryCamera" class="bg-black hover:bg-white hover:text-black text-white font-bold px-8 py-4 text-xs tracking-widest uppercase border border-black flex items-center gap-3 transition active:scale-95">
-                    <i class="ph ph-arrow-counter-clockwise text-base"></i> Izinkan & Coba Lagi
+                <button id="btnRetryCamera" class="bg-blue-600 hover:bg-blue-500 text-white font-black px-7 py-3.5 rounded-2xl text-xs flex items-center gap-2 transition shadow-lg active:scale-95">
+                    <i class="ph ph-arrow-counter-clockwise font-bold text-base"></i> Izinkan & Coba Lagi
                 </button>
             </div>
 
             <!-- Countdown Overlay -->
-            <div id="countdownOverlay" class="absolute inset-0 flex flex-col items-center justify-center hide bg-white/90 z-20">
-                <div id="teksCountdown" class="text-[170px] sm:text-[220px] font-black text-black leading-none" style="font-family: 'Playfair Display', serif;">3</div>
-                <div class="text-black font-bold text-xs sm:text-sm tracking-[0.2em] uppercase flex items-center gap-3 bg-white px-6 py-3 border border-black mt-8">
-                    <span class="w-3 h-3 bg-red-600 animate-ping rounded-none"></span> Merekam Video Live Pose...
+            <div id="countdownOverlay" class="absolute inset-0 flex flex-col items-center justify-center hide bg-black/35 backdrop-blur-[2px] z-20">
+                <div id="teksCountdown" class="text-[170px] sm:text-[220px] font-black text-white drop-shadow-[0_0_40px_rgba(0,0,0,0.95)] animate-pulse leading-none">3</div>
+                <div class="text-white font-black text-xs sm:text-sm tracking-widest flex items-center gap-2 bg-slate-900/80 px-5 py-2 rounded-full border border-white/20 shadow-xl mt-4">
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span> Merekam Video Live Pose...
                 </div>
             </div>
 
             <!-- Filter Selection Tray -->
             <div class="absolute bottom-[104px] left-1/2 -translate-x-1/2 w-[95%] max-w-2xl z-10 pointer-events-auto">
-                <div class="text-[10px] text-black font-bold uppercase tracking-widest mb-3 text-center flex items-center justify-center gap-2 bg-white/80 py-1 border-t border-b border-black">
-                    <i class="ph ph-magic-wand"></i> Pilih Filter Efek
+                <div class="text-[10px] text-white/90 font-black uppercase tracking-wider mb-2 text-center drop-shadow-md flex items-center justify-center gap-1.5">
+                    <i class="ph ph-magic-wand text-amber-300"></i> Pilih Filter Efek
                 </div>
-                <div id="cameraFilterTray" class="w-full flex gap-4 overflow-x-auto hide-scrollbar snap-x snap-mandatory px-4 py-4 bg-white border border-black">
+                <div id="cameraFilterTray" class="w-full flex gap-3 overflow-x-auto hide-scrollbar snap-x snap-mandatory px-3 py-3 glass-panel bg-black/20 rounded-3xl shadow-2xl border border-white/20">
                     <!-- Populated by JS -->
                 </div>
             </div>
 
             <!-- Settings Bar (Initial Setup) -->
-            <div id="settingsBar" class="absolute bottom-6 left-1/2 -translate-x-1/2 w-[95%] max-w-lg bg-white p-4 flex items-center justify-between gap-4 z-10 pointer-events-auto border border-black">
+            <div id="settingsBar" class="absolute bottom-6 left-1/2 -translate-x-1/2 w-[95%] max-w-lg glass-panel rounded-3xl p-3.5 flex items-center justify-between gap-3 z-10 pointer-events-auto shadow-2xl">
                 <div class="w-1/3">
-                    <label class="text-[10px] text-black font-bold block mb-2 uppercase tracking-widest">Timer</label>
-                    <select id="settingTimer" class="w-full bg-white border border-black text-black p-3 text-xs outline-none cursor-pointer font-bold uppercase tracking-wider hover:bg-gray-50">
+                    <label class="text-[10px] text-slate-700 font-black block mb-1 uppercase tracking-wider"><i class="ph ph-timer text-blue-600"></i> Timer</label>
+                    <select id="settingTimer" class="w-full bg-white border border-slate-200 rounded-xl text-slate-800 p-2 text-xs outline-none cursor-pointer font-bold shadow-xs">
                         <option value="3">3 Detik</option>
                         <option value="5">5 Detik</option>
                     </select>
                 </div>
                 <div class="hidden">
-                    <label class="text-[10px] text-black font-bold block mb-2 uppercase tracking-widest">Jumlah Pose</label>
-                    <select id="settingSnaps" class="w-full bg-white border border-black text-black p-3 text-xs outline-none cursor-pointer font-bold uppercase tracking-wider hover:bg-gray-50">
+                    <label class="text-[10px] text-slate-700 font-black block mb-1 uppercase tracking-wider"><i class="ph ph-images text-blue-600"></i> Jumlah Pose</label>
+                    <select id="settingSnaps" class="w-full bg-white border border-slate-200 rounded-xl text-slate-800 p-2.5 text-xs outline-none cursor-pointer font-bold shadow-xs">
                         <option value="3">3 Pose</option>
                         <option value="4" selected>4 Pose</option>
                         <option value="5">5 Pose</option>
                     </select>
                 </div>
                 <div class="flex-grow flex items-end justify-end">
-                    <button id="btnMulaiFoto" class="bg-black hover:bg-white hover:text-black text-white border border-black px-6 py-4 w-full font-bold text-xs tracking-widest uppercase transition flex items-center justify-center gap-2 active:scale-95">
+                    <button id="btnMulaiFoto" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-3 w-full rounded-xl font-black text-xs transition shadow-md flex items-center justify-center gap-1.5 active:scale-95">
                         <i class="ph ph-camera text-base"></i> MULAI FOTO
                     </button>
                 </div>
             </div>
 
             <!-- Progress Counter -->
-            <div id="photoCounter" class="absolute bottom-[136px] left-1/2 -translate-x-1/2 bg-white px-5 py-2 border border-black text-black font-bold text-xs uppercase tracking-widest hide z-10 pointer-events-auto flex items-center gap-3">
-                <i class="ph ph-camera"></i>
+            <div id="photoCounter" class="absolute bottom-[136px] left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md px-4 py-1.5 rounded-full border border-slate-200 text-slate-800 font-black text-xs shadow-md hide z-10 pointer-events-auto flex items-center gap-2">
+                <i class="ph ph-camera text-blue-600"></i>
                 <span id="textCounter">0/4</span>
             </div>
 
             <!-- Thumbnail Tray -->
             <div class="absolute bottom-4 w-full z-10 flex justify-center pointer-events-auto px-4">
-                <div id="thumbnailContainer" class="thumbnail-container capturing flex gap-2"></div>
+                <div id="thumbnailContainer" class="thumbnail-container capturing"></div>
             </div>
 
             <!-- Continue Button -->
-            <button id="btnContinue" class="absolute bottom-6 right-6 bg-black hover:bg-white hover:text-black text-white border border-black px-8 py-4 font-bold text-xs tracking-widest uppercase hide z-20 transition-all flex items-center gap-3 pointer-events-auto active:scale-95">
-                LANJUTKAN KE FRAME <i class="ph ph-arrow-right text-base"></i>
+            <button id="btnContinue" class="absolute bottom-6 right-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-7 py-3.5 rounded-full font-black text-sm hide z-20 transition-all flex items-center gap-2 shadow-[0_10px_25px_-5px_rgba(37,99,235,0.5)] pointer-events-auto active:scale-95">
+                LANJUTKAN KE FRAME <i class="ph ph-arrow-right font-bold text-base"></i>
             </button>
         </div>
 
         <!-- ================= STATE 3: FRAME BUILDER ================= -->
-        <div id="state-builder" class="w-full h-full hide flex flex-col md:flex-row bg-white pt-14 absolute top-0 left-0 z-20">
+        <div id="state-builder" class="w-full h-full hide flex flex-col md:flex-row bg-slate-100 pt-14 absolute top-0 left-0 z-20">
             <!-- Left Panel: Captured Photos Palette -->
-            <div class="w-full md:w-72 bg-white h-48 md:h-full p-4 overflow-y-auto flex flex-col gap-4 border-b md:border-b-0 md:border-r border-black shrink-0 z-10">
-                <div class="text-left pb-4 border-b border-black">
-                    <h3 class="font-bold text-xs text-black uppercase tracking-[0.2em] flex items-center gap-2">
-                        <i class="ph ph-images text-base"></i> DAFTAR FOTO
+            <div class="w-full md:w-72 bg-white h-48 md:h-full p-4 overflow-y-auto flex flex-col gap-3 border-b md:border-b-0 md:border-r border-slate-200 shrink-0 shadow-sm z-10">
+                <div class="text-left pb-2 border-b border-slate-100">
+                    <h3 class="font-black text-xs text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                        <i class="ph ph-images text-blue-600 text-base"></i> DAFTAR FOTO
                     </h3>
-                    <p class="text-[10px] text-gray-500 mt-2 font-medium uppercase tracking-wider">Tap/drag foto lalu pilih slot frame di tengah untuk menukar posisi.</p>
+                    <p class="text-[10px] text-slate-500 mt-1 font-medium">Tap/drag foto lalu pilih slot frame di tengah untuk menukar posisi.</p>
                 </div>
-                <div id="builderPhotos" class="flex flex-col gap-4 overflow-y-auto"></div>
+                <div id="builderPhotos" class="flex flex-col gap-3 overflow-y-auto"></div>
             </div>
             
             <!-- Center Canvas Editor Area -->
-            <div class="flex-grow h-full flex flex-col items-center justify-center p-4 sm:p-8 relative overflow-hidden bg-gray-50">
-                <div class="absolute top-4 text-black text-[10px] font-bold tracking-[0.2em] flex items-center gap-3 bg-white px-6 py-2 border border-black z-10 uppercase">
-                    <i class="ph ph-squares-four text-sm"></i> Susun foto sesuai nomor slot
+            <div class="flex-grow h-full flex flex-col items-center justify-center p-3 sm:p-6 relative overflow-hidden bg-slate-100">
+                <div class="absolute top-3 text-slate-600 text-[11px] font-bold tracking-wider flex items-center gap-2 bg-white/90 px-4 py-1.5 rounded-full border border-slate-200 z-10 shadow-xs">
+                    <i class="ph ph-squares-four text-blue-600 text-sm"></i> Susun foto sesuai nomor slot pada frame
                 </div>
                 
-                <div id="frameWrapper" class="relative transition-transform duration-200 ease-out my-auto flex items-center justify-center" style="transform-origin: center center;">
-                    <div id="frameEditor" class="relative bg-white overflow-hidden border border-black"></div>
+                <div id="frameWrapper" class="relative shadow-2xl transition-transform duration-200 ease-out my-auto flex items-center justify-center" style="transform-origin: center center;">
+                    <div id="frameEditor" class="relative bg-white overflow-hidden shadow-[0_15px_40px_-10px_rgba(0,0,0,0.2)]"></div>
                 </div>
 
-                <button id="btnSelesaiEdit" class="absolute bottom-6 right-6 bg-black hover:bg-white hover:text-black text-white border border-black px-8 py-4 font-bold text-xs tracking-[0.2em] uppercase transition-all flex items-center gap-3 z-20">
-                    SELESAI & BUAT HASIL <i class="ph ph-check-circle text-lg"></i>
+                <button id="btnSelesaiEdit" class="absolute bottom-5 right-5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-7 py-3 rounded-full font-black text-sm transition-all flex items-center gap-2 shadow-[0_10px_25px_-5px_rgba(16,185,129,0.4)] active:scale-95 z-20">
+                    SELESAI & BUAT HASIL <i class="ph ph-check-circle text-lg font-bold"></i>
                 </button>
             </div>
 
             <!-- Right Panel: Filter Selectors (HIDDEN as per request) -->
-            <div class="w-full md:w-96 lg:w-[380px] bg-white h-72 md:h-full flex flex-col border-t md:border-t-0 md:border-l border-black shrink-0 z-10 hidden">
-                <div class="p-6 bg-white border-b border-black text-center shrink-0">
-                    <h3 class="font-bold text-sm text-black uppercase tracking-[0.2em] flex items-center justify-center gap-2">
-                        <i class="ph ph-magic-wand"></i> PILIH FILTER
+            <div class="w-full md:w-96 lg:w-[380px] bg-white h-72 md:h-full flex flex-col border-t md:border-t-0 md:border-l border-slate-200 shrink-0 shadow-lg z-10 hidden">
+                <div class="p-4 bg-slate-50 border-b border-slate-200 text-center shrink-0">
+                    <h3 class="font-black text-sm text-slate-800 uppercase tracking-wider flex items-center justify-center gap-2">
+                        <i class="ph ph-magic-wand text-blue-600"></i> PILIH FILTER
                     </h3>
-                    <p class="text-[10px] text-gray-500 mt-2 font-medium uppercase tracking-wider">Berikan efek filter menarik pada fotomu.</p>
+                    <p class="text-[10px] text-slate-500 mt-1 font-medium">Berikan efek filter menarik pada fotomu.</p>
                 </div>
                 <!-- Filter List Area -->
-                <div id="filterList" class="p-4 overflow-y-auto grid grid-cols-2 gap-4 flex-grow content-start bg-gray-50"></div>
+                <div id="filterList" class="p-3.5 overflow-y-auto grid grid-cols-2 gap-3 flex-grow content-start bg-slate-50/50"></div>
             </div>
         </div>
 
         <!-- ================= STATE 4: RESULTS (3 OUTPUTS + DOWNLOAD ALL) ================= -->
-        <div id="state-results" class="w-full h-full pt-16 overflow-y-auto hide flex flex-col items-center bg-white absolute top-0 left-0 z-30">
-            <div class="text-center mt-6 mb-10 px-4">
-                <div id="resultsBadge" class="inline-flex items-center gap-2 bg-transparent border border-black px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-black">
-                    <i class="ph ph-sparkle text-black"></i> <span id="resultsBadgeText">HASIL SIAP DI-DOWNLOAD</span>
+        <div id="state-results" class="w-full h-full pt-16 overflow-y-auto hide flex flex-col items-center bg-slate-50 absolute top-0 left-0 z-30">
+            <div class="text-center mt-2 mb-6 px-4">
+                <div id="resultsBadge" class="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 px-4 py-1.5 rounded-full text-xs font-black text-blue-700 mb-2 shadow-xs">
+                    <i class="ph ph-sparkle text-amber-500"></i> <span id="resultsBadgeText">HASIL SIAP DI-DOWNLOAD</span>
                 </div>
-                <h2 id="resultsTitle" class="text-4xl md:text-5xl font-black tracking-tight text-black" style="font-family: 'Playfair Display', serif;">YOUR PHOTOBOOTH MOMENTS</h2>
-                <p id="resultsSubtitle" class="text-gray-600 text-xs md:text-sm mt-3 max-w-lg mx-auto font-medium uppercase tracking-wider">Semua foto, video live motion, dan animasi GIF berhasil dibuat dengan kualitas tinggi!</p>
+                <h2 id="resultsTitle" class="text-3xl md:text-4xl font-black tracking-wide text-slate-900">YOUR PHOTOBOOTH MOMENTS</h2>
+                <p id="resultsSubtitle" class="text-slate-500 text-xs md:text-sm mt-1 max-w-md mx-auto font-medium">Semua foto, video live motion, dan animasi GIF berhasil dibuat dengan kualitas tinggi!</p>
             </div>
             
             <!-- Loading Indicator during processing -->
             <div id="loadingResults" class="text-center py-20 flex flex-col items-center hide">
-                <div class="loader mb-6 border-black border-t-transparent"></div>
-                <p class="text-black tracking-[0.2em] text-sm font-bold mt-2 uppercase" id="loadingText">MENGHASILKAN PHOTO STRIP ULTRA-HD...</p>
-                <p class="text-gray-500 text-xs mt-2 font-medium uppercase tracking-widest" id="loadingSubtext">Menyinkronkan frame foto & live motion clips...</p>
+                <div class="loader mb-6"></div>
+                <p class="text-slate-900 tracking-wider text-sm font-black mt-2" id="loadingText">MENGHASILKAN PHOTO STRIP ULTRA-HD...</p>
+                <p class="text-slate-500 text-xs mt-1 font-medium" id="loadingSubtext">Menyinkronkan frame foto & live motion clips...</p>
             </div>
 
             <!-- Master Action Bar: Download All ZIP -->
-            <div id="masterActionBar" class="w-full max-w-5xl px-6 mb-10 flex flex-wrap items-center justify-between gap-6 hide">
-                <button id="btnDownloadAllZip" class="bg-black hover:bg-gray-800 text-white px-8 py-4 font-bold text-xs tracking-[0.2em] uppercase flex items-center gap-3 transition">
+            <div id="masterActionBar" class="w-full max-w-5xl px-6 mb-6 flex flex-wrap items-center justify-between gap-4 hide">
+                <button id="btnDownloadAllZip" class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-6 py-3.5 rounded-2xl font-black text-sm flex items-center gap-2.5 transition shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] active:scale-95">
                     <i class="ph ph-file-zip text-xl"></i> DOWNLOAD ALL IN ONE (ZIP)
                 </button>
-                <button id="btnAmbilFotoBaru" onclick="restartPhotoSession()" class="bg-white hover:bg-gray-100 text-black px-6 py-4 font-bold text-xs tracking-[0.2em] uppercase flex items-center gap-3 border border-black transition">
-                    <i class="ph ph-camera-rotate text-base"></i> AMBIL FOTO BARU
+                <button id="btnAmbilFotoBaru" onclick="restartPhotoSession()" class="bg-white hover:bg-slate-100 text-slate-800 px-5 py-3 rounded-2xl font-bold text-xs flex items-center gap-2 border border-slate-200 shadow-sm transition">
+                    <i class="ph ph-camera-rotate text-base text-blue-600"></i> AMBIL FOTO BARU
                 </button>
             </div>
 
@@ -1024,157 +1055,158 @@
             <div id="resultsGrid" class="grid grid-cols-1 lg:grid-cols-3 gap-6 justify-center items-start w-full max-w-6xl px-6 pb-12 hide">
                 
                 <!-- OUTPUT 1: Photo Strip (Static Frame) -->
-                <div class="output-card p-6 border border-black bg-white flex flex-col items-center">
-                    <div class="flex items-center justify-between w-full mb-4 pb-4 border-b border-black">
-                        <div class="flex items-center gap-3">
-                            <span class="w-10 h-10 bg-black text-white flex items-center justify-center font-bold text-sm">1</span>
+                <div class="output-card p-5 rounded-3xl shadow-lg flex flex-col items-center">
+                    <div class="flex items-center justify-between w-full mb-3 pb-2.5 border-b border-slate-100">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-sm">1</span>
                             <div class="text-left">
-                                <h3 class="text-black font-bold text-sm uppercase tracking-[0.2em]">Photo Strip</h3>
-                                <p class="text-[10px] text-gray-500 font-medium uppercase tracking-widest">High-Res Print Quality (JPG)</p>
+                                <h3 class="text-slate-900 font-black text-sm uppercase tracking-wider">Photo Strip</h3>
+                                <p class="text-[10px] text-slate-500 font-medium">High-Res Print Quality (JPG)</p>
                             </div>
                         </div>
-                        <span class="text-[10px] bg-white text-black px-3 py-1 font-bold border border-black uppercase tracking-widest">STILL PHOTO</span>
+                        <span class="text-[10px] bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full font-bold border border-blue-200">STILL PHOTO</span>
                     </div>
 
-                    <div class="p-4 bg-gray-50 flex items-center justify-center w-full min-h-[340px] max-h-[460px] overflow-hidden border border-black">
-                        <img id="hasilStrip" alt="Photo Strip" class="max-w-full max-h-[430px] h-auto object-contain border border-gray-200" />
+                    <div class="p-3 bg-slate-100/70 rounded-2xl shadow-inner flex items-center justify-center w-full min-h-[340px] max-h-[460px] overflow-hidden border border-slate-200">
+                        <img id="hasilStrip" alt="Photo Strip" class="max-w-full max-h-[430px] h-auto object-contain rounded-lg shadow-md" />
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3 w-full mt-6">
-                        <button id="btnDownloadStrip" class="bg-black hover:bg-white hover:text-black text-white py-4 font-bold text-xs flex justify-center items-center gap-2 border border-black transition uppercase tracking-widest">
-                            <i class="ph ph-download-simple text-base"></i> JPG
+                    <div class="grid grid-cols-2 gap-2 w-full mt-4">
+                        <button id="btnDownloadStrip" class="bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl font-bold text-xs flex justify-center items-center gap-1.5 transition shadow-sm">
+                            <i class="ph ph-download-simple text-base"></i> Download JPG
                         </button>
-                        <button id="btnDownloadStripPng" class="bg-white hover:bg-gray-100 text-black py-4 font-bold text-xs flex justify-center items-center gap-2 border border-black transition uppercase tracking-widest">
-                            <i class="ph ph-image text-base"></i> PNG
+                        <button id="btnDownloadStripPng" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 rounded-xl font-bold text-xs flex justify-center items-center gap-1.5 transition border border-slate-200">
+                            <i class="ph ph-image text-base"></i> Download PNG
                         </button>
                     </div>
                 </div>
 
                 <!-- OUTPUT 2: Live Video Frame (Motion Strip MP4) -->
-                <div class="output-card p-6 border border-black bg-white flex flex-col items-center">
-                    <div class="flex items-center justify-between w-full mb-4 pb-4 border-b border-black">
-                        <div class="flex items-center gap-3">
-                            <span class="w-10 h-10 bg-black text-white flex items-center justify-center font-bold text-sm">2</span>
+                <div class="output-card p-5 rounded-3xl shadow-lg flex flex-col items-center">
+                    <div class="flex items-center justify-between w-full mb-3 pb-2.5 border-b border-slate-100">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center font-black text-sm">2</span>
                             <div class="text-left">
-                                <h3 class="text-black font-bold text-sm uppercase tracking-[0.2em]">Motion Strip</h3>
-                                <p class="text-[10px] text-gray-500 font-medium uppercase tracking-widest">Live Video Looping (MP4)</p>
+                                <h3 class="text-slate-900 font-black text-sm uppercase tracking-wider">Motion Strip</h3>
+                                <p class="text-[10px] text-slate-500 font-medium">Live Video Looping (MP4)</p>
                             </div>
                         </div>
-                        <span class="text-[10px] bg-white text-black px-3 py-1 font-bold border border-black flex items-center gap-2 uppercase tracking-widest">
-                            <span class="w-2 h-2 bg-red-600 live-dot"></span> LIVE
+                        <span class="text-[10px] bg-pink-50 text-pink-700 px-2.5 py-0.5 rounded-full font-bold border border-pink-200 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-pink-500 live-dot"></span> LIVE
                         </span>
                     </div>
 
-                    <div class="p-4 bg-gray-50 flex items-center justify-center w-full min-h-[340px] max-h-[460px] overflow-hidden relative border border-black">
+                    <div class="p-3 bg-slate-100/70 rounded-2xl shadow-inner flex items-center justify-center w-full min-h-[340px] max-h-[460px] overflow-hidden relative border border-slate-200">
                         <div id="liveVideoFrameWrapper" class="flex items-center justify-center transform origin-center">
-                            <div id="liveVideoFrameContainer" class="relative bg-white overflow-hidden border border-gray-200"></div>
+                            <div id="liveVideoFrameContainer" class="relative bg-white overflow-hidden shadow-md rounded-lg"></div>
                         </div>
                     </div>
 
-                    <button id="btnDownloadLiveVideo" class="mt-6 bg-black hover:bg-white hover:text-black text-white py-4 font-bold w-full flex justify-center items-center gap-2 border border-black transition uppercase tracking-widest text-xs">
-                        <i class="ph ph-video-camera text-base"></i> Download Video
+                    <button id="btnDownloadLiveVideo" class="mt-4 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white py-3 rounded-xl font-bold w-full flex justify-center items-center gap-2 transition shadow-sm text-xs">
+                        <i class="ph ph-video-camera text-base"></i> Download Video Live (MP4)
                     </button>
                 </div>
 
                 <!-- OUTPUT 3: Looping Animated GIF -->
-                <div class="output-card p-6 border border-black bg-white flex flex-col items-center">
-                    <div class="flex items-center justify-between w-full mb-4 pb-4 border-b border-black">
-                        <div class="flex items-center gap-3">
-                            <span class="w-10 h-10 bg-black text-white flex items-center justify-center font-bold text-sm">3</span>
+                <div class="output-card p-5 rounded-3xl shadow-lg flex flex-col items-center">
+                    <div class="flex items-center justify-between w-full mb-3 pb-2.5 border-b border-slate-100">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-black text-sm">3</span>
                             <div class="text-left">
-                                <h3 class="text-black font-bold text-sm uppercase tracking-[0.2em]">Animasi GIF</h3>
-                                <p class="text-[10px] text-gray-500 font-medium uppercase tracking-widest">Looping GIF dari pose</p>
+                                <h3 class="text-slate-900 font-black text-sm uppercase tracking-wider">Animasi GIF</h3>
+                                <p class="text-[10px] text-slate-500 font-medium">Looping GIF dari kumpulan pose</p>
                             </div>
                         </div>
-                        <span class="text-[10px] bg-white text-black px-3 py-1 font-bold border border-black uppercase tracking-widest">GIF</span>
+                        <span class="text-[10px] bg-purple-50 text-purple-700 px-2.5 py-0.5 rounded-full font-bold border border-purple-200">GIF</span>
                     </div>
 
-                    <div id="animPreviewContainer" class="p-0 bg-white w-full flex justify-center items-center overflow-hidden relative border border-black" style="width: 100%; aspect-ratio: 4/3; max-height: 230px;">
+                    <div id="animPreviewContainer" class="p-0 bg-white rounded-2xl shadow-inner w-full flex justify-center items-center overflow-hidden relative border border-slate-200" style="width: 100%; aspect-ratio: 4/3; max-height: 230px;">
                         <img id="liveAnimImg" src="" class="w-full h-full object-cover" />
                     </div>
                     
                     <!-- GIF Controls -->
-                    <div class="mt-4 bg-gray-50 p-4 border border-black w-full text-xs flex flex-col gap-4">
-                        <div class="flex items-center justify-between gap-4">
-                            <label class="text-black font-bold text-[10px] shrink-0 w-16 uppercase tracking-widest"><i class="ph ph-clock"></i> Speed</label>
-                            <input type="range" id="animSpeed" min="250" max="1500" step="50" value="650" style="direction: rtl;" class="w-full cursor-pointer accent-black h-1 bg-gray-300" title="Kecepatan perpindahan pose animasi GIF">
+                    <div class="mt-3 bg-slate-50 p-3 rounded-2xl border border-slate-200 w-full text-xs shadow-inner flex flex-col gap-2.5">
+                        <div class="flex items-center justify-between gap-3">
+                            <label class="text-slate-700 font-bold text-[10px] shrink-0 w-14 uppercase"><i class="ph ph-clock"></i> Speed</label>
+                            <input type="range" id="animSpeed" min="250" max="1500" step="50" value="650" style="direction: rtl;" class="w-full cursor-pointer accent-purple-600 h-1 bg-slate-200 rounded-lg" title="Kecepatan perpindahan pose animasi GIF">
                         </div>
-                        <div class="flex items-center justify-between gap-4">
-                            <label class="text-black font-bold text-[10px] shrink-0 w-16 uppercase tracking-widest"><i class="ph ph-frame-corners"></i> Border</label>
-                            <input type="range" id="animBorder" min="0" max="15" step="1" value="0" class="w-full cursor-pointer accent-black h-1 bg-gray-300">
+                        <div class="flex items-center justify-between gap-3">
+                            <label class="text-slate-700 font-bold text-[10px] shrink-0 w-14 uppercase"><i class="ph ph-frame-corners"></i> Border</label>
+                            <input type="range" id="animBorder" min="0" max="15" step="1" value="0" class="w-full cursor-pointer accent-purple-600 h-1 bg-slate-200 rounded-lg">
                         </div>
-                        <div class="flex items-center justify-between gap-4">
-                            <label class="text-black font-bold text-[10px] shrink-0 w-16 uppercase tracking-widest"><i class="ph ph-palette"></i> Warna</label>
-                            <input type="color" id="animColor" value="#ffffff" class="w-full h-8 p-1 border border-black cursor-pointer bg-white">
+                        <div class="flex items-center justify-between gap-3">
+                            <label class="text-slate-700 font-bold text-[10px] shrink-0 w-14 uppercase"><i class="ph ph-palette"></i> Warna</label>
+                            <input type="color" id="animColor" value="#ffffff" class="w-full h-6 p-0 border-0 rounded cursor-pointer bg-transparent">
                         </div>
                     </div>
 
-                    <button id="btnDownloadGif" class="mt-6 bg-black hover:bg-white hover:text-black text-white py-4 font-bold w-full flex justify-center items-center gap-2 border border-black transition uppercase tracking-widest text-xs">
-                        <i class="ph ph-file-gif text-base"></i> Download GIF
+                    <button id="btnDownloadGif" class="mt-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white py-3 rounded-xl font-bold w-full flex justify-center items-center gap-2 transition shadow-sm text-xs">
+                        <i class="ph ph-file-gif text-base"></i> Download GIF Image
                     </button>
                 </div>
 
             </div>
 
             <!-- QR Section & Reset -->
-            <div id="qrSection" class="w-full max-w-4xl flex flex-col md:flex-row items-center justify-between bg-white p-6 sm:p-10 border border-black mb-16 gap-8 hide">
-                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
+            <div id="qrSection" class="w-full max-w-4xl flex flex-col md:flex-row items-center justify-between bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-lg mb-16 gap-6 hide">
+                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
                     <div class="relative shrink-0 group cursor-pointer" title="Klik QR Code untuk membuka halaman simulasi HP pelanggan">
-                        <div id="qrcode" class="bg-white p-4 border-4 border-black hover:border-gray-800 flex items-center justify-center min-w-[150px] min-h-[150px] transition-all"></div>
-                        <div class="mt-3 text-center">
-                            <span class="inline-flex items-center gap-2 text-[10px] font-bold text-black bg-white px-3 py-1 border border-black hover:bg-black hover:text-white transition uppercase tracking-widest">
-                                <i class="ph ph-cursor-click"></i> Klik Simulasi
+                        <div id="qrcode" class="bg-white p-2.5 rounded-2xl shadow-md border-2 border-slate-200 group-hover:border-blue-500 group-hover:shadow-blue-100 flex items-center justify-center min-w-[135px] min-h-[135px] transition-all"></div>
+                        <div class="mt-1.5 text-center">
+                            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200 group-hover:bg-blue-600 group-hover:text-white transition">
+                                <i class="ph ph-cursor-click"></i> Klik untuk Simulasi
                             </span>
                         </div>
-                        <div id="qrLoadingSpinner" class="hidden absolute inset-0 bg-white/90 flex flex-col items-center justify-center gap-2 text-black border border-black">
-                            <i class="ph ph-spinner animate-spin text-3xl"></i>
-                            <span class="text-[10px] font-bold tracking-[0.2em] uppercase">MENYIMPAN...</span>
+                        <div id="qrLoadingSpinner" class="hidden absolute inset-0 bg-white/95 backdrop-blur-xs rounded-2xl flex flex-col items-center justify-center gap-1.5 text-slate-900 shadow-lg">
+                            <i class="ph ph-spinner animate-spin text-2xl text-emerald-600"></i>
+                            <span class="text-[9px] font-black text-slate-700 tracking-wider">MENYIMPAN...</span>
                         </div>
                     </div>
-                    <div class="text-left py-2">
-                        <div id="gdriveStatusBadge" class="hidden inline-flex items-center gap-2 bg-white text-black border border-black px-3 py-1 text-[10px] font-bold uppercase tracking-widest mb-3">
-                            <i class="ph ph-google-drive-logo text-sm"></i> Terhubung
+                    <div class="text-left">
+                        <div id="gdriveStatusBadge" class="hidden inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold mb-1.5">
+                            <i class="ph ph-google-drive-logo text-xs"></i> Google Drive Cloud Terhubung
                         </div>
-                        <h4 class="text-xl sm:text-2xl font-black text-black mb-2 flex items-center gap-3 uppercase tracking-wider">
-                            <i class="ph ph-qr-code"></i> Simpan ke HP
+                        <h4 class="text-base sm:text-lg font-bold text-slate-900 mb-1 flex items-center gap-2">
+                            <i class="ph ph-qr-code text-blue-600"></i> Scan & Simpan ke HP Pelanggan
                         </h4>
-                        <p id="qrDescriptionText" class="text-xs text-gray-600 max-w-sm leading-relaxed mb-5 font-medium uppercase tracking-wider">
-                            Scan QR untuk membuka galeri hasil foto, video motion MP4, animasi GIF, dan link Google Drive.
+                        <p id="qrDescriptionText" class="text-xs text-slate-500 max-w-sm leading-relaxed mb-3 font-medium">
+                            Scan QR dengan kamera smartphone untuk membuka halaman galeri hasil foto, video motion MP4, animasi GIF, dan link Google Drive.
                         </p>
-                        <div id="gdriveActionButtons" class="flex flex-wrap items-center gap-3 mt-2">
-                            <a id="btnOpenGdriveFolder" href="#" target="_blank" class="hidden bg-black hover:bg-white hover:text-black text-white text-xs font-bold uppercase tracking-widest px-5 py-3 border border-black transition flex items-center gap-2">
-                                <i class="ph ph-arrow-square-out text-sm"></i> Buka Drive
+                        <div id="gdriveActionButtons" class="flex flex-wrap items-center gap-2 mt-1">
+
+                            <a id="btnOpenGdriveFolder" href="#" target="_blank" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm active:scale-95">
+                                <i class="ph ph-arrow-square-out text-sm"></i> Buka Google Drive
                             </a>
-                            <button id="btnSetupGdriveResults" type="button" class="text-[10px] text-black hover:bg-gray-100 bg-white px-5 py-3 transition flex items-center gap-2 border border-black font-bold uppercase tracking-widest">
-                                <i class="ph ph-google-drive-logo text-sm"></i> Setup Drive
+                            <button id="btnSetupGdriveResults" type="button" class="text-[11px] text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl transition flex items-center gap-1 border border-slate-200 font-bold">
+                                <i class="ph ph-google-drive-logo text-emerald-600"></i> Setup Google Drive
                             </button>
                         </div>
                     </div>
                 </div>
-                <button onclick="restartPhotoSession()" class="bg-black hover:bg-white hover:text-black text-white px-10 py-5 font-bold uppercase tracking-[0.2em] border border-black transition flex items-center justify-center gap-3 text-sm shrink-0">
-                    <i class="ph ph-arrow-counter-clockwise text-xl"></i> SESI BARU
+                <button onclick="restartPhotoSession()" class="bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-full font-black transition flex items-center justify-center gap-2 text-sm shadow-md shrink-0 active:scale-95">
+                    <i class="ph ph-arrow-counter-clockwise text-lg"></i> SESI BARU
                 </button>
             </div>
         </div>
     </main>
 
     <!-- ================= MODAL 1: CUSTOM FRAME STUDIO ================= -->
-    <div id="customFrameModal" class="fixed inset-0 z-50 bg-white/95 flex items-center justify-center p-4 sm:p-8 hide">
-        <div class="bg-white border-4 border-black w-full max-w-5xl h-[92vh] max-h-[850px] flex flex-col overflow-hidden text-black">
+    <div id="customFrameModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 hide">
+        <div class="bg-white border border-slate-200 w-full max-w-5xl h-[92vh] max-h-[850px] rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-900">
             
             <!-- Modal Header -->
-            <div class="p-6 border-b-4 border-black flex items-center justify-between bg-white">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-black text-white flex items-center justify-center text-xl">
+            <div class="p-4 px-6 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg shadow-xs">
                         <i class="ph ph-paint-brush font-bold"></i>
                     </div>
                     <div>
-                        <h3 class="text-black font-black text-lg sm:text-xl tracking-[0.2em] uppercase">CUSTOM FRAME STUDIO</h3>
-                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mt-1">Upload PNG/JPG frame, atur posisi slot, dan deteksi green screen otomatis.</p>
+                        <h3 class="text-slate-900 font-black text-sm sm:text-base tracking-wide">CUSTOM FRAME STUDIO</h3>
+                        <p class="text-[11px] text-slate-500 font-medium">Upload PNG/JPG frame, atur posisi slot, dan deteksi green screen otomatis.</p>
                     </div>
                 </div>
-                <button id="btnCloseCustomModal" class="w-10 h-10 border-2 border-black hover:bg-black hover:text-white text-black flex items-center justify-center transition">
-                    <i class="ph ph-x font-bold text-xl"></i>
+                <button id="btnCloseCustomModal" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 hover:text-slate-900 flex items-center justify-center transition">
+                    <i class="ph ph-x font-bold text-base"></i>
                 </button>
             </div>
 
@@ -1182,24 +1214,24 @@
             <div class="flex-grow flex flex-col md:flex-row overflow-hidden">
                 
                 <!-- Left: Upload & Interactive Visual Canvas Stage -->
-                <div class="flex-grow bg-gray-50 p-6 flex flex-col items-center justify-center relative overflow-hidden border-b-4 md:border-b-0 md:border-r-4 border-black">
+                <div class="flex-grow bg-slate-100 p-4 flex flex-col items-center justify-center relative overflow-hidden border-b md:border-b-0 md:border-r border-slate-200">
                     
                     <!-- Upload Drop Zone (Initial State) -->
-                    <div id="customUploadDropZone" class="w-full max-w-md border-4 border-dashed border-black hover:bg-white bg-gray-50 p-10 flex flex-col items-center justify-center text-center cursor-pointer transition">
+                    <div id="customUploadDropZone" class="w-full max-w-md border-2 border-dashed border-slate-300 hover:border-blue-500 bg-white rounded-3xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition shadow-sm">
                         <input type="file" id="customFrameFileInput" accept="image/png, image/jpeg, image/jpg, image/webp" class="hidden" />
-                        <div class="w-20 h-20 bg-black text-white flex items-center justify-center mb-6 text-4xl">
+                        <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4 text-3xl shadow-inner">
                             <i class="ph ph-cloud-arrow-up"></i>
                         </div>
-                        <h4 class="text-black font-black text-lg mb-2 tracking-widest uppercase">PILIH FILE FRAME</h4>
-                        <p class="text-xs text-gray-500 max-w-xs mb-6 font-bold uppercase tracking-wider">Format PNG (transparan) atau JPG (dengan warna hijau green screen).</p>
-                        <button type="button" onclick="document.getElementById('customFrameFileInput').click()" class="bg-black hover:bg-white hover:text-black text-white px-8 py-4 text-xs font-bold transition flex items-center gap-3 border border-black uppercase tracking-widest">
+                        <h4 class="text-slate-900 font-black text-base mb-1">PILIH ATAU TARIK FILE FRAME</h4>
+                        <p class="text-xs text-slate-500 max-w-xs mb-4 font-medium">Format PNG (transparan) atau JPG (dengan warna hijau green screen).</p>
+                        <button type="button" onclick="document.getElementById('customFrameFileInput').click()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-full text-xs font-bold transition shadow-sm flex items-center gap-2">
                             <i class="ph ph-folder-open text-base"></i> BROWSE GAMBAR
                         </button>
                     </div>
 
                     <!-- Interactive Slot Stage (Shown once image is loaded) -->
                     <div id="customEditorStageWrapper" class="w-full h-full flex items-center justify-center relative overflow-hidden hide">
-                        <div id="customEditorStage" class="relative bg-transparent border border-black overflow-hidden select-none" style="transform-origin: center center;">
+                        <div id="customEditorStage" class="relative bg-transparent shadow-xl overflow-hidden select-none" style="transform-origin: center center;">
                             <img id="customFramePreviewImg" class="w-full h-full object-fill pointer-events-none select-none block" alt="Custom Frame" />
                             <div id="customSlotsOverlay" class="absolute inset-0 w-full h-full pointer-events-none"></div>
                         </div>
@@ -1208,50 +1240,50 @@
                 </div>
 
                 <!-- Right: Control Panel -->
-                <div class="w-full md:w-96 bg-white p-6 flex flex-col gap-6 overflow-y-auto shrink-0">
+                <div class="w-full md:w-80 bg-white p-5 flex flex-col gap-4 overflow-y-auto shrink-0">
                     
                     <div>
-                        <label class="text-xs font-bold text-black block mb-2 uppercase tracking-widest">Nama Frame</label>
-                        <input type="text" id="customFrameNameInput" placeholder="Contoh: My Aesthetic Frame" class="w-full bg-white border-2 border-black p-4 text-xs text-black outline-none focus:bg-gray-50 transition font-bold uppercase tracking-wider" />
+                        <label class="text-[11px] font-bold text-slate-700 block mb-1.5 uppercase tracking-wider">Nama Frame</label>
+                        <input type="text" id="customFrameNameInput" placeholder="Contoh: My Aesthetic Frame" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 transition font-medium" />
                     </div>
 
                     <!-- Green Screen Auto-Detect Card -->
-                    <div class="bg-white p-5 border-2 border-black flex flex-col gap-3 hover:bg-gray-50 transition">
+                    <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 flex flex-col gap-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-black text-black flex items-center gap-2 uppercase tracking-widest">
-                                <i class="ph ph-magic-wand text-lg"></i> Auto-Detect
+                            <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                                <i class="ph ph-magic-wand text-emerald-600 text-base"></i> Auto-Detect Green Screen
                             </span>
-                            <span class="text-[10px] bg-black text-white px-3 py-1 font-bold border border-black tracking-widest uppercase">CHROMA</span>
+                            <span class="text-[9px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-bold border border-emerald-200">CHROMA KEY</span>
                         </div>
-                        <p class="text-[10px] text-gray-600 leading-relaxed font-bold uppercase tracking-wider">
+                        <p class="text-[10px] text-slate-500 leading-relaxed font-medium">
                             Otomatis mendeteksi area hijau pada frame untuk diubah menjadi slot foto dan membuat warna hijau transparan.
                         </p>
-                        <button id="btnAutoDetectGreenScreen" class="bg-black hover:bg-white hover:text-black text-white py-4 mt-2 border border-black text-xs font-bold transition flex items-center justify-center gap-2 uppercase tracking-widest disabled:opacity-50">
+                        <button id="btnAutoDetectGreenScreen" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white py-2 px-3 rounded-xl text-xs font-black transition flex items-center justify-center gap-1.5 shadow-sm disabled:opacity-50">
                             <i class="ph ph-sparkle text-base"></i> DETEKSI GREEN SCREEN
                         </button>
                     </div>
 
                     <!-- Slot Management Controls -->
-                    <div class="flex flex-col gap-3">
+                    <div class="flex flex-col gap-2">
                         <div class="flex justify-between items-center">
-                            <label class="text-xs font-bold text-black uppercase tracking-widest">Daftar Slot (<span id="customSlotCountText">0</span>)</label>
-                            <button id="btnAddSlotManual" class="text-[10px] font-bold text-black hover:bg-black hover:text-white flex items-center gap-2 bg-white px-3 py-2 border border-black transition uppercase tracking-widest">
+                            <label class="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Daftar Slot Foto (<span id="customSlotCountText">0</span>)</label>
+                            <button id="btnAddSlotManual" class="text-[10px] font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200 transition">
                                 <i class="ph ph-plus font-bold"></i> Tambah Slot
                             </button>
                         </div>
-                        <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider leading-relaxed">
-                            *Tips: Tarik slot untuk memindahkan, tarik titik sudut/tepi untuk mengubah ukuran.
+                        <div class="text-[10px] text-slate-500 font-medium">
+                            *Tips: Tarik slot untuk memindahkan, tarik titik sudut/tepi untuk memperlebar / memperkecil.
                         </div>
-                        <div id="customSlotItemList" class="flex flex-col gap-2 max-h-48 overflow-y-auto pr-2"></div>
+                        <div id="customSlotItemList" class="flex flex-col gap-1.5 max-h-36 overflow-y-auto pr-1"></div>
                     </div>
 
                     <!-- Bottom Action Buttons -->
-                    <div class="mt-auto pt-4 border-t-2 border-black flex flex-col gap-3">
-                        <button id="btnChangeFrameImage" class="text-xs text-black hover:bg-black hover:text-white py-3 border border-black transition flex items-center justify-center gap-2 font-bold uppercase tracking-widest">
+                    <div class="mt-auto pt-3 border-t border-slate-200 flex flex-col gap-2">
+                        <button id="btnChangeFrameImage" class="text-xs text-slate-600 hover:text-slate-900 py-1.5 transition flex items-center justify-center gap-1.5 font-bold">
                             <i class="ph ph-arrows-clockwise text-base"></i> Ganti Gambar Frame
                         </button>
-                        <button id="btnSaveCustomFrame" class="bg-black hover:bg-white hover:text-black text-white border border-black py-4 px-4 text-xs font-bold transition flex items-center justify-center gap-2 uppercase tracking-widest active:scale-95 disabled:opacity-50">
-                            <i class="ph ph-check text-base font-bold"></i> SIMPAN & GUNAKAN
+                        <button id="btnSaveCustomFrame" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white py-3 px-4 rounded-xl text-xs font-black transition flex items-center justify-center gap-2 shadow-sm active:scale-95 disabled:opacity-50">
+                            <i class="ph ph-check text-base font-bold"></i> SIMPAN & GUNAKAN FRAME
                         </button>
                     </div>
 
@@ -1263,58 +1295,58 @@
     </div>
 
     <!-- ================= MODAL 2: FRAME MANAGER ================= -->
-    <div id="frameManagerModal" class="fixed inset-0 z-50 bg-white/95 flex items-center justify-center p-4 sm:p-8 hide">
-        <div class="bg-white border-4 border-black w-full max-w-5xl h-[88vh] max-h-[750px] flex flex-col overflow-hidden text-black">
+    <div id="frameManagerModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 hide">
+        <div class="bg-white border border-slate-200 w-full max-w-4xl h-[88vh] max-h-[750px] rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-900">
             
             <!-- Manager Header -->
-            <div class="p-6 border-b-4 border-black flex items-center justify-between bg-white">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-black text-white flex items-center justify-center text-xl">
+            <div class="p-4 px-6 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg shadow-xs">
                         <i class="ph ph-sliders-horizontal font-bold"></i>
                     </div>
                     <div>
-                        <h3 class="text-black font-black text-lg sm:text-xl tracking-[0.2em] uppercase">KELOLA TEMPLATE FRAME</h3>
-                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mt-1">Atur & hapus template bawaan/kustom agar event Anda siap pakai.</p>
+                        <h3 class="text-slate-900 font-black text-sm sm:text-base tracking-wide">KELOLA TEMPLATE FRAME EVENT</h3>
+                        <p class="text-[11px] text-slate-500 font-medium">Atur & hapus template bawaan/kustom agar event Anda siap pakai dengan cepat (satset).</p>
                     </div>
                 </div>
-                <button id="btnCloseFrameManager" class="w-10 h-10 border-2 border-black hover:bg-black hover:text-white text-black flex items-center justify-center transition">
-                    <i class="ph ph-x font-bold text-xl"></i>
+                <button id="btnCloseFrameManager" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 hover:text-slate-900 flex items-center justify-center transition">
+                    <i class="ph ph-x font-bold text-base"></i>
                 </button>
             </div>
 
             <!-- Manager Toolbar -->
-            <div class="p-4 px-6 bg-gray-50 border-b-2 border-black flex flex-wrap items-center justify-between gap-4 text-xs">
-                <div class="flex items-center gap-3">
-                    <button id="btnExportPreset" class="bg-white hover:bg-black hover:text-white text-black px-4 py-3 font-bold flex items-center gap-2 border border-black transition uppercase tracking-widest">
-                        <i class="ph ph-download text-sm"></i> Export Preset
+            <div class="p-3 px-6 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-2">
+                    <button id="btnExportPreset" class="bg-white hover:bg-slate-100 text-slate-800 px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5 border border-slate-200 transition shadow-xs">
+                        <i class="ph ph-download text-sm text-blue-600"></i> Export Preset (.json)
                     </button>
                     <input type="file" id="importPresetFileInput" accept=".json" class="hidden" />
-                    <button id="btnImportPresetTrigger" class="bg-white hover:bg-black hover:text-white text-black px-4 py-3 font-bold flex items-center gap-2 border border-black transition uppercase tracking-widest">
-                        <i class="ph ph-upload text-sm"></i> Import Preset
+                    <button id="btnImportPresetTrigger" class="bg-white hover:bg-slate-100 text-slate-800 px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5 border border-slate-200 transition shadow-xs">
+                        <i class="ph ph-upload text-sm text-blue-600"></i> Import Preset
                     </button>
                 </div>
-                <div class="flex items-center gap-3">
-                    <button id="btnResetToDefaults" class="text-black hover:bg-black hover:text-white px-4 py-3 border border-black font-bold flex items-center gap-2 transition text-xs uppercase tracking-widest">
-                        <i class="ph ph-arrow-counter-clockwise text-sm"></i> Reset Bawaan
+                <div class="flex items-center gap-2">
+                    <button id="btnResetToDefaults" class="text-slate-500 hover:text-red-600 px-3 py-2 rounded-xl font-bold flex items-center gap-1.5 transition text-[11px]">
+                        <i class="ph ph-arrow-counter-clockwise text-sm"></i> Reset ke Bawaan
                     </button>
                 </div>
             </div>
 
             <!-- Manager Body -->
-            <div class="flex-grow p-6 sm:p-8 overflow-y-auto bg-white">
-                <div class="mb-6 flex justify-between items-center border-b-2 border-black pb-4">
-                    <span class="text-sm font-black text-black uppercase tracking-[0.2em]">Daftar Frame Aktif (<span id="mgrFrameCountText">0</span>)</span>
-                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">*Frame yang dihapus tidak akan muncul.</span>
+            <div class="flex-grow p-4 sm:p-6 overflow-y-auto bg-slate-50/50">
+                <div class="mb-3 flex justify-between items-center">
+                    <span class="text-xs font-black text-slate-800 uppercase tracking-wider">Daftar Frame Aktif (<span id="mgrFrameCountText">0</span>)</span>
+                    <span class="text-[11px] text-slate-500 font-medium">*Frame yang Anda hapus tidak akan muncul di pilihan photobooth.</span>
                 </div>
-                <div id="frameManagerGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+                <div id="frameManagerGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5"></div>
             </div>
 
             <!-- Manager Footer -->
-            <div class="p-6 border-t-4 border-black bg-white flex justify-between items-center">
-                <button type="button" onclick="customFrameModal.classList.remove('hide'); frameManagerModal.classList.add('hide');" class="bg-white hover:bg-black hover:text-white text-black border border-black px-8 py-4 font-bold uppercase tracking-widest transition flex items-center gap-3 text-sm">
-                    <i class="ph ph-plus-circle text-lg"></i> Upload Frame Baru
+            <div class="p-4 px-6 border-t border-slate-200 bg-white flex justify-between items-center">
+                <button type="button" onclick="customFrameModal.classList.remove('hide'); frameManagerModal.classList.add('hide');" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm">
+                    <i class="ph ph-plus-circle text-base"></i> + Upload Frame Baru
                 </button>
-                <button id="btnDoneFrameManager" class="bg-black hover:bg-white hover:text-black text-white border border-black px-10 py-4 font-black uppercase tracking-[0.2em] transition text-sm">
+                <button id="btnDoneFrameManager" class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2.5 rounded-xl text-xs font-black transition shadow-sm">
                     SELESAI & SIMPAN
                 </button>
             </div>
@@ -1325,13 +1357,13 @@
 
 
     <!-- Toast Notification Popup -->
-    <div id="themeToast" class="fixed top-6 right-6 z-[200] bg-black text-white border border-white px-6 py-4 flex items-center gap-4 transform translate-y-[-150%] transition-transform duration-300 pointer-events-none shadow-[4px_4px_0_rgba(255,255,255,1)]">
-        <div class="w-10 h-10 bg-white text-black flex items-center justify-center text-xl shrink-0">
+    <div id="themeToast" class="fixed top-6 right-6 z-[200] bg-white border border-slate-200 text-slate-900 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 transform translate-y-[-150%] transition-transform duration-300 pointer-events-none">
+        <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg shrink-0 border border-emerald-100">
             <i class="ph ph-check-circle font-bold"></i>
         </div>
         <div>
-            <div class="text-sm font-black uppercase tracking-widest" id="themeToastTitle">Pengaturan Tersimpan</div>
-            <div class="text-xs text-gray-300 font-bold uppercase tracking-wider mt-1" id="themeToastMessage">Tampilan kustom berhasil diterapkan.</div>
+            <div class="text-xs font-black text-slate-900" id="themeToastTitle">Pengaturan Tersimpan</div>
+            <div class="text-[10px] text-slate-500 font-medium" id="themeToastMessage">Tampilan kustom berhasil diterapkan.</div>
         </div>
     </div>
 

@@ -9,15 +9,18 @@ const tinggiFoto = 675;
 
 // ================= DAFTAR FILTER FOTO (CSS & Canvas Filter) =================
 const filters = {
-    'none': { name: 'RAW', css: 'none', canvasFilter: 'none' },
-    'bw': { name: 'MONOCHROME', css: 'grayscale(100%) contrast(150%)', canvasFilter: 'grayscale(100%) contrast(150%)' },
-    'fisheye': { name: 'CCTV / SECURITY', css: 'url(#fisheye-filter) saturate(0) contrast(1.5)', canvasFilter: 'url(#fisheye-filter) saturate(0) contrast(1.5)' },
-    'glitch': { name: 'SYS_FAILURE', css: 'url(#glitch-filter) contrast(1.2) saturate(1.5)', canvasFilter: 'url(#glitch-filter) contrast(1.2) saturate(1.5)' },
-    'thermal': { name: 'THERMAL SCAN', css: 'url(#thermal-filter)', canvasFilter: 'url(#thermal-filter)' },
-    'posterize': { name: 'X-RAY INVERT', css: 'url(#posterize-filter) grayscale(100%) invert(100%) contrast(150%)', canvasFilter: 'url(#posterize-filter) grayscale(100%) invert(100%) contrast(150%)' },
-    'neon': { name: 'EDGE DETECT', css: 'url(#neon-edge)', canvasFilter: 'url(#neon-edge)' },
-    'noise': { name: 'STATIC NOISE', css: 'url(#noise-filter) grayscale(100%) contrast(200%) brightness(80%)', canvasFilter: 'url(#noise-filter) grayscale(100%) contrast(200%) brightness(80%)' },
-    'liquid': { name: 'DISTORTION', css: 'url(#liquid-filter) grayscale(100%) contrast(130%)', canvasFilter: 'url(#liquid-filter) grayscale(100%) contrast(130%)' }
+    'none': { name: 'Normal', css: 'none', canvasFilter: 'none' },
+    'bw': { name: 'Classic B&W', css: 'grayscale(100%) contrast(120%)', canvasFilter: 'grayscale(100%) contrast(120%)' },
+    'vintage': { name: 'Vintage Film', css: 'sepia(40%) contrast(135%) saturate(120%)', canvasFilter: 'sepia(40%) contrast(135%) saturate(120%)' },
+    'fisheye': { name: 'Fisheye Lens', css: 'url(#fisheye-filter) saturate(1.2) contrast(1.1)', canvasFilter: 'url(#fisheye-filter) saturate(1.2) contrast(1.1)' },
+    'glitch': { name: 'VHS Glitch', css: 'url(#glitch-filter) contrast(1.1) saturate(1.5)', canvasFilter: 'url(#glitch-filter) contrast(1.1) saturate(1.5)' },
+    'neon': { name: 'Neon Glow', css: 'url(#neon-edge)', canvasFilter: 'url(#neon-edge)' },
+    'liquid': { name: 'Liquid Melt', css: 'url(#liquid-filter) saturate(1.5)', canvasFilter: 'url(#liquid-filter) saturate(1.5)' },
+    'thermal': { name: 'Thermal Cam', css: 'url(#thermal-filter)', canvasFilter: 'url(#thermal-filter)' },
+    'night-vision': { name: 'Night Vision', css: 'url(#noise-filter) sepia(100%) hue-rotate(70deg) saturate(300%) contrast(150%) brightness(110%)', canvasFilter: 'url(#noise-filter) sepia(100%) hue-rotate(70deg) saturate(300%) contrast(150%) brightness(110%)' },
+    'posterize': { name: 'Comic Style', css: 'url(#posterize-filter) saturate(200%) contrast(120%)', canvasFilter: 'url(#posterize-filter) saturate(200%) contrast(120%)' },
+    'cyberpunk': { name: 'Cyberpunk', css: 'saturate(250%) hue-rotate(30deg) contrast(150%)', canvasFilter: 'saturate(250%) hue-rotate(30deg) contrast(150%)' },
+    'dreamy': { name: 'Dreamy Blur', css: 'blur(3px) brightness(120%) saturate(80%) contrast(110%)', canvasFilter: 'blur(3px) brightness(120%) saturate(80%) contrast(110%)' }
 };
 
 // ================= TEMPLATE FRAME BAWAAN (BUILT-IN) =================
